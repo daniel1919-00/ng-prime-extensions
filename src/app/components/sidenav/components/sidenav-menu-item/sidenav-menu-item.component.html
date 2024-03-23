@@ -1,0 +1,6 @@
+<div *ngIf="item" class="item" [routerLink]="item.path" routerLinkActive="active">
+    <div class="item-info">
+        <i class="icon pi" [ngClass]="item.icon"></i>
+        <span class="title">{{ item.title }}</span>
+    </div>
+</div>

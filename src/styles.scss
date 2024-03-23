@@ -1,1 +1,29 @@
-/* You can add global styles to this file, and also import other style files */
+@import "primeng/resources/primeng.css";
+@import "@ng-dominus/dm-styles/dm-styles.min.css";
+@import "primeicons/primeicons.css";
+
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --app-header-height: 50px;
+    --app-sidenav-menu-width: 250px;
+    --app-sidenav-menu-item-padding: 10px;
+    --app-sidenav-menu-item-margin: 8px;
+}
+
+.primary-color {
+    color: var(--primary-color);
+}
+
+.primary-color-text {
+    color: var(--primary-color-text);
+}

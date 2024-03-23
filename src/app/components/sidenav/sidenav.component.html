@@ -1,0 +1,8 @@
+<p-sidebar #sidebarRef styleClass="_sidebar" [(visible)]="sidebarVisible" [modal]="isMobileDevice"
+           [showCloseIcon]="isMobileDevice" position="left" [closeOnEscape]="false">
+    <ng-template pTemplate="headless">
+        <div class="dm:flex dm:flex-column">
+            <app-sidenav-menu-item *ngFor="let menuItem of menuItems" [item]="menuItem"></app-sidenav-menu-item>
+        </div>
+    </ng-template>
+</p-sidebar>

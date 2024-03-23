@@ -1,0 +1,26 @@
+<p-card>
+    <h3>
+        <ng-content select="[docTitle]"></ng-content>
+    </h3>
+    <ng-content select="[docDescription]"></ng-content>
+</p-card>
+<br>
+<p-card>
+    <p-tabView>
+        <p-tabPanel header="Overview">
+            <ng-content select="[docOverview]"></ng-content>
+        </p-tabPanel>
+
+        <p-tabPanel *ngIf="hasContent('[docApi]')" header="Api">
+            <ng-content select="[docApi]"></ng-content>
+        </p-tabPanel>
+
+        <p-tabPanel *ngIf="hasContent('[docIntl]')" header="Internationalization">
+            <ng-content select="[docIntl]"></ng-content>
+        </p-tabPanel>
+
+        <p-tabPanel *ngIf="hasContent('[docStyling]')" header="Styling">
+            <ng-content select="[docStyling]"></ng-content>
+        </p-tabPanel>
+    </p-tabView>
+</p-card>
