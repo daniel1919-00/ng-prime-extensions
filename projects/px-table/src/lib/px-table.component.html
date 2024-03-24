@@ -26,6 +26,8 @@
     [dataKey]="dataKey"
     [stateStorage]="stateStorage"
     [stateKey]="stateKey"
+    [tableStyle]="tableStyle"
+    [tableStyleClass]="tableStyleClass"
 >
     <ng-template pTemplate="header" let-columns>
         <tr>
@@ -43,9 +45,12 @@
     <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
             <ng-container *ngFor="let column of columns; trackBy: identifyColumn">
-                <td *ngIf="displayedColumns.includes(column.id)"
-                    [ngTemplateOutlet]="!column.renderUsing ? cellRenderDefaultTemplate : (column.renderUsing.component ? cellRenderComponentTemplate : cellRenderPipeTemplate)"
-                    [ngTemplateOutletContext]="{column, rowData}"></td>
+                <td *ngIf="displayedColumns.includes(column.id)">
+                    <ng-container
+                        [ngTemplateOutlet]="!column.renderUsing ? cellRenderDefaultTemplate : (column.renderUsing.component ? cellRenderComponentTemplate : cellRenderPipeTemplate)"
+                        [ngTemplateOutletContext]="{column, rowData}"
+                    ></ng-container>
+                </td>
             </ng-container>
         </tr>
     </ng-template>

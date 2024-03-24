@@ -128,6 +128,14 @@ export class PxTableComponent implements OnInit, OnChanges {
      * Unique identifier of a stateful table to use in state storage.
      */
     @Input() stateKey?: string;
+    /**
+     * Inline style of the table.
+     */
+    @Input() tableStyle?: {[p: string]: any} | null;
+    /**
+     * Style class of the table.
+     */
+    @Input() tableStyleClass?: string;
 
     protected displayedColumns: string[] = [];
     protected records: PxTableRow[] = [];
