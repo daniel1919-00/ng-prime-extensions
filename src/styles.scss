@@ -26,3 +26,9 @@ body {
 .primary-color-text {
     color: var(--primary-color-text);
 }
+
+.no-focus-outline:focus {
+    outline: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}

@@ -1,5 +1,4 @@
-import {ProviderToken, Type} from "@angular/core";
-import {HttpContext, HttpHeaders, HttpParams} from "@angular/common/http";
+import {InjectionToken, ProviderToken, Type} from "@angular/core";
 
 export interface PxTableColumnDefinition {
     /**
@@ -48,22 +47,9 @@ export interface PxTableRenderComponentData {
     arguments: any[] | { [key: string]: any };
 }
 
-export interface PxTableDataServerResponse {
-    totalResults: number;
-    rows: PxTableRow[];
-}
-
-export interface PxTableRequestOptions {
-    body?: any;
-    headers?: HttpHeaders | {
-        [header: string]: string | string[];
-    };
-    context?: HttpContext;
-    observe?: 'body';
-    params?: HttpParams | {
-        [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean>;
-    };
-    responseType?: 'json';
+export interface PxTableDataResponse {
+    totalRecords: number;
+    records: PxTableRow[];
 }
 
 export interface PxTableColumnVisibility {
@@ -73,3 +59,21 @@ export interface PxTableColumnVisibility {
      */
     visible?: boolean;
 }
+
+export interface PxTableColumnVisibility {
+    columnId: string;
+    /**
+     * If not specified, the visibility will be toggled
+     */
+    visible?: boolean;
+}
+
+export interface PxTableSortedColum {
+    columnId: string;
+    /**
+     * Sort order. 1 - Ascending / -1 - Descending
+     */
+    order: number;
+}
+
+export const PX_TABLE_RENDER_COMPONENT_DATA = new InjectionToken<PxTableRenderComponentData>('PX_TABLE_RENDER_COMPONENT_DATA');

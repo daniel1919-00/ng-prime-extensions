@@ -11,15 +11,15 @@
             <ng-content select="[docOverview]"></ng-content>
         </p-tabPanel>
 
-        <p-tabPanel *ngIf="hasContent('[docApi]')" header="Api">
+        <p-tabPanel header="Api">
             <ng-content select="[docApi]"></ng-content>
         </p-tabPanel>
 
-        <p-tabPanel *ngIf="hasContent('[docIntl]')" header="Internationalization">
+        <p-tabPanel header="Internationalization">
             <ng-content select="[docIntl]"></ng-content>
         </p-tabPanel>
 
-        <p-tabPanel *ngIf="hasContent('[docStyling]')" header="Styling">
+        <p-tabPanel header="Styling">
             <ng-content select="[docStyling]"></ng-content>
         </p-tabPanel>
     </p-tabView>

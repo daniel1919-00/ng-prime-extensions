@@ -1,4 +1,4 @@
-import {Component, ViewContainerRef} from '@angular/core';
+import {Component} from '@angular/core';
 import {CardModule} from "primeng/card";
 import {PxTableComponent} from "../../../../projects/px-table/src/lib/px-table.component";
 import {TabViewModule} from "primeng/tabview";
@@ -17,12 +17,4 @@ import {NgIf} from "@angular/common";
     styleUrl: './library-documentation.component.scss'
 })
 export class LibraryDocumentationComponent {
-    constructor(
-        private viewContainerRef: ViewContainerRef
-    ) {
-    }
-
-    hasContent(selector: string): boolean {
-        return this.viewContainerRef.element.nativeElement.querySelector(selector) !== null;
-    }
 }

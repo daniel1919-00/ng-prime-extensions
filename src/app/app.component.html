@@ -1,16 +1,16 @@
-<div class="_container"
-     [ngClass]="{'mobile': (appService.isViewportMobileSize | async), 'sidenav-visible': sidenavService.isSidenavVisible}">
+<div class="_container" [ngClass]="{'mobile': (appService.isViewportMobileSize | async), 'sidenav-visible': sidenavService.isSidenavVisible}">
+    <p-toast></p-toast>
     <header class="_header">
         <div class="_header-inner dm:flex dm:flex-nowrap dm:align-items-center dm:justify-content-between">
             <div class="dm:flex dm:align-items-center">
-                <p-button styleClass="headerButton" icon="pi pi-bars" [text]="true" size="small"
+                <p-button styleClass="no-focus-outline" icon="pi pi-bars" [text]="true" size="small"
                           (click)="sidenavService.toggleSidenav()"></p-button>
                 &nbsp;
                 &nbsp;
                 <strong>ng-prime-extensions</strong>
             </div>
             <div>
-                <p-button styleClass="headerButton"
+                <p-button styleClass="no-focus-outline"
                           [icon]="'pi ' + (appService.isDarkModeActive() ? 'pi-sun' : 'pi-moon')" [text]="true"
                           size="small" (click)="appService.toggleDarkMode()"></p-button>
             </div>

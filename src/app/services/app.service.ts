@@ -1,6 +1,7 @@
 import {Inject, Injectable, OnDestroy} from '@angular/core';
 import {DOCUMENT} from "@angular/common";
 import {BehaviorSubject, debounceTime, fromEvent, Subject, takeUntil} from "rxjs";
+import {HighlightLoader} from "ngx-highlightjs";
 
 @Injectable({
     providedIn: 'root'
@@ -13,7 +14,8 @@ export class AppService implements OnDestroy {
     private serviceDestroyed$ = new Subject<void>();
 
     constructor(
-        @Inject(DOCUMENT) private readonly document: Document
+        @Inject(DOCUMENT) private readonly document: Document,
+        private hljsLoader: HighlightLoader
     ) {
 
         this.isViewportMobileSize = new BehaviorSubject<boolean>(this.getIsViewportMobileSize());
@@ -35,6 +37,7 @@ export class AppService implements OnDestroy {
 
     toggleDarkMode() {
         this.darkModeActive = !this.darkModeActive;
+        this.hljsLoader.setTheme(this.darkModeActive ? 'assets/highlightjs/vs2015.css' : 'assets/highlightjs/xcode.css');
         this.document.getElementById('dynamicStylesheet')?.setAttribute('href', this.theme + '-' + (this.darkModeActive ? 'dark' : 'light') + '.css');
     }
 

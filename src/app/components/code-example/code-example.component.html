@@ -2,13 +2,8 @@
     <div class="header">
         <span class="title">{{ title }}</span>
         <span>
-            <button *ngIf="showSource" class="copy-button" mat-icon-button [matTooltip]="getCopyBtnTooltip()"
-                    (click)="copyCode()">
-                <mat-icon>content_copy</mat-icon>
-            </button>
-            <button *ngIf="code.html || code.ts || code.styles" mat-icon-button (click)="showSource = !showSource">
-            <mat-icon>code</mat-icon>
-        </button>
+            <p-button *ngIf="showSource" styleClass="no-focus-outline" [pTooltip]="getCopyBtnTooltip()" icon="pi pi-copy" size="small" [text]="true" (click)="copyCode()"></p-button>
+            <p-button *ngIf="code.html || code.ts || code.styles" styleClass="no-focus-outline" (click)="showSource = !showSource" icon="pi pi-code" size="small" [text]="true"></p-button>
         </span>
     </div>
     <ng-container [ngTemplateOutlet]="showSource ? source : result"></ng-container>
@@ -20,16 +15,18 @@
 </ng-template>
 <ng-template #source>
     <div class="code-source">
-        <mat-tab-group (selectedIndexChange)="currentOpenTab = $event">
-            <mat-tab *ngIf="code.html" label="HTML">
+        <p-tabView (activeIndexChange)="currentOpenTab = $event">
+            <p-tabPanel *ngIf="code.html" header="HTML">
                 <pre><code [highlight]="code.html" [languages]="['xml']"></code></pre>
-            </mat-tab>
-            <mat-tab *ngIf="code.ts" label="TS">
+            </p-tabPanel>
+
+            <p-tabPanel *ngIf="code.ts" header="TS">
                 <pre><code [highlight]="code.ts" [languages]="['typescript']"></code></pre>
-            </mat-tab>
-            <mat-tab *ngIf="code.styles" label="STYLES">
+            </p-tabPanel>
+
+            <p-tabPanel *ngIf="code.styles" header="STYLES">
                 <pre><code [highlight]="code.styles" [languages]="['scss', 'css']"></code></pre>
-            </mat-tab>
-        </mat-tab-group>
+            </p-tabPanel>
+        </p-tabView>
     </div>
 </ng-template>

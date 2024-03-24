@@ -2,6 +2,10 @@ import {Component, Input} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {CodeExample, CodeTab} from "./code-example";
 import {HighlightModule} from "ngx-highlightjs";
+import {ButtonModule} from "primeng/button";
+import {TooltipModule} from "primeng/tooltip";
+import {MessageService} from "primeng/api";
+import {TabViewModule} from "primeng/tabview";
 
 @Component({
     selector: 'app-code-example',
@@ -9,6 +13,9 @@ import {HighlightModule} from "ngx-highlightjs";
     imports: [
         CommonModule,
         HighlightModule,
+        ButtonModule,
+        TooltipModule,
+        TabViewModule,
     ],
     templateUrl: './code-example.component.html',
     styleUrl: './code-example.component.scss'
@@ -21,7 +28,9 @@ export class CodeExampleComponent {
 
     private clipboard: Clipboard;
 
-    constructor() {
+    constructor(
+        private messageService: MessageService
+    ) {
         this.clipboard = navigator.clipboard;
     }
 
@@ -54,9 +63,9 @@ export class CodeExampleComponent {
         }
 
         await this.clipboard.writeText(code);
-        // this.notifications.notify({
-        //     type: "info",
-        //     content: 'Source code copied to clipboard.'
-        // });
+        this.messageService.add({
+            severity: 'info',
+            summary: 'Source code copied to clipboard.'
+        });
     }
 }
