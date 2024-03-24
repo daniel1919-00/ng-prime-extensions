@@ -35,15 +35,22 @@
 
     ._content {
         position: relative;
-        width: calc(100% - var(--app-sidenav-menu-width));
-        left: var(--app-sidenav-menu-width);
+        width: 100%;
+        left: 0;
         top: var(--app-header-height);
         padding: var(--content-padding);
     }
 
-    &.mobile {
+    &.sidenav-visible:not(.mobile) {
         ._content {
-            left: 0;
+            left: var(--app-sidenav-menu-width);
+            width: calc(100% - var(--app-sidenav-menu-width));
+        }
+    }
+
+    &.mobile {
+        ._sidebar {
+            top: 0
         }
     }
 }

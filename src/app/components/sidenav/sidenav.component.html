@@ -1,8 +1,7 @@
-<p-sidebar #sidebarRef styleClass="_sidebar" [(visible)]="sidebarVisible" [modal]="isMobileDevice"
-           [showCloseIcon]="isMobileDevice" position="left" [closeOnEscape]="false">
-    <ng-template pTemplate="headless">
-        <div class="dm:flex dm:flex-column">
-            <app-sidenav-menu-item *ngFor="let menuItem of menuItems" [item]="menuItem"></app-sidenav-menu-item>
-        </div>
+<p-sidebar styleClass="_sidebar" [(visible)]="sidenavService.isSidenavVisible" [modal]="isMobileDevice"
+           [showCloseIcon]="isMobileDevice" position="left" [closeOnEscape]="isMobileDevice"
+           [dismissible]="isMobileDevice">
+    <ng-template pTemplate="content">
+        <app-sidenav-menu-item *ngFor="let menuItem of menuItems" [item]="menuItem"></app-sidenav-menu-item>
     </ng-template>
 </p-sidebar>

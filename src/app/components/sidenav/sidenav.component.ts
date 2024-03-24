@@ -1,5 +1,5 @@
-import {Component, Input, ViewChild} from '@angular/core';
-import {Sidebar, SidebarModule} from "primeng/sidebar";
+import {Component, OnDestroy} from '@angular/core';
+import {SidebarModule} from "primeng/sidebar";
 import {ButtonModule} from "primeng/button";
 import {RippleModule} from "primeng/ripple";
 import {StyleClassModule} from "primeng/styleclass";
@@ -7,6 +7,9 @@ import {SidenavMenuItemComponent} from "./components/sidenav-menu-item/sidenav-m
 import {menuItem} from "./sidenav";
 import {routes} from "../../app.routes";
 import {CommonModule} from "@angular/common";
+import {SidenavService} from "../../services/sidenav.service";
+import {AppService} from "../../services/app.service";
+import {Subject} from "rxjs";
 
 @Component({
     selector: 'app-sidenav',
@@ -22,16 +25,16 @@ import {CommonModule} from "@angular/common";
     templateUrl: './sidenav.component.html',
     styleUrl: './sidenav.component.scss'
 })
-export class SidenavComponent {
-    @ViewChild('sidebarRef') sidebarRef!: Sidebar;
+export class SidenavComponent implements OnDestroy {
+    protected menuItems: menuItem[];
+    protected isMobileDevice = false;
 
-    @Input() isMobileDevice = false;
+    private componentDestroyed$ = new Subject<void>();
 
-    sidebarVisible: boolean = true;
-
-    menuItems: menuItem[];
-
-    constructor() {
+    constructor(
+        protected sidenavService: SidenavService,
+        private appService: AppService
+    ) {
         const menuItems: menuItem[] = [];
 
         for (let i = routes.length; i--;) {
@@ -44,5 +47,15 @@ export class SidenavComponent {
         }
 
         this.menuItems = menuItems.sort();
+
+        this.appService.isViewportMobileSize.subscribe(isMobileSize => {
+            this.isMobileDevice = isMobileSize;
+            this.sidenavService.isSidenavVisible = !isMobileSize;
+        });
+    }
+
+    ngOnDestroy() {
+        this.componentDestroyed$.next();
+        this.componentDestroyed$.complete();
     }
 }
