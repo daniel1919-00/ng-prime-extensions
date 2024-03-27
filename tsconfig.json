@@ -17,6 +17,9 @@
     "paths": {
       "px-table": [
         "./dist/px-table"
+      ],
+      "px-uploader": [
+        "./dist/px-uploader"
       ]
     },
     "importHelpers": true,

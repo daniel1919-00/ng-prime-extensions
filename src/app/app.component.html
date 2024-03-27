@@ -1,4 +1,5 @@
-<div class="_container" [ngClass]="{'mobile': (appService.isViewportMobileSize | async), 'sidenav-visible': sidenavService.isSidenavVisible}">
+<div class="_container"
+     [ngClass]="{'mobile': (appService.isViewportMobileSize | async), 'sidenav-visible': sidenavService.isSidenavVisible}">
     <p-toast></p-toast>
     <header class="_header">
         <div class="_header-inner dm:flex dm:flex-nowrap dm:align-items-center dm:justify-content-between">

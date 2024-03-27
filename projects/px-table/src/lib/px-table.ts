@@ -1,4 +1,5 @@
 import {InjectionToken, ProviderToken, Type} from "@angular/core";
+import {FilterMetadata} from "primeng/api";
 
 export interface PxTableColumnDefinition {
     /**
@@ -77,3 +78,10 @@ export interface PxTableSortedColum {
 }
 
 export const PX_TABLE_RENDER_COMPONENT_DATA = new InjectionToken<PxTableRenderComponentData>('PX_TABLE_RENDER_COMPONENT_DATA');
+
+export interface PxTableDataRequestInfo {
+    pageIndex: number;
+    pageLength: number;
+    sortedColumns: PxTableSortedColum[];
+    filters: {[filter: string]: any} | {[p: string]: FilterMetadata | FilterMetadata[] | undefined};
+}

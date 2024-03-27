@@ -1,0 +1,12 @@
+.entry-group {
+    margin-bottom: 4rem;
+    .title {
+        color: var(--primary-color);
+    }
+
+    .entry {
+        padding-left: 1.4rem;
+        border-left: 1px solid var(--primary-color);
+        margin-bottom: 2.5rem;
+    }
+}

@@ -4,21 +4,28 @@ import {PxTableComponent} from "../../../../projects/px-table/src/lib/px-table.c
 import {LibraryDocumentationComponent} from "../../components/library-documentation/library-documentation.component";
 import {CodeExampleComponent} from "../../components/code-example/code-example.component";
 import {pxTableCodeExample} from "./code-example";
-import {UntypedFormBuilder, UntypedFormGroup} from "@angular/forms";
+import {ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup} from "@angular/forms";
 import {
     PX_TABLE_RENDER_COMPONENT_DATA,
-    PxTableColumnDefinition, PxTableColumnVisibility,
+    PxTableColumnDefinition, PxTableColumnVisibility, PxTableDataRequestInfo, PxTableDataResponse,
     PxTableRenderComponentData
 } from "../../../../projects/px-table/src/lib/px-table";
 import {DatePipe} from "@angular/common";
-import {Subject, Subscription, takeUntil} from "rxjs";
+import {Subject, takeUntil} from "rxjs";
+import {MultiSelectModule} from "primeng/multiselect";
+import {FloatLabelModule} from "primeng/floatlabel";
+import {DropdownModule} from "primeng/dropdown";
+import {HttpClient, HttpClientModule} from "@angular/common/http";
+import {TieredMenuModule} from "primeng/tieredmenu";
+import {MenuItem} from "primeng/api";
 
 @Component({
     standalone: true,
     template: `
-        Rendering image id <strong>{{ columnData.columnData }}</strong> from <a href="https://picsum.photos/images">Lorem Picsum</a>.
+        Rendering image id <strong>{{ columnData.columnData }}</strong> from <a href="https://picsum.photos/images">Lorem
+            Picsum</a>.
         <br>
-        <img [src]="'https://picsum.photos/id/'+columnData.columnData+'/100'" style="max-width: 100px">
+        <img [src]="'https://picsum.photos/id/'+columnData.columnData+'/100'" style="max-width: 100px" alt="Pic">
     `
 })
 class MyColumnRenderer {
@@ -35,7 +42,13 @@ class MyColumnRenderer {
         CardModule,
         PxTableComponent,
         LibraryDocumentationComponent,
-        CodeExampleComponent
+        CodeExampleComponent,
+        ReactiveFormsModule,
+        MultiSelectModule,
+        FloatLabelModule,
+        DropdownModule,
+        HttpClientModule,
+        TieredMenuModule
     ],
     providers: [
         DatePipe
@@ -44,8 +57,7 @@ class MyColumnRenderer {
     styleUrl: './px-table-docs.component.scss'
 })
 export class PxTableDocsComponent implements OnDestroy {
-
-    protected readonly pxTableCodeExample = pxTableCodeExample;
+    @ViewChild('table') private table!: PxTableComponent;
     form: UntypedFormGroup;
     tableColumns: PxTableColumnDefinition[] = [
         {id: 'column1', name: 'Column 1', sortable: true},
@@ -54,53 +66,116 @@ export class PxTableDocsComponent implements OnDestroy {
         {id: 'column4', name: 'component rendered column', sortable: true, renderUsing: {component: MyColumnRenderer}},
     ];
 
-    tableStaticDataSrc: {[key: string]: any}[] = [];
-
-    tableServerSideDataSrc = 'https://localhost/table';
-    rowContextMenuIsVisibleFn = (row: any) => {
-        if(this.form.get(['config', 'rowContextMenu'])?.value !== '1') {
-            return false;
+    tableStaticDataSrc: { [key: string]: any }[] = [];
+    contextualMenuItems: MenuItem[] = [
+        {
+            label: 'File',
+            icon: 'pi pi-file',
+            visible: false,
+            items: [
+                {
+                    label: 'New',
+                    icon: 'pi pi-plus',
+                    items: [
+                        {
+                            label: 'Document',
+                            icon: 'pi pi-file'
+                        },
+                        {
+                            label: 'Image',
+                            icon: 'pi pi-image'
+                        },
+                        {
+                            label: 'Video',
+                            icon: 'pi pi-video'
+                        }
+                    ]
+                },
+                {
+                    label: 'Open',
+                    icon: 'pi pi-folder-open'
+                },
+                {
+                    label: 'Print',
+                    icon: 'pi pi-print'
+                }
+            ]
+        },
+        {
+            label: 'Edit',
+            icon: 'pi pi-file-edit',
+            items: [
+                {
+                    label: 'Copy',
+                    icon: 'pi pi-copy'
+                },
+                {
+                    label: 'Delete',
+                    icon: 'pi pi-times'
+                }
+            ]
+        },
+        {
+            label: 'Search',
+            icon: 'pi pi-search'
+        },
+        {
+            separator: true
+        },
+        {
+            label: 'Share',
+            icon: 'pi pi-share-alt',
+            items: [
+                {
+                    label: 'Slack',
+                    icon: 'pi pi-slack'
+                },
+                {
+                    label: 'Whatsapp',
+                    icon: 'pi pi-whatsapp'
+                }
+            ]
         }
+    ];
 
+    tableServerSideDataSrc = (requestInfo: PxTableDataRequestInfo) => {
+        return this.http.post<PxTableDataResponse>('https://localhost/table', {
+            pageIndex: requestInfo.pageIndex,
+            pageLen: requestInfo.pageLength,
+            sortedColumns: requestInfo.sortedColumns,
+            filters: requestInfo.filters
+        });
+    };
+
+    rowContextMenuIsVisibleFn = (row: any) => {
         const displayCond = this.form.get(['config', 'rowContextMenuIsVisibleFn'])?.value;
-        if(displayCond === 'all') {
+        if (displayCond === 'all') {
             return true;
         }
 
         return displayCond === 'even' ? row['column1'] % 2 === 0 : row['column1'] % 2 !== 0;
     }
 
-    rowSelectionModel = [];
-    clickedRowData: any = null;
+    protected readonly pxTableCodeExample = pxTableCodeExample;
 
-    @ViewChild('table') private table!: PxTableComponent;
     private componentDestroyed$ = new Subject<void>();
-    private rowClickedSub?: Subscription;
 
     constructor(
-        fb: UntypedFormBuilder
+        fb: UntypedFormBuilder,
+        public http: HttpClient
     ) {
         this.form = fb.group({
             config: fb.group({
                 tableColumns: [this.tableColumns.map(c => c.id)],
                 dataSource: ['static'],
-                sortingArrowPosition: ['after'],
-                outline: ['1'],
-                stripedRows: ['0'],
-                rowContextMenu: ['0'],
+                rowContextMenuItems: ['1'],
                 rowContextMenuIsVisibleFn: ['all'],
-                rowHoverEffectEnabled: ['0'],
-                rowSelectionModel: ['0'],
-                rowSelectionModelMultiple: ['0'],
-                rowClicked: ['0'],
-                isLoading: [false],
-                freezeHeaderRow: ['1'],
-                maxHeight: ['700px'],
+                rowContextMenuToggleBy: [0],
             })
         });
 
         const date = new Date();
-        for(let i = 0; i < 100; ++i) {
+        for (let i = 0; i < 100; ++i) {
             date.setDate(date.getDate() + 1);
             this.tableStaticDataSrc.push({
                 column1: i + 1,
@@ -110,30 +185,13 @@ export class PxTableDocsComponent implements OnDestroy {
             });
         }
 
-        // [
-        //     'rowContextMenu',
-        //     'rowContextMenuIsVisibleFn',
-        // ].forEach(formControl => this.form.get(['config', formControl])?.valueChanges
-        //     .pipe(takeUntil(this.componentDestroyed$))
-        //     .subscribe(() => this.table.refresh(false)));
-
-        this.form.get(['config', 'rowSelectionModelMultiple'])?.valueChanges
-            .pipe(takeUntil(this.componentDestroyed$))
-            .subscribe(v => {
-                if(v === '1') {
-                    // this.rowSelectionModel = new PxTableSelectionModel<any>(true);
-                } else {
-                    // this.rowSelectionModel = new PxTableSelectionModel<any>(false);
-                }
-            });
-
         this.form.get(['config', 'tableColumns'])?.valueChanges
             .pipe(takeUntil(this.componentDestroyed$))
             .subscribe((visibleTableColumns: string[]) => {
                 const tableColumns = this.tableColumns;
                 const visibilityConfig: PxTableColumnVisibility[] = [];
 
-                for(let i = tableColumns.length; i--;) {
+                for (let i = tableColumns.length; i--;) {
                     const tableColumn = tableColumns[i];
                     visibilityConfig.push({
                         columnId: tableColumn.id,
@@ -141,43 +199,19 @@ export class PxTableDocsComponent implements OnDestroy {
                     });
                 }
 
-                // this.table.changeColumnsVisibility(visibilityConfig);
+                this.table.changeColumnsVisibility(visibilityConfig);
             });
 
-        this.form.get(['config', 'rowClicked'])?.valueChanges
+        [
+            'rowContextMenuItems',
+            'rowContextMenuIsVisibleFn',
+        ].forEach(formControl => this.form.get(['config', formControl])?.valueChanges
             .pipe(takeUntil(this.componentDestroyed$))
-            .subscribe(v => {
-                if(v === '1') {
-                    // this.rowClickedSub = this.table.rowClicked$.subscribe((row: any) => {
-                    //     this.clickedRowData = row;
-                    // });
-                } else {
-                    this.rowClickedSub?.unsubscribe();
-                    this.clickedRowData = null;
-                }
-            });
-
-        this.form.get(['config', 'isLoading'])?.valueChanges
-            .pipe(takeUntil(this.componentDestroyed$))
-            .subscribe(v => {
-                // this.table.isLoading = v;
-            });
-
-        this.form.get(['config', 'freezeHeaderRow'])?.valueChanges
-            .pipe(takeUntil(this.componentDestroyed$))
-            .subscribe(v => {
-                if(v === '1') {
-                    const maxHeightControl = this.form.get(['config', 'maxHeight']);
-                    if(maxHeightControl && maxHeightControl.value === '') {
-                        maxHeightControl.setValue('700px');
-                    }
-                }
-            });
+            .subscribe(() => this.table.refresh(false)));
     }
 
     ngOnDestroy() {
         this.componentDestroyed$.next();
         this.componentDestroyed$.complete();
-        this.rowClickedSub?.unsubscribe();
     }
 }

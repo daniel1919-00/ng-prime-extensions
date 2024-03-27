@@ -1,11 +1,319 @@
-<app-library-documentation>
-    <span docTitle>px-table</span>
-    <span docDescription class="primary-color">PrimeNG-based library used to create data tables.</span>
+<app-library-documentation header="px-table" [hiddenSections]="['docIntl', 'docStyling']">
+    <span docDescription class="primary-color">
+        <a href="https://primeng.org" target="_blank">PrimeNG-based</a> library used to create data tables.
+    </span>
 
     <div docOverview>
         <app-code-example [code]="pxTableCodeExample">
-            <px-table [columns]="tableColumns" [dataSource]="tableStaticDataSrc"></px-table>
+            <h2>Configuration</h2>
+            <form [formGroup]="form">
+                <section formGroupName="config" class="dm:grid dm:align-items-center">
+                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-multiSelect [style]="{'width': '100%'}" inputId="visible-columns" [options]="tableColumns"
+                                       optionLabel="name" optionValue="id"
+                                       formControlName="tableColumns"></p-multiSelect>
+                        <label for="visible-columns">Visible columns</label>
+                    </p-floatLabel>
+
+                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-dropdown [style]="{'width': '100%'}" inputId="[dataSource]"
+                                    [options]="[{value: 'static', desc: 'Static'}, {value: 'server', desc: 'Server'}, {value: 'empty', desc: 'No data'}]"
+                                    optionLabel="desc" optionValue="value" formControlName="dataSource"></p-dropdown>
+                        <label for="[dataSource]">[dataSource]</label>
+                    </p-floatLabel>
+
+                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuItems]"
+                                    [options]="[{value: '1', desc: 'Enabled'}, {value: '0', desc: 'Disabled'}]"
+                                    optionLabel="desc" optionValue="value"
+                                    formControlName="rowContextMenuItems"></p-dropdown>
+                        <label for="[rowContextMenuItems]">[rowContextMenuItems]</label>
+                    </p-floatLabel>
+
+                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuToggleBy]"
+                                    [options]="[{value: 'rightClick', desc: 'Right-click only'}, {value: 'button', desc: 'Button toggle only'}, {value: 0, desc: 'Unrestricted'}]"
+                                    optionLabel="desc" optionValue="value"
+                                    formControlName="rowContextMenuToggleBy"></p-dropdown>
+                        <label for="[rowContextMenuToggleBy]">[rowContextMenuToggleBy]</label>
+                    </p-floatLabel>
+
+                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuIsVisibleFn]"
+                                    [options]="[{value: 'all', desc: 'All rows'}, {value: 'even', desc: 'Even rows'}, {value: 'odd', desc: 'Odd rows'}]"
+                                    optionLabel="desc" optionValue="value"
+                                    formControlName="rowContextMenuIsVisibleFn"></p-dropdown>
+                        <label for="[rowContextMenuIsVisibleFn]">[rowContextMenuIsVisibleFn]</label>
+                    </p-floatLabel>
+                </section>
+            </form>
+            <br>
+            <h2>Result</h2>
+            <px-table
+                #table
+                [columns]="tableColumns"
+                [rowsPerPage]="5"
+                [dataSource]="form.get(['config', 'dataSource'])?.value === 'static' ? tableStaticDataSrc : (form.get(['config', 'dataSource'])?.value === 'server' ? tableServerSideDataSrc : [])"
+                [rowContextMenuItems]="this.form.get(['config', 'rowContextMenuItems'])?.value === '1' ? contextualMenuItems : undefined"
+                [rowContextMenuIsActiveFn]="rowContextMenuIsVisibleFn"
+                [rowContextMenuToggleBy]="!this.form.get(['config', 'rowContextMenuToggleBy'])?.value ? undefined : this.form.get(['config', 'rowContextMenuToggleBy'])?.value"
+            ></px-table>
         </app-code-example>
     </div>
 
+    <div docApi>
+        <div class="entry-group">
+            <h2 class="title">Imports</h2>
+            <div class="entry">
+                <pre><code class="dm:quote code">import &#123; PxTableComponent &#125; from '&#64;ng-prime-extensions/px-table';</code></pre>
+            </div>
+        </div>
+
+        <div class="entry-group">
+            <h2 class="title">Inputs</h2>
+            <div class="entry">
+                <h3>columns</h3>
+                <p>Table column definitions.</p>
+                <pre><code class="dm:quote">export interface PxTableColumnDefinition &#123;
+    /**
+     * This will be matched against the data source when providing value for this column.
+     * For example the column id 'my_column' should be found in the data source, like so: [&#123;'my_column': 'column_value'&#125;, ...].
+     */
+    id: string;
+    /**
+     * The column display name.
+     */
+    name: string;
+    /**
+     * Classes to be placed on the whole column (th & td).
+     * The values must be compatible with ngClass.
+     */
+    classes?: ngClassCompatible;
+    /**
+     * Is this column sortable?
+     */
+    sortable?: boolean;
+    /**
+     * Whether this column is displayed or hidden.
+     */
+    visible?: boolean;
+    /**
+     * Render this column using a pipe or a component.
+     * If both are set, the component property takes priority
+     */
+    renderUsing?: &#123;
+        component?: Type&lt;any&gt;;
+        pipe?: ProviderToken&lt;any&gt;;
+        /**
+         * arguments to be passed to either the pipe or the component
+         */
+        arguments?: any[] | &#123;[key: string]: any&#125;
+    &#125;;
+&#125;
+</code></pre>
+            </div>
+
+            <div class="entry">
+                <h3>dataSource</h3>
+                <p>The data source from which rows are fetched.</p>
+                <p>Can be a static array of rows or a function that takes in info about the data request (like the current page index, the sorted columns, etc.) and returns an observable which will emit the information required by the table.</p>
+            </div>
+
+            <div class="entry">
+                <h3>paginator</h3>
+                <p>Whether pagination is enabled.</p>
+            </div>
+
+            <div class="entry">
+                <h3>rowsPerPage</h3>
+                <p>Number of rows to display per page.</p>
+            </div>
+
+            <div class="entry">
+                <h3>rowsPerPageOptions</h3>
+                <p>Array of integer values to display inside rows per page dropdown of paginator.</p>
+            </div>
+
+            <div class="entry">
+                <h3>selectionMode</h3>
+                <p>Specifies the selection mode, valid values are "single" and "multiple".</p>
+            </div>
+
+            <div class="entry">
+                <h3>selection</h3>
+                <p>Selected row in single mode or an array of values in multiple mode.</p>
+            </div>
+
+            <div class="entry">
+                <h3>contextMenuSelection</h3>
+                <p>Selected row with a context menu.</p>
+            </div>
+
+            <div class="entry">
+                <h3>responsiveLayout</h3>
+                <p>Defines the responsive mode.</p>
+            </div>
+
+            <div class="entry">
+                <h3>pxFilters</h3>
+                <p>Own implementation of table filters to pass along to the [dataSource].</p>
+                <p>[filters] and [globalFilterFields] inputs will be ignored if this is set.</p>
+            </div>
+
+            <div class="entry">
+                <h3>filters</h3>
+                <p>An array of FilterMetadata objects to provide external filters.</p>
+            </div>
+
+            <div class="entry">
+                <h3>globalFilterFields</h3>
+                <p>An array of fields as string to use in global filtering.</p>
+            </div>
+
+            <div class="entry">
+                <h3>sortMode</h3>
+                <p>Defines whether sorting works on single column or on multiple columns.</p>
+            </div>
+
+            <div class="entry">
+                <h3>sortColumnId</h3>
+                <p>Name of the field to sort data by default.</p>
+            </div>
+
+            <div class="entry">
+                <h3>sortDirection</h3>
+                <p>Order to sort when default sorting is enabled.</p>
+                <p>0 - unsorted</p>
+                <p>1 - Ascending</p>
+                <p>-1 - Descending</p>
+            </div>
+
+            <div class="entry">
+                <h3>resetPageOnSort</h3>
+                <p>When true, resets paginator to first page after sorting. Available only when sortMode is set to single.</p>
+            </div>
+
+            <div class="entry">
+                <h3>styleClass</h3>
+                <p>Passed to p-table.</p>
+            </div>
+
+            <div class="entry">
+                <h3>resizableColumns</h3>
+                <p>When enabled, columns can be resized using drag and drop.</p>
+            </div>
+
+            <div class="entry">
+                <h3>columnResizeMode</h3>
+                <p>Defines whether the overall table width should change on column resize, valid values are "fit" and "expand".</p>
+            </div>
+
+            <div class="entry">
+                <h3>columnResizeMode</h3>
+                <p>Defines whether the overall table width should change on column resize, valid values are "fit" and "expand".</p>
+            </div>
+
+            <div class="entry">
+                <h3>scrollable</h3>
+                <p>Enables scrollable tables.</p>
+            </div>
+
+            <div class="entry">
+                <h3>scrollHeight</h3>
+                <p>Height of the scroll viewport in fixed pixels or the "flex" keyword for a dynamic size.</p>
+            </div>
+
+            <div class="entry">
+                <h3>reorderableColumns</h3>
+                <p>When enabled, columns can be reordered using drag and drop.</p>
+            </div>
+
+            <div class="entry">
+                <h3>dataKey</h3>
+                <p>A property to uniquely identify a record in data.</p>
+            </div>
+
+            <div class="entry">
+                <h3>stateStorage</h3>
+                <p>Defines where a stateful table keeps its state, valid values are "session" for sessionStorage and "local" for localStorage.</p>
+            </div>
+
+            <div class="entry">
+                <h3>stateKey</h3>
+                <p>Unique identifier of a stateful table to use in state storage.</p>
+            </div>
+
+            <div class="entry">
+                <h3>tableStyle</h3>
+                <p>Inline style of the table.</p>
+            </div>
+
+            <div class="entry">
+                <h3>tableStyleClass</h3>
+                <p>Style class of the table.</p>
+            </div>
+
+            <div class="entry">
+                <h3>rowContextMenuItems</h3>
+                <p>An array of menu items. This enables the context menu and context menu toggle button (added automatically on a separate column at the end of the table).</p>
+            </div>
+
+            <div class="entry">
+                <h3>rowContextMenuToggleIcon</h3>
+                <p>Name of the icon to be passed along to the p-button toggle</p>
+            </div>
+
+            <div class="entry">
+                <h3>rowContextMenuToggleBy</h3>
+                <p>Limits how the context menu is toggled. By default, the menu is triggered by both a right click action and by the button inside the special "actions" column.</p>
+            </div>
+
+            <div class="entry">
+                <h3>rowContextMenuIsActiveFn</h3>
+                <p>Function that determines when the contextual menu is active for a particular row.</p>
+            </div>
+        </div>
+
+        <div class="entry-group">
+            <h2 class="title">Outputs</h2>
+            <div class="entry">
+                <h3>onRowSelect</h3>
+                <p>Callback to invoke when a row is selected.</p>
+            </div>
+
+            <div class="entry">
+                <h3>onRowUnselect</h3>
+                <p>Callback to invoke when a row is unselected.</p>
+            </div>
+
+            <div class="entry">
+                <h3>contextMenuSelectionChange</h3>
+                <p>Selected row with a context menu.</p>
+            </div>
+
+            <div class="entry">
+                <h3>selectionChange</h3>
+                <p>Selected row in single mode or an array of values in multiple mode.</p>
+            </div>
+        </div>
+
+        <div class="entry-group">
+            <h2 class="title">Public methods</h2>
+
+            <div class="entry">
+                <h3>refresh</h3>
+                <p>Re-fetch table data.</p>
+            </div>
+
+            <div class="entry">
+                <h3>changeColumnVisibility</h3>
+                <p>Hides/shows or toggles the specified table column's visibility.</p>
+            </div>
+
+            <div class="entry">
+                <h3>changeColumnsVisibility</h3>
+                <p>Changes the visibility of multiple columns at once.</p>
+            </div>
+        </div>
+    </div>
 </app-library-documentation>

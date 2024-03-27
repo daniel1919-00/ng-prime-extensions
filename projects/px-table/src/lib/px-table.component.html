@@ -1,3 +1,4 @@
+<p-contextMenu #contextMenuRef [model]="rowContextMenuItems" appendTo="body"></p-contextMenu>
 <p-table
     [styleClass]="styleClass"
     [columns]="columns"
@@ -6,17 +7,13 @@
     [paginator]="paginator"
     [rows]="rowsPerPage"
     [rowsPerPageOptions]="rowsPerPageOptions"
-    [selectionMode]="selectionMode"
-    [selection]="selection"
     [(first)]="pageIndex"
     [sortMode]="sortMode"
     [sortField]="sortColumnId"
     [sortOrder]="sortDirection"
     [resetPageOnSort]="resetPageOnSort"
-    (selectionChange)="selectionChange.emit($event)"
     [responsiveLayout]="responsiveLayout"
     [lazy]="!isDataSrcStatic"
-    (onLazyLoad)="onLazyLoad($event)"
     [loading]="isLoading"
     [resizableColumns]="resizableColumns"
     [columnResizeMode]="columnResizeMode"
@@ -28,6 +25,17 @@
     [stateKey]="stateKey"
     [tableStyle]="tableStyle"
     [tableStyleClass]="tableStyleClass"
+    [filters]="filters"
+    [globalFilterFields]="globalFilterFields"
+    [contextMenu]="contextMenuRef"
+    [contextMenuSelection]="contextMenuSelection"
+    (contextMenuSelectionChange)="contextMenuSelectionChange.emit($event)"
+    (onLazyLoad)="onLazyLoad($event)"
+    [selection]="selection"
+    [selectionMode]="selectionMode"
+    (selectionChange)="selectionChange.emit($event)"
+    (onRowSelect)="onRowSelect.emit($event)"
+    (onRowUnselect)="onRowUnselect.emit($event)"
 >
     <ng-template pTemplate="header" let-columns>
         <tr>
@@ -35,23 +43,30 @@
                 <th *ngIf="displayedColumns.includes(column.id)"
                     [pSortableColumn]="column.sortable ? column.id : undefined"
                     [pSortableColumnDisabled]="!column.sortable"
+                    [ngClass]="column.classes"
                 >
                     {{ column.name }}
                     <p-sortIcon *ngIf="column.sortable" [field]="column.id"></p-sortIcon>
                 </th>
             </ng-container>
+            <th *ngIf="rowContextMenuItems && (!rowContextMenuToggleBy || rowContextMenuToggleBy === 'button')">&nbsp;</th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr>
+        <tr pContextMenuRow [pContextMenuRowDisabled]="!rowContextMenuItems || (rowContextMenuToggleBy && rowContextMenuToggleBy !== 'rightClick') || (rowContextMenuIsActiveFn && !rowContextMenuIsActiveFn(rowData))">
             <ng-container *ngFor="let column of columns; trackBy: identifyColumn">
-                <td *ngIf="displayedColumns.includes(column.id)">
+                <td *ngIf="displayedColumns.includes(column.id)" [ngClass]="column.classes">
                     <ng-container
                         [ngTemplateOutlet]="!column.renderUsing ? cellRenderDefaultTemplate : (column.renderUsing.component ? cellRenderComponentTemplate : cellRenderPipeTemplate)"
                         [ngTemplateOutletContext]="{column, rowData}"
                     ></ng-container>
                 </td>
             </ng-container>
+
+            <td *ngIf="rowContextMenuItems && (!rowContextMenuToggleBy || rowContextMenuToggleBy === 'button') && (!rowContextMenuIsActiveFn || rowContextMenuIsActiveFn(rowData))">
+                <p-button [icon]="rowContextMenuToggleIcon" (click)="toggledContextMenu.toggle($event)"></p-button>
+                <p-menu #toggledContextMenu [model]="rowContextMenuItems" [popup]="true" appendTo="body"></p-menu>
+            </td>
         </tr>
     </ng-template>
 </p-table>

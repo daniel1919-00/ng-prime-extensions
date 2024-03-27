@@ -8,17 +8,21 @@ import {
     OnInit,
     Output, SimpleChanges
 } from "@angular/core";
-import {TableLazyLoadEvent, TableModule} from "primeng/table";
+import {TableLazyLoadEvent, TableModule, TableRowSelectEvent, TableRowUnSelectEvent} from "primeng/table";
 import {
     PX_TABLE_RENDER_COMPONENT_DATA,
-    PxTableColumnDefinition, PxTableColumnVisibility, PxTableDataResponse,
+    PxTableColumnDefinition, PxTableColumnVisibility, PxTableDataRequestInfo, PxTableDataResponse,
     PxTableRenderComponentData,
     PxTableRow, PxTableSortedColum
 } from "./px-table";
-import {AsyncPipe, NgComponentOutlet, NgForOf, NgIf, NgTemplateOutlet} from "@angular/common";
+import {AsyncPipe, NgClass, NgComponentOutlet, NgForOf, NgIf, NgTemplateOutlet} from "@angular/common";
 import {PxTableRenderPipePipe} from "./px-table-render.pipe";
 import {Observable, take} from "rxjs";
 import {FormGroup} from "@angular/forms";
+import {FilterMetadata, MenuItem} from "primeng/api";
+import {ButtonModule} from "primeng/button";
+import {MenuModule} from "primeng/menu";
+import {ContextMenuModule} from "primeng/contextmenu";
 
 @Component({
     selector: 'px-table',
@@ -30,7 +34,11 @@ import {FormGroup} from "@angular/forms";
         NgComponentOutlet,
         NgTemplateOutlet,
         PxTableRenderPipePipe,
-        AsyncPipe
+        AsyncPipe,
+        ButtonModule,
+        MenuModule,
+        ContextMenuModule,
+        NgClass
     ],
     templateUrl: './px-table.component.html',
     styleUrl: './px-table.component.scss',
@@ -43,11 +51,11 @@ export class PxTableComponent implements OnInit, OnChanges {
     @Input({required: true}) columns!: PxTableColumnDefinition[];
     /**
      * The data source from which rows are fetched.
-     * Can be a static array of rows or a function that takes in the current page index, the sorted columns (if sort mode is single, then the array will always contain the currently sorted column) and the table filters and returns an observable which will emit the information required by the table.
+     * Can be a static array of rows or a function that takes in info about the data request (like the current page index, the sorted columns, etc.) and returns an observable which will emit the information required by the table.
      */
-    @Input({required: true}) dataSource!: PxTableRow[] | ((pageIndex: number, sortedColumns: PxTableSortedColum[], filters: {[filter: string]: any}) => Observable<PxTableDataResponse>);
+    @Input({required: true}) dataSource!: PxTableRow[] | ((requestInfo: PxTableDataRequestInfo) => Observable<PxTableDataResponse>);
     /**
-     * Whether pagination is enabled
+     * Whether pagination is enabled.
      */
     @Input() paginator: boolean = true;
     /**
@@ -55,9 +63,9 @@ export class PxTableComponent implements OnInit, OnChanges {
      */
     @Input() rowsPerPage = 10;
     /**
-     * Array of integer/object values to display inside rows per page dropdown of paginator
+     * Array of integer values to display inside rows per page dropdown of paginator.
      */
-    @Input() rowsPerPageOptions?: any[];
+    @Input() rowsPerPageOptions: number[] = [5, 10, 20, 30, 40, 50];
     /**
      * Specifies the selection mode, valid values are "single" and "multiple".
      */
@@ -68,14 +76,30 @@ export class PxTableComponent implements OnInit, OnChanges {
     @Input() selection?: any[];
     @Output() selectionChange = new EventEmitter();
     /**
-     * Defines the responsive mode
+     * Selected row with a context menu.
+     */
+    @Input() contextMenuSelection?: any[];
+    @Output() contextMenuSelectionChange = new EventEmitter();
+    /**
+     * Defines the responsive mode.
      */
     @Input() responsiveLayout: 'stack' | 'scroll' = 'scroll';
     /**
-     * Table filters to pass along to the [dataSource]
+     * Own implementation of table filters to pass along to the [dataSource].
+     * [filters] and [globalFilterFields] inputs will be ignored if this is set.
      */
-    @Input() filters?: {[filter: string]: any} | FormGroup;
-
+    @Input() pxFilters?: {[filter: string]: any} | FormGroup;
+    /**
+     * An array of FilterMetadata objects to provide external filters.
+     */
+    @Input() filters: {[p: string]: FilterMetadata | FilterMetadata[]} = {};
+    /**
+     * An array of fields as string to use in global filtering.
+     */
+    @Input() globalFilterFields?: string[];
+    /**
+     * Defines whether sorting works on single column or on multiple columns.
+     */
     @Input() sortMode: 'single' | 'multiple' = 'single';
     /**
      * Name of the field to sort data by default.
@@ -93,7 +117,7 @@ export class PxTableComponent implements OnInit, OnChanges {
      */
     @Input() resetPageOnSort = true;
     /**
-     * Passed to p-table
+     * Passed to p-table.
      */
     @Input() styleClass?: string;
     /**
@@ -136,6 +160,30 @@ export class PxTableComponent implements OnInit, OnChanges {
      * Style class of the table.
      */
     @Input() tableStyleClass?: string;
+    /**
+     * An array of menu items. This enables the context menu and context menu toggle button (added automatically on a separate column at the end of the table).
+     */
+    @Input() rowContextMenuItems?: MenuItem[];
+    /**
+     * Name of the icon to be passed along to the p-button toggle.
+     */
+    @Input() rowContextMenuToggleIcon: string = 'pi pi-bars';
+    /**
+     * Limits how the context menu is toggled. By default, the menu is triggered by both a right click action and by the button inside the special "actions" column.
+     */
+    @Input() rowContextMenuToggleBy?: 'rightClick' | 'button';
+    /**
+     * Function that determines when the contextual menu is active for a particular row.
+     */
+    @Input() rowContextMenuIsActiveFn?: (row: PxTableRow) => boolean;
+    /**
+     * Callback to invoke when a row is selected.
+     */
+    @Output() onRowSelect = new EventEmitter<TableRowSelectEvent>();
+    /**
+     * Callback to invoke when a row is unselected.
+     */
+    @Output() onRowUnselect = new EventEmitter<TableRowUnSelectEvent>();
 
     protected displayedColumns: string[] = [];
     protected records: PxTableRow[] = [];
@@ -145,6 +193,7 @@ export class PxTableComponent implements OnInit, OnChanges {
     protected isLoading = false;
 
     private lastLazyLoadEventData: TableLazyLoadEvent = {};
+    private tableInitialized = false;
 
     constructor(
         private injector: Injector,
@@ -153,8 +202,14 @@ export class PxTableComponent implements OnInit, OnChanges {
     }
 
     ngOnInit() {
+        if(this.pxFilters) {
+            this.filters = {};
+            delete this.globalFilterFields;
+        }
+
         this.prepareDisplayedColumns();
         this.checkDataSource();
+        this.tableInitialized = true;
     }
 
     ngOnChanges(changes: SimpleChanges) {
@@ -165,10 +220,13 @@ export class PxTableComponent implements OnInit, OnChanges {
 
         if(changes['dataSource'] && !changes['dataSource'].firstChange) {
             this.checkDataSource();
-            this.changeDetector.markForCheck();
         }
     }
 
+    /**
+     * Re-fetch table data.
+     * @param resetPage
+     */
     refresh(resetPage = true) {
         if(this.isLoading) {
             return;
@@ -181,7 +239,7 @@ export class PxTableComponent implements OnInit, OnChanges {
     }
 
     /**
-     * Hides/shows or toggles the specified table column's visibility
+     * Hides/shows or toggles the specified table column's visibility.
      * @param columnId
      * @param visible If not specified, the visibility will be toggled
      */
@@ -197,7 +255,7 @@ export class PxTableComponent implements OnInit, OnChanges {
     }
 
     /**
-     * Changes the visibility of multiple columns
+     * Changes the visibility of multiple columns at once.
      * @param columns The columns and their visibility. Example: [{columnId: 'myColumn1', visible: true}, {columnId: 'myOtherColumn', visible: false}] -- sets myColumn1 to visible and hides myOtherColumn
      */
     changeColumnsVisibility(columns: PxTableColumnVisibility[]) {
@@ -228,7 +286,8 @@ export class PxTableComponent implements OnInit, OnChanges {
             this.lastLazyLoadEventData = {
                 multiSortMeta: $event.multiSortMeta,
                 sortField: $event.sortField,
-                sortOrder: $event.sortOrder
+                sortOrder: $event.sortOrder,
+                filters: $event.filters
             };
 
             const sortedColumns: PxTableSortedColum[] = [];
@@ -253,11 +312,12 @@ export class PxTableComponent implements OnInit, OnChanges {
                 });
             }
 
-            (dataSource as Exclude<typeof this.dataSource, PxTableRow[]>)(
-                this.pageIndex,
+            (dataSource as Exclude<typeof this.dataSource, PxTableRow[]>)({
+                pageIndex: this.pageIndex,
+                pageLength: this.rowsPerPage,
                 sortedColumns,
-                this.filters instanceof FormGroup ? this.filters.value || {} : this.filters || {}
-            ).pipe(take(1)).subscribe(response => {
+                filters: this.pxFilters ? (this.pxFilters instanceof FormGroup ? this.pxFilters.value || {} : this.filters || {}) : $event.filters
+            }).pipe(take(1)).subscribe(response => {
                 this.records = response.records;
                 this.totalRecords = response.totalRecords;
                 this.isLoading = false;
@@ -287,9 +347,10 @@ export class PxTableComponent implements OnInit, OnChanges {
     private checkDataSource() {
         if(Array.isArray(this.dataSource)) {
             this.isDataSrcStatic = true;
-            this.refresh(false);
+            this.refresh(this.tableInitialized);
         } else {
             this.isDataSrcStatic = false;
+            this.tableInitialized && this.refresh();
         }
     }
 

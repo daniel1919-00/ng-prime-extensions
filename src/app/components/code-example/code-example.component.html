@@ -2,8 +2,10 @@
     <div class="header">
         <span class="title">{{ title }}</span>
         <span>
-            <p-button *ngIf="showSource" styleClass="no-focus-outline" [pTooltip]="getCopyBtnTooltip()" icon="pi pi-copy" size="small" [text]="true" (click)="copyCode()"></p-button>
-            <p-button *ngIf="code.html || code.ts || code.styles" styleClass="no-focus-outline" (click)="showSource = !showSource" icon="pi pi-code" size="small" [text]="true"></p-button>
+            <p-button *ngIf="showSource" styleClass="no-focus-outline" [pTooltip]="getCopyBtnTooltip()"
+                      icon="pi pi-copy" size="small" [text]="true" (click)="copyCode()"></p-button>
+            <p-button *ngIf="code.html || code.ts || code.styles" styleClass="no-focus-outline"
+                      (click)="showSource = !showSource" icon="pi pi-code" size="small" [text]="true"></p-button>
         </span>
     </div>
     <ng-container [ngTemplateOutlet]="showSource ? source : result"></ng-container>

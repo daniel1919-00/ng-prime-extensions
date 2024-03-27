@@ -2,6 +2,7 @@ import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from
 import {from, lastValueFrom, Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 import {timeoutAsync} from "./shared";
+import {PxTableDataResponse, PxTableSortedColum} from "../../projects/px-table/src/lib/px-table";
 
 @Injectable()
 export class BackendInterceptor implements HttpInterceptor {
@@ -11,40 +12,32 @@ export class BackendInterceptor implements HttpInterceptor {
 
     private async handleRequest(req: HttpRequest<any>, next: HttpHandler) {
         const requestedEndpoint = req.url.replace('https://localhost/', '').split('/');
-        //const endpointMethod = requestedEndpoint[1];
         switch (requestedEndpoint[0]) {
-            case 'table': return await this.getTableResponse(req);
-            default: return await lastValueFrom(next.handle(req));
+            case 'table':
+                return await this.getTableResponse(req);
+            default:
+                return await lastValueFrom(next.handle(req));
         }
     }
 
     private async getTableResponse(request: HttpRequest<any>) {
-
         let pageIndex: number, pageLen: number, sortCol: string, sortDir: string;
-        if(request.method === 'GET') {
-            pageIndex = +(request.params.get('dm_page_index') || 0);
-            pageLen = +(request.params.get('dm_page_len') || 0);
-            sortCol = request.params.get('dm_sort_col') || '';
-            sortDir = request.params.get('dm_sort_dir') || '';
-        } else {
-            const requestBody = request.body;
-
-            pageIndex = requestBody.dm_page_index;
-            pageLen = requestBody.dm_page_len;
-            sortCol = requestBody.dm_sort_col;
-            sortDir = requestBody.dm_sort_dir
-        }
-
+        const requestBody = request.body;
+        pageIndex = requestBody.pageIndex;
+        pageLen = requestBody.pageLen;
+        const sortedCol: PxTableSortedColum = requestBody.sortedColumns ? requestBody.sortedColumns[0] : {};
+        sortCol = sortedCol.columnId;
+        sortDir = sortedCol.order ? (sortedCol.order > 0 ? 'asc' : 'desc') : '';
         const data = [];
         const maxResults = 100;
         let startRow = pageIndex * pageLen;
         let endRow = startRow + pageLen;
-        if(endRow > maxResults) {
+        if (endRow > maxResults) {
             endRow = maxResults;
         }
 
         const date = new Date();
-        for(let i = 0; i < maxResults; ++i) {
+        for (let i = 0; i < maxResults; ++i) {
             date.setDate(date.getDate() + 1);
             data.push({
                 column1: i + 1,
@@ -54,12 +47,12 @@ export class BackendInterceptor implements HttpInterceptor {
             });
         }
 
-        if(sortCol !== '') {
+        if (sortCol !== '') {
 
             let sortOrderAHigher = 1;
             let sortOrderALower = -1;
 
-            if(sortDir === 'desc') {
+            if (sortDir === 'desc') {
                 sortOrderAHigher = -1;
                 sortOrderALower = 1;
             }
@@ -79,9 +72,9 @@ export class BackendInterceptor implements HttpInterceptor {
         return new HttpResponse({
             status: 200,
             body: {
-                totalResults: maxResults,
-                rows: data.slice(startRow, endRow)
-            }
+                totalRecords: maxResults,
+                records: data.slice(startRow, endRow)
+            } as PxTableDataResponse
         });
     }
 }

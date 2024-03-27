@@ -5,5 +5,5 @@ A collection of libraries intended to extend the [PrimeNG](https://primeng.org/)
 
 ## Documentation
 
-WIP
+[Link](https://daniel1919-00.github.io/ng-prime-extensions/)
 
