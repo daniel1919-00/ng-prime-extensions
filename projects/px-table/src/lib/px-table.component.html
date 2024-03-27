@@ -78,7 +78,7 @@
 <ng-template #cellRenderComponentTemplate let-column="column" let-rowData="rowData">
     <ng-container
         [ngComponentOutlet]="column.renderUsing.component"
-        [ngComponentOutletInjector]="createRenderComponentInjector(column, rowData[column.id])"></ng-container>
+        [ngComponentOutletInjector]="createRenderComponentInjector(column, rowData)"></ng-container>
 </ng-template>
 
 <ng-template #cellRenderPipeTemplate let-column="column" let-rowData="rowData">
