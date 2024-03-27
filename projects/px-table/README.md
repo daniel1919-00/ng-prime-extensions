@@ -8,4 +8,4 @@ Part of [ng-prime-extensions](https://github.com/daniel1919-00/ng-prime-extensio
 
 ## Usage
 
-WIP
+Check out the [documentation and demo](https://daniel1919-00.github.io/ng-prime-extensions/px-table).
