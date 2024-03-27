@@ -4,7 +4,7 @@ import {
     Component,
     EventEmitter,
     Injector,
-    Input, OnChanges,
+    Input, OnChanges, OnDestroy,
     OnInit,
     Output, SimpleChanges
 } from "@angular/core";
@@ -17,7 +17,7 @@ import {
 } from "./px-table";
 import {AsyncPipe, NgClass, NgComponentOutlet, NgForOf, NgIf, NgTemplateOutlet} from "@angular/common";
 import {PxTableRenderPipePipe} from "./px-table-render.pipe";
-import {Observable, take} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 import {FormGroup} from "@angular/forms";
 import {FilterMetadata, MenuItem} from "primeng/api";
 import {ButtonModule} from "primeng/button";
@@ -44,7 +44,7 @@ import {ContextMenuModule} from "primeng/contextmenu";
     styleUrl: './px-table.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PxTableComponent implements OnInit, OnChanges {
+export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
     /**
      * Table column definitions.
      */
@@ -194,6 +194,7 @@ export class PxTableComponent implements OnInit, OnChanges {
 
     private lastLazyLoadEventData: TableLazyLoadEvent = {};
     private tableInitialized = false;
+    private dataSrcSub?: Subscription;
 
     constructor(
         private injector: Injector,
@@ -312,12 +313,13 @@ export class PxTableComponent implements OnInit, OnChanges {
                 });
             }
 
-            (dataSource as Exclude<typeof this.dataSource, PxTableRow[]>)({
+            this.dataSrcSub?.unsubscribe();
+            this.dataSrcSub = (dataSource as Exclude<typeof this.dataSource, PxTableRow[]>)({
                 pageIndex: this.pageIndex,
                 pageLength: this.rowsPerPage,
                 sortedColumns,
                 filters: this.pxFilters ? (this.pxFilters instanceof FormGroup ? this.pxFilters.value || {} : this.filters || {}) : $event.filters
-            }).pipe(take(1)).subscribe(response => {
+            }).subscribe(response => {
                 this.records = response.records;
                 this.totalRecords = response.totalRecords;
                 this.isLoading = false;
@@ -382,5 +384,9 @@ export class PxTableComponent implements OnInit, OnChanges {
         }
 
         return foundColumn;
+    }
+
+    ngOnDestroy() {
+        this.dataSrcSub?.unsubscribe();
     }
 }
