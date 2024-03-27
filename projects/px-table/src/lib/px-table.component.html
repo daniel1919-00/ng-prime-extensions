@@ -29,7 +29,7 @@
     [globalFilterFields]="globalFilterFields"
     [contextMenu]="contextMenuRef"
     [contextMenuSelection]="contextMenuSelection"
-    (contextMenuSelectionChange)="contextMenuSelectionChange.emit($event)"
+    (contextMenuSelectionChange)="onContextMenuSelectionChange($event)"
     (onLazyLoad)="onLazyLoad($event)"
     [selection]="selection"
     [selectionMode]="selectionMode"
@@ -53,7 +53,7 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr pContextMenuRow [pContextMenuRowDisabled]="!rowContextMenuItems || (rowContextMenuToggleBy && rowContextMenuToggleBy !== 'rightClick') || (rowContextMenuIsActiveFn && !rowContextMenuIsActiveFn(rowData))">
+        <tr [pContextMenuRow]="rowData" [pContextMenuRowDisabled]="!rowContextMenuItems || (rowContextMenuToggleBy && rowContextMenuToggleBy !== 'rightClick') || (rowContextMenuIsActiveFn && !rowContextMenuIsActiveFn(rowData))">
             <ng-container *ngFor="let column of columns; trackBy: identifyColumn">
                 <td *ngIf="displayedColumns.includes(column.id)" [ngClass]="column.classes">
                     <ng-container
@@ -65,7 +65,7 @@
 
             <td *ngIf="rowContextMenuItems && (!rowContextMenuToggleBy || rowContextMenuToggleBy === 'button') && (!rowContextMenuIsActiveFn || rowContextMenuIsActiveFn(rowData))">
                 <p-button [icon]="rowContextMenuToggleIcon" (click)="toggledContextMenu.toggle($event)"></p-button>
-                <p-menu #toggledContextMenu [model]="rowContextMenuItems" [popup]="true" appendTo="body"></p-menu>
+                <p-menu #toggledContextMenu [model]="rowContextMenuItems" [popup]="true" appendTo="body" (onShow)="contextMenuSelectionChange.emit(rowData)"></p-menu>
             </td>
         </tr>
     </ng-template>
@@ -78,7 +78,7 @@
 <ng-template #cellRenderComponentTemplate let-column="column" let-rowData="rowData">
     <ng-container
         [ngComponentOutlet]="column.renderUsing.component"
-        [ngComponentOutletInjector]="createRenderComponentInjector(column, rowData)"></ng-container>
+        [ngComponentOutletInjector]="createRenderComponentInjector(column, rowData[column.id], rowData)"></ng-container>
 </ng-template>
 
 <ng-template #cellRenderPipeTemplate let-column="column" let-rowData="rowData">

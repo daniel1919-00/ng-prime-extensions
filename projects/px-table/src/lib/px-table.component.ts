@@ -6,7 +6,7 @@ import {
     Injector,
     Input, OnChanges, OnDestroy,
     OnInit,
-    Output, SimpleChanges
+    Output, QueryList, SimpleChanges, ViewChildren
 } from "@angular/core";
 import {TableLazyLoadEvent, TableModule, TableRowSelectEvent, TableRowUnSelectEvent} from "primeng/table";
 import {
@@ -21,7 +21,7 @@ import {Observable, Subscription} from "rxjs";
 import {FormGroup} from "@angular/forms";
 import {FilterMetadata, MenuItem} from "primeng/api";
 import {ButtonModule} from "primeng/button";
-import {MenuModule} from "primeng/menu";
+import {Menu, MenuModule} from "primeng/menu";
 import {ContextMenuModule} from "primeng/contextmenu";
 
 @Component({
@@ -45,6 +45,7 @@ import {ContextMenuModule} from "primeng/contextmenu";
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
+    @ViewChildren('toggledContextMenu') toggledContextMenus!: QueryList<Menu>;
     /**
      * Table column definitions.
      */
@@ -74,12 +75,18 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
      * Selected row in single mode or an array of values in multiple mode.
      */
     @Input() selection?: any[];
+    /**
+     * Callback to invoke on selection changed.
+     */
     @Output() selectionChange = new EventEmitter();
     /**
      * Selected row with a context menu.
      */
-    @Input() contextMenuSelection?: any[];
-    @Output() contextMenuSelectionChange = new EventEmitter();
+    @Input() contextMenuSelection?: PxTableRow;
+    /**
+     * Callback to invoke on context menu selection change.
+     */
+    @Output() contextMenuSelectionChange = new EventEmitter<PxTableRow>();
     /**
      * Defines the responsive mode.
      */
@@ -328,13 +335,23 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
         }
     }
 
-    protected createRenderComponentInjector(column: PxTableColumnDefinition, columnData: any) {
+    protected onContextMenuSelectionChange($event: any) {
+        const contextMenuPanels = this.toggledContextMenus.toArray()
+        for(let i = contextMenuPanels.length; i--;) {
+            const contextMenuPanel = contextMenuPanels[i];
+            contextMenuPanel.hide();
+        }
+        this.contextMenuSelectionChange.emit($event);
+    }
+
+    protected createRenderComponentInjector(column: PxTableColumnDefinition, columnData: any, row: PxTableRow) {
         return Injector.create({
             providers: [{
                 provide: PX_TABLE_RENDER_COMPONENT_DATA,
                 useValue: {
                     columnId: column.id,
                     columnData,
+                    row,
                     arguments: column.renderUsing?.arguments
                 } as PxTableRenderComponentData
             }],

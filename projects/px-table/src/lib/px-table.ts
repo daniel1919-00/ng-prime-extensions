@@ -45,6 +45,7 @@ export interface PxTableRow {
 export interface PxTableRenderComponentData {
     columnId: string;
     columnData: string;
+    row: PxTableRow;
     arguments: any[] | { [key: string]: any };
 }
 

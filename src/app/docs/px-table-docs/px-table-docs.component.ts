@@ -8,9 +8,9 @@ import {ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup} from "@angula
 import {
     PX_TABLE_RENDER_COMPONENT_DATA,
     PxTableColumnDefinition, PxTableColumnVisibility, PxTableDataRequestInfo, PxTableDataResponse,
-    PxTableRenderComponentData
+    PxTableRenderComponentData, PxTableRow
 } from "../../../../projects/px-table/src/lib/px-table";
-import {DatePipe} from "@angular/common";
+import {DatePipe, JsonPipe} from "@angular/common";
 import {Subject, takeUntil} from "rxjs";
 import {MultiSelectModule} from "primeng/multiselect";
 import {FloatLabelModule} from "primeng/floatlabel";
@@ -48,7 +48,8 @@ class MyColumnRenderer {
         FloatLabelModule,
         DropdownModule,
         HttpClientModule,
-        TieredMenuModule
+        TieredMenuModule,
+        JsonPipe
     ],
     providers: [
         DatePipe
@@ -137,6 +138,8 @@ export class PxTableDocsComponent implements OnDestroy {
             ]
         }
     ];
+
+    protected contextMenuSelection?: PxTableRow;
 
     tableServerSideDataSrc = (requestInfo: PxTableDataRequestInfo) => {
         return this.http.post<PxTableDataResponse>('https://localhost/table', {
