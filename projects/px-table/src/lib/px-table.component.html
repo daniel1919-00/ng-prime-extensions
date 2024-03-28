@@ -55,6 +55,7 @@
         <tr [pContextMenuRow]="rowData" [pContextMenuRowDisabled]="!rowContextMenuItems || (rowContextMenuToggleBy && rowContextMenuToggleBy !== 'rightClick') || (rowContextMenuIsActiveFn && !rowContextMenuIsActiveFn(rowData))">
             <ng-container *ngFor="let column of columns; trackBy: identifyColumn">
                 <td *ngIf="displayedColumns.includes(column.id)" [ngClass]="column.classes">
+                    <span *ngIf="responsiveLayout === 'stack'" class="p-column-title">{{column.name}}</span>
                     <ng-container
                         [ngTemplateOutlet]="!column.renderUsing ? cellRenderDefaultTemplate : (column.renderUsing.component ? cellRenderComponentTemplate : cellRenderPipeTemplate)"
                         [ngTemplateOutletContext]="{column, rowData}"
@@ -63,8 +64,11 @@
             </ng-container>
 
             <td *ngIf="rowContextMenuItems && (!rowContextMenuToggleBy || rowContextMenuToggleBy === 'button') && (!rowContextMenuIsActiveFn || rowContextMenuIsActiveFn(rowData))">
-                <p-button [icon]="rowContextMenuToggleIcon" (click)="toggledContextMenu.toggle($event)"></p-button>
-                <p-menu #toggledContextMenu [model]="rowContextMenuItems" [popup]="true" appendTo="body" (onShow)="onContextMenuSelectionChange(rowData, false); onContextMenuShown()"></p-menu>
+                <span *ngIf="responsiveLayout === 'stack'" class="p-column-title">&nbsp;</span>
+                <span>
+                    <p-button [icon]="rowContextMenuToggleIcon" (click)="toggledContextMenu.toggle($event)"></p-button>
+                    <p-menu #toggledContextMenu [model]="rowContextMenuItems" [popup]="true" appendTo="body" (onShow)="onContextMenuSelectionChange(rowData, false); onContextMenuShown()"></p-menu>
+                </span>
             </td>
         </tr>
     </ng-template>

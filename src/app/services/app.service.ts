@@ -2,6 +2,7 @@ import {Inject, Injectable, OnDestroy} from '@angular/core';
 import {DOCUMENT} from "@angular/common";
 import {BehaviorSubject, debounceTime, fromEvent, Subject, takeUntil} from "rxjs";
 import {HighlightLoader} from "ngx-highlightjs";
+import {Router} from "@angular/router";
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +16,8 @@ export class AppService implements OnDestroy {
 
     constructor(
         @Inject(DOCUMENT) private readonly document: Document,
-        private hljsLoader: HighlightLoader
+        private hljsLoader: HighlightLoader,
+        private router: Router
     ) {
 
         this.isViewportMobileSize = new BehaviorSubject<boolean>(this.getIsViewportMobileSize());
@@ -33,6 +35,15 @@ export class AppService implements OnDestroy {
 
     setTheme(theme: 'blue') {
         this.theme = theme;
+    }
+
+    reloadCurrentRoute() {
+        const router = this.router;
+        const currentUrl = router.url;
+        router.navigateByUrl('/', {skipLocationChange: true, onSameUrlNavigation: 'reload'}).then(() =>
+        {
+            router.navigateByUrl(currentUrl, {skipLocationChange: true}).then();
+        });
     }
 
     toggleDarkMode() {

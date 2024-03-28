@@ -53,6 +53,14 @@
                                     formControlName="rowContextMenuIsVisibleFn"></p-dropdown>
                         <label for="[rowContextMenuIsVisibleFn]">[rowContextMenuIsVisibleFn]</label>
                     </p-floatLabel>
+
+                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuIsVisibleFn]"
+                                    [options]="[{value: 'scroll', desc: 'Scroll'}, {value: 'stack', desc: 'Stack'}]"
+                                    optionLabel="desc" optionValue="value"
+                                    formControlName="responsiveLayout"></p-dropdown>
+                        <label for="[responsiveLayout]">[responsiveLayout]</label>
+                    </p-floatLabel>
                 </section>
             </form>
             <br>
@@ -61,6 +69,7 @@
                 #table
                 [columns]="tableColumns"
                 [rowsPerPage]="5"
+                [responsiveLayout]="form.get(['config', 'responsiveLayout'])?.value || 'scroll'"
                 [dataSource]="form.get(['config', 'dataSource'])?.value === 'static' ? tableStaticDataSrc : (form.get(['config', 'dataSource'])?.value === 'server' ? tableServerSideDataSrc : [])"
                 [rowContextMenuItems]="this.form.get(['config', 'rowContextMenuItems'])?.value === '1' ? contextualMenuItems : undefined"
                 [dynamicContextMenuItems]="this.form.get(['config', 'dynamicContextMenuItems'])?.value === '1' ? dynamicContextMenuItems : undefined"

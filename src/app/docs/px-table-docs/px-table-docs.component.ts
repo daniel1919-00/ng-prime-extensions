@@ -18,6 +18,7 @@ import {DropdownModule} from "primeng/dropdown";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {TieredMenuModule} from "primeng/tieredmenu";
 import {MenuItem} from "primeng/api";
+import {AppService} from "../../services/app.service";
 
 @Component({
     standalone: true,
@@ -172,7 +173,8 @@ export class PxTableDocsComponent implements OnDestroy {
 
     constructor(
         fb: UntypedFormBuilder,
-        public http: HttpClient
+        public http: HttpClient,
+        private appService: AppService
     ) {
         this.form = fb.group({
             config: fb.group({
@@ -181,9 +183,15 @@ export class PxTableDocsComponent implements OnDestroy {
                 rowContextMenuItems: ['1'],
                 rowContextMenuIsVisibleFn: ['all'],
                 rowContextMenuToggleBy: [0],
-                dynamicContextMenuItems: ['0']
+                dynamicContextMenuItems: ['0'],
+                responsiveLayout: ['scroll']
             })
         });
+
+        const storedFilters = localStorage.getItem('__table-config');
+        if(storedFilters) {
+            this.form.patchValue(JSON.parse(storedFilters));
+        }
 
         const date = new Date();
         for (let i = 0; i < 100; ++i) {
@@ -215,10 +223,23 @@ export class PxTableDocsComponent implements OnDestroy {
 
         [
             'rowContextMenuItems',
-            'rowContextMenuIsVisibleFn',
+            'rowContextMenuIsVisibleFn'
         ].forEach(formControl => this.form.get(['config', formControl])?.valueChanges
             .pipe(takeUntil(this.componentDestroyed$))
             .subscribe(() => this.table.refresh(false)));
+
+        this.form.get(['config', 'responsiveLayout'])?.valueChanges
+            .pipe(takeUntil(this.componentDestroyed$))
+            .subscribe(() => {
+                this.storeFilters();
+                this.appService.reloadCurrentRoute();
+            })
+
+        this.form.valueChanges.pipe(takeUntil(this.componentDestroyed$)).subscribe(() => this.storeFilters());
+    }
+
+    private storeFilters() {
+        localStorage.setItem('__table-config', JSON.stringify(this.form.value));
     }
 
     ngOnDestroy() {
