@@ -2,254 +2,272 @@ import {CodeExample} from "../../components/code-example/code-example";
 
 export const pxTableCodeExample: CodeExample = {
     html: `
+<h2>Configuration</h2>
 <form [formGroup]="form">
-    <h3>Configuration</h3>
-
     <section formGroupName="config" class="dm:grid dm:align-items-center">
-        <mat-form-field class="dm:col-fixed">
-            <mat-label>Visible columns</mat-label>
-            <mat-select formControlName="tableColumns" [multiple]="true">
-                <mat-option *ngFor="let column of tableColumns" [value]="column.id">{{ column.name }}</mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field class="dm:col-fixed">
-            <mat-label>[dataSource]</mat-label>
-            <mat-select formControlName="dataSource">
-                <mat-option value="static">Static</mat-option>
-                <mat-option value="server">Server</mat-option>
-            </mat-select>
-        </mat-form-field>
+        <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+            <p-multiSelect [style]="{'width': '100%'}" inputId="visible-columns" [options]="tableColumns"
+                           optionLabel="name" optionValue="id"
+                           formControlName="tableColumns"></p-multiSelect>
+            <label for="visible-columns">Visible columns</label>
+        </p-floatLabel>
 
-        <mat-form-field class="dm:col-fixed">
-            <mat-label>[sortingArrowPosition]</mat-label>
-            <mat-select formControlName="sortingArrowPosition">
-                <mat-option value="before">before</mat-option>
-                <mat-option value="after">after</mat-option>
-            </mat-select>
-        </mat-form-field>
+        <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+            <p-dropdown [style]="{'width': '100%'}" inputId="[dataSource]"
+                        [options]="[{value: 'static', desc: 'Static'}, {value: 'server', desc: 'Server'}, {value: 'empty', desc: 'No data'}]"
+                        optionLabel="desc" optionValue="value" formControlName="dataSource"></p-dropdown>
+            <label for="[dataSource]">[dataSource]</label>
+        </p-floatLabel>
 
-        <mat-form-field class="dm:col-fixed">
-            <mat-label>[rowContextMenu]</mat-label>
-            <mat-select formControlName="rowContextMenu">
-                <mat-option value="1">Enabled</mat-option>
-                <mat-option value="0">Disabled</mat-option>
-            </mat-select>
-        </mat-form-field>
+        <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+            <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuItems]"
+                        [options]="[{value: '1', desc: 'Enabled'}, {value: '0', desc: 'Disabled'}]"
+                        optionLabel="desc" optionValue="value"
+                        formControlName="rowContextMenuItems"></p-dropdown>
+            <label for="[rowContextMenuItems]">[rowContextMenuItems]</label>
+        </p-floatLabel>
 
-        <mat-form-field *ngIf="form.get(['config', 'rowContextMenu'])?.value === '1'" class="dm:col-fixed">
-            <mat-label>[rowContextMenuIsVisibleFn]</mat-label>
-            <mat-select formControlName="rowContextMenuIsVisibleFn">
-                <mat-option value="all">All rows</mat-option>
-                <mat-option value="even">Even rows</mat-option>
-                <mat-option value="odd">Odd rows</mat-option>
-            </mat-select>
-        </mat-form-field>
+        <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+            <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuItems]"
+                        [options]="[{value: '1', desc: 'Enabled'}, {value: '0', desc: 'Disabled'}]"
+                        optionLabel="desc" optionValue="value"
+                        formControlName="dynamicContextMenuItems"></p-dropdown>
+            <label for="[dynamicContextMenuItems]">[dynamicContextMenuItems]</label>
+        </p-floatLabel>
 
-        <mat-form-field class="dm:col-fixed">
-            <mat-label>[rowHoverEffectEnabled]</mat-label>
-            <mat-select formControlName="rowHoverEffectEnabled">
-                <mat-option value="1">Enabled</mat-option>
-                <mat-option value="0">Disabled</mat-option>
-            </mat-select>
-        </mat-form-field>
+        <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+            <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuToggleBy]"
+                        [options]="[{value: 'rightClick', desc: 'Right-click only'}, {value: 'button', desc: 'Button toggle only'}, {value: 0, desc: 'Unrestricted'}]"
+                        optionLabel="desc" optionValue="value"
+                        formControlName="rowContextMenuToggleBy"></p-dropdown>
+            <label for="[rowContextMenuToggleBy]">[rowContextMenuToggleBy]</label>
+        </p-floatLabel>
 
-        <mat-form-field class="dm:col-fixed">
-            <mat-label>[rowSelectionModel]</mat-label>
-            <mat-select formControlName="rowSelectionModel">
-                <mat-option value="1">Enabled</mat-option>
-                <mat-option value="0">Disabled</mat-option>
-            </mat-select>
-        </mat-form-field>
+        <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+            <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuIsVisibleFn]"
+                        [options]="[{value: 'all', desc: 'All rows'}, {value: 'even', desc: 'Even rows'}, {value: 'odd', desc: 'Odd rows'}]"
+                        optionLabel="desc" optionValue="value"
+                        formControlName="rowContextMenuIsVisibleFn"></p-dropdown>
+            <label for="[rowContextMenuIsVisibleFn]">[rowContextMenuIsVisibleFn]</label>
+        </p-floatLabel>
 
-        <mat-form-field *ngIf="form.get(['config', 'rowSelectionModel'])?.value === '1'" class="dm:col-fixed">
-            <mat-label>[rowSelectionModel] multiple/single</mat-label>
-            <mat-select formControlName="rowSelectionModelMultiple">
-                <mat-option value="1">Multiple</mat-option>
-                <mat-option value="0">Single</mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <mat-form-field class="dm:col-fixed">
-            <mat-label>Bind to (rowClicked) event</mat-label>
-            <mat-select formControlName="rowClicked">
-                <mat-option value="1">Bound</mat-option>
-                <mat-option value="0">Unbound</mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <mat-form-field class="dm:col-fixed">
-            <mat-label>[freezeHeaderRow]</mat-label>
-            <mat-select formControlName="freezeHeaderRow">
-                <mat-option value="1">Frozen</mat-option>
-                <mat-option value="0">Unfrozen</mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <mat-form-field class="dm:col-fixed">
-            <mat-label>[maxHeight]</mat-label>
-            <input type="text" matInput formControlName="maxHeight">
-        </mat-form-field>
-
-        <mat-slide-toggle class="dm:col-fixed" formControlName="isLoading" color="primary">[isLoading]</mat-slide-toggle>
+        <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+            <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuIsVisibleFn]"
+                        [options]="[{value: 'scroll', desc: 'Scroll'}, {value: 'stack', desc: 'Stack'}]"
+                        optionLabel="desc" optionValue="value"
+                        formControlName="responsiveLayout"></p-dropdown>
+            <label for="[responsiveLayout]">[responsiveLayout]</label>
+        </p-floatLabel>
     </section>
-
-    <br>
-    <div *ngIf="form.get(['config', 'rowSelectionModel'])?.value === '1'" style="max-height: 200px; overflow: auto;">
-        <pre>SelectionModel: {{rowSelectionModel.selected | json}}</pre>
-    </div>
-
-    <br>
-    <div *ngIf="form.get(['config', 'rowClicked'])?.value === '1'">
-        <pre>Clicked row data: {{clickedRowData | json}}</pre>
-    </div>
-
-    <br>
-    <h3>Result</h3>
-    <dm-table
-        #table
-        [dataSource]="form.get(['config', 'dataSource'])?.value === 'static' ? tableStaticDataSrc : (form.get(['config', 'dataSource'])?.value === 'server' ? tableServerSideDataSrc : [])"
-        [columns]="tableColumns"
-        [sortingArrowPosition]="form.get(['config', 'sortingArrowPosition'])?.value || 'after'"
-        [rowContextMenu]="rowContextMenu"
-        [rowContextMenuIsVisibleFn]="rowContextMenuIsVisibleFn"
-        [rowHoverEffectEnabled]="form.get(['config', 'rowHoverEffectEnabled'])?.value === '1'"
-        [outline]="form.get(['config', 'outline'])?.value === '1'"
-        [stripedRows]="form.get(['config', 'stripedRows'])?.value === '1'"
-        [freezeHeaderRow]="form.get(['config', 'freezeHeaderRow'])?.value === '1'"
-        [maxHeight]="form.get(['config', 'maxHeight'])?.value"
-        [rowSelectionModel]="form.get(['config', 'rowSelectionModel'])?.value === '1' ? rowSelectionModel : undefined"
-        [pageSize]="10"
-    ></dm-table>
-
-    <mat-menu #rowContextMenu="matMenu">
-        <button mat-menu-item>Item 1</button>
-        <button mat-menu-item>Item 2</button>
-    </mat-menu>
 </form>
+<br>
+<h2>Result</h2>
+<px-table
+    #table
+    [columns]="tableColumns"
+    [rowsPerPage]="5"
+    [responsiveLayout]="form.get(['config', 'responsiveLayout'])?.value || 'scroll'"
+    [dataSource]="form.get(['config', 'dataSource'])?.value === 'static' ? tableStaticDataSrc : (form.get(['config', 'dataSource'])?.value === 'server' ? tableServerSideDataSrc : [])"
+    [rowContextMenuItems]="this.form.get(['config', 'rowContextMenuItems'])?.value === '1' ? contextualMenuItems : undefined"
+    [dynamicContextMenuItems]="this.form.get(['config', 'dynamicContextMenuItems'])?.value === '1' ? dynamicContextMenuItems : undefined"
+    [rowContextMenuIsActiveFn]="rowContextMenuIsVisibleFn"
+    [rowContextMenuToggleBy]="!this.form.get(['config', 'rowContextMenuToggleBy'])?.value ? undefined : this.form.get(['config', 'rowContextMenuToggleBy'])?.value"
+></px-table>
     `,
     ts: `
 import {Component, Inject, OnDestroy, ViewChild} from '@angular/core';
-import {CommonModule, DatePipe} from '@angular/common';
-import {DmTableComponent} from "../../../../../dm-table/src/lib/dm-table.component";
-import {MatCardModule} from "@angular/material/card";
-import {ComponentDocHeaderComponent} from "../../components/component-doc-header/component-doc-header.component";
-import {MatTabsModule} from "@angular/material/tabs";
+import {CardModule} from "primeng/card";
+import {PxTableComponent} from "../../../../projects/px-table/src/lib/px-table.component";
+import {LibraryDocumentationComponent} from "../../components/library-documentation/library-documentation.component";
 import {ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup} from "@angular/forms";
-import {CodeExampleComponent} from "../../components/code-example/code-example.component";
-import {dmTableDocsCodeExample} from "./dm-table-docs-code-example";
 import {
-    DM_TABLE_RENDER_COMPONENT_DATA,
-    DmTableColumnDefinition, DmTableColumnVisibility, DmTableRenderComponentData,
-} from "../../../../../dm-table/src/lib/dm-table";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatOptionModule} from "@angular/material/core";
-import {MatSelectModule} from "@angular/material/select";
-import {TableDocsComponent} from "./table-docs/table-docs.component";
-import {MatMenuModule} from "@angular/material/menu";
-import {Subject, Subscription, takeUntil} from "rxjs";
-import {SelectionModel} from "@angular/cdk/collections";
-import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+    PX_TABLE_RENDER_COMPONENT_DATA,
+    PxTableColumnDefinition, PxTableColumnVisibility, PxTableDataRequestInfo, PxTableDataResponse,
+    PxTableRenderComponentData, PxTableRow
+} from "../../../../projects/px-table/src/lib/px-table";
+import {DatePipe, JsonPipe} from "@angular/common";
+import {Subject, takeUntil} from "rxjs";
+import {MultiSelectModule} from "primeng/multiselect";
+import {FloatLabelModule} from "primeng/floatlabel";
+import {DropdownModule} from "primeng/dropdown";
+import {HttpClient, HttpClientModule} from "@angular/common/http";
+import {TieredMenuModule} from "primeng/tieredmenu";
+import {MenuItem} from "primeng/api";
+import {AppService} from "../../services/app.service";
 
 @Component({
     standalone: true,
     template: \`
-        Rendering image id <strong>{{ columnData.columnData }}</strong> from <a href="https://picsum.photos/images">Lorem Picsum</a>.
+        Rendering image id <strong>{{ columnData.columnData }}</strong> from <a href="https://picsum.photos/images">Lorem
+            Picsum</a>.
         <br>
-        <img [src]="'https://picsum.photos/id/'+columnData.columnData+'/100'" style="max-width: 100px">
+        <img [src]="'https://picsum.photos/id/'+columnData.columnData+'/100'" style="max-width: 100px" alt="Pic">
     \`
 })
 class MyColumnRenderer {
     constructor(
-        @Inject(DM_TABLE_RENDER_COMPONENT_DATA) protected columnData: DmTableRenderComponentData
+        @Inject(PX_TABLE_RENDER_COMPONENT_DATA) protected columnData: PxTableRenderComponentData
     ) {
     }
 }
 
 @Component({
-    selector: 'app-dm-table-docs',
+    selector: 'app-px-table',
     standalone: true,
     imports: [
-        CommonModule,
-        DmTableComponent,
-        MatCardModule,
-        ComponentDocHeaderComponent,
-        MatTabsModule,
+        CardModule,
+        PxTableComponent,
+        LibraryDocumentationComponent,
+        CodeExampleComponent,
         ReactiveFormsModule,
-        MatFormFieldModule,
-        MatOptionModule,
-        MatSelectModule,
-        TableDocsComponent,
-        MatMenuModule,
-        MatSlideToggleModule
+        MultiSelectModule,
+        FloatLabelModule,
+        DropdownModule,
+        HttpClientModule,
+        TieredMenuModule,
+        JsonPipe
     ],
     providers: [
-        DatePipe,
-        {
-            provide: DM_TABLE_INTL,
-            useValue: {
-                [DmTableIntl.NO_DATA]: 'Nothing here..',
-                [DmTableIntl.LOADING]: 'Loading some data...'
-            }
-        }
+        DatePipe
     ],
-    templateUrl: './dm-table-docs.component.html',
-    styleUrl: './dm-table-docs.component.scss',
+    templateUrl: './px-table-docs.component.html',
+    styleUrl: './px-table-docs.component.scss'
 })
-export class DmTableDocsComponent implements OnDestroy {
+export class PxTableDocsComponent implements OnDestroy {
+    @ViewChild('table') private table!: PxTableComponent;
     form: UntypedFormGroup;
-    tableColumns: DmTableColumnDefinition[] = [
-        {id: 'column1', name: 'Column 1'},
-        {id: 'column2', name: 'Column 2'},
-        {id: 'column3', name: 'pipe rendered column', renderUsing: {pipe: DatePipe}},
-        {id: 'column4', name: 'component rendered column', renderUsing: {component: MyColumnRenderer}},
+    tableColumns: PxTableColumnDefinition[] = [
+        {id: 'column1', name: 'Column 1', sortable: true},
+        {id: 'column2', name: 'Column 2', sortable: true},
+        {id: 'column3', name: 'date pipe rendered column', sortable: true, renderUsing: {pipe: DatePipe}},
+        {id: 'column4', name: 'component rendered column', sortable: true, renderUsing: {component: MyColumnRenderer}},
     ];
 
-    tableStaticDataSrc: {[key: string]: any}[] = [];
-
-    tableServerSideDataSrc = 'https://localhost/table';
-    rowContextMenuIsVisibleFn = (row: any) => {
-        if(this.form.get(['config', 'rowContextMenu'])?.value !== '1') {
-            return false;
+    tableStaticDataSrc: { [key: string]: any }[] = [];
+    contextualMenuItems: MenuItem[] = [
+        {
+            label: 'File',
+            icon: 'pi pi-file',
+            visible: false,
+            items: [
+                {
+                    label: 'New',
+                    icon: 'pi pi-plus',
+                    items: [
+                        {
+                            label: 'Document',
+                            icon: 'pi pi-file'
+                        },
+                        {
+                            label: 'Image',
+                            icon: 'pi pi-image'
+                        },
+                        {
+                            label: 'Video',
+                            icon: 'pi pi-video'
+                        }
+                    ]
+                },
+                {
+                    label: 'Open',
+                    icon: 'pi pi-folder-open'
+                },
+                {
+                    label: 'Print',
+                    icon: 'pi pi-print'
+                }
+            ]
+        },
+        {
+            label: 'Edit',
+            icon: 'pi pi-file-edit',
+            items: [
+                {
+                    label: 'Copy',
+                    icon: 'pi pi-copy'
+                },
+                {
+                    label: 'Delete',
+                    icon: 'pi pi-times'
+                }
+            ]
+        },
+        {
+            label: 'Search',
+            icon: 'pi pi-search'
+        },
+        {
+            separator: true
+        },
+        {
+            label: 'Share',
+            icon: 'pi pi-share-alt',
+            items: [
+                {
+                    label: 'Slack',
+                    icon: 'pi pi-slack'
+                },
+                {
+                    label: 'Whatsapp',
+                    icon: 'pi pi-whatsapp'
+                }
+            ]
         }
+    ];
 
+    dynamicContextMenuItems: ((rowData: PxTableRow) => MenuItem[]) = (rowData: PxTableRow) =>
+    {
+        return [
+            {
+                label: 'Dynamic from row: ' + rowData['column1']
+            }
+        ];
+    };
+
+    tableServerSideDataSrc = (requestInfo: PxTableDataRequestInfo) => {
+        return this.http.post<PxTableDataResponse>('https://localhost/table', {
+            pageIndex: requestInfo.pageIndex,
+            pageLen: requestInfo.pageLength,
+            sortedColumns: requestInfo.sortedColumns,
+            filters: requestInfo.filters
+        });
+    };
+
+    rowContextMenuIsVisibleFn = (row: any) => {
         const displayCond = this.form.get(['config', 'rowContextMenuIsVisibleFn'])?.value;
-        if(displayCond === 'all') {
+        if (displayCond === 'all') {
             return true;
         }
 
         return displayCond === 'even' ? row['column1'] % 2 === 0 : row['column1'] % 2 !== 0;
     }
 
-    rowSelectionModel = new SelectionModel<any>();
-    clickedRowData: any = null;
-
-    @ViewChild('table') private table!: DmTableComponent;
     private componentDestroyed$ = new Subject<void>();
-    private rowClickedSub?: Subscription;
-
 
     constructor(
-        fb: UntypedFormBuilder
+        fb: UntypedFormBuilder,
+        public http: HttpClient,
+        private appService: AppService
     ) {
         this.form = fb.group({
             config: fb.group({
                 tableColumns: [this.tableColumns.map(c => c.id)],
                 dataSource: ['static'],
-                sortingArrowPosition: ['after'],
-                rowContextMenu: ['0'],
+                rowContextMenuItems: ['1'],
                 rowContextMenuIsVisibleFn: ['all'],
-                rowHoverEffectEnabled: ['0'],
-                rowSelectionModel: ['0'],
-                rowSelectionModelMultiple: ['0'],
-                rowClicked: ['0'],
-                isLoading: [false],
-                freezeHeaderRow: ['1'],
-                maxHeight: ['700px']
+                rowContextMenuToggleBy: [0],
+                dynamicContextMenuItems: ['0'],
+                responsiveLayout: ['scroll']
             })
         });
 
+        const storedFilters = localStorage.getItem('__table-config');
+        if(storedFilters) {
+            this.form.patchValue(JSON.parse(storedFilters));
+        }
+
         const date = new Date();
-        for(let i = 0; i < 100; ++i) {
+        for (let i = 0; i < 100; ++i) {
             date.setDate(date.getDate() + 1);
             this.tableStaticDataSrc.push({
                 column1: i + 1,
@@ -259,30 +277,13 @@ export class DmTableDocsComponent implements OnDestroy {
             });
         }
 
-        [
-            'rowContextMenu',
-            'rowContextMenuIsVisibleFn',
-        ].forEach(formControl => this.form.get(['config', formControl])?.valueChanges
-            .pipe(takeUntil(this.componentDestroyed$))
-            .subscribe(() => this.table.refresh(false)));
-
-        this.form.get(['config', 'rowSelectionModelMultiple'])?.valueChanges
-            .pipe(takeUntil(this.componentDestroyed$))
-            .subscribe(v => {
-                if(v === '1') {
-                    this.rowSelectionModel = new SelectionModel<any>(true);
-                } else {
-                    this.rowSelectionModel = new SelectionModel<any>(false);
-                }
-            });
-
         this.form.get(['config', 'tableColumns'])?.valueChanges
             .pipe(takeUntil(this.componentDestroyed$))
             .subscribe((visibleTableColumns: string[]) => {
                 const tableColumns = this.tableColumns;
-                const visibilityConfig: DmTableColumnVisibility[] = [];
+                const visibilityConfig: PxTableColumnVisibility[] = [];
 
-                for(let i = tableColumns.length; i--;) {
+                for (let i = tableColumns.length; i--;) {
                     const tableColumn = tableColumns[i];
                     visibilityConfig.push({
                         columnId: tableColumn.id,
@@ -293,41 +294,30 @@ export class DmTableDocsComponent implements OnDestroy {
                 this.table.changeColumnsVisibility(visibilityConfig);
             });
 
-        this.form.get(['config', 'rowClicked'])?.valueChanges
+        [
+            'rowContextMenuItems',
+            'rowContextMenuIsVisibleFn'
+        ].forEach(formControl => this.form.get(['config', formControl])?.valueChanges
             .pipe(takeUntil(this.componentDestroyed$))
-            .subscribe(v => {
-                if(v === '1') {
-                    this.rowClickedSub = this.table.rowClicked$.subscribe((row: any) => {
-                        this.clickedRowData = row;
-                    });
-                } else {
-                    this.rowClickedSub?.unsubscribe();
-                    this.clickedRowData = null;
-                }
-            });
+            .subscribe(() => this.table.refresh(false)));
 
-        this.form.get(['config', 'isLoading'])?.valueChanges
+        this.form.get(['config', 'responsiveLayout'])?.valueChanges
             .pipe(takeUntil(this.componentDestroyed$))
-            .subscribe(v => {
-                this.table.isLoading = v;
-            });
+            .subscribe(() => {
+                this.storeFilters();
+                this.appService.reloadCurrentRoute();
+            })
 
-        this.form.get(['config', 'freezeHeaderRow'])?.valueChanges
-            .pipe(takeUntil(this.componentDestroyed$))
-            .subscribe(v => {
-                if(v === '1') {
-                    const maxHeightControl = this.form.get(['config', 'maxHeight']);
-                    if(maxHeightControl && maxHeightControl.value === '') {
-                        maxHeightControl.setValue('700px');
-                    }
-                }
-            });
+        this.form.valueChanges.pipe(takeUntil(this.componentDestroyed$)).subscribe(() => this.storeFilters());
+    }
+
+    private storeFilters() {
+        localStorage.setItem('__table-config', JSON.stringify(this.form.value));
     }
 
     ngOnDestroy() {
         this.componentDestroyed$.next();
         this.componentDestroyed$.complete();
-        this.rowClickedSub?.unsubscribe();
     }
 }
     `,
