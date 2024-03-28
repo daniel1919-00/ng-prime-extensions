@@ -19,7 +19,7 @@ import {AsyncPipe, NgClass, NgComponentOutlet, NgForOf, NgIf, NgTemplateOutlet} 
 import {PxTableRenderPipePipe} from "./px-table-render.pipe";
 import {Observable, Subscription} from "rxjs";
 import {FormGroup} from "@angular/forms";
-import {FilterMetadata, MenuItem} from "primeng/api";
+import {FilterMetadata, MenuItem, PrimeNGConfig} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {Menu, MenuModule} from "primeng/menu";
 import {ContextMenuModule} from "primeng/contextmenu";
@@ -211,7 +211,8 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
 
     constructor(
         private injector: Injector,
-        private changeDetector: ChangeDetectorRef
+        private changeDetector: ChangeDetectorRef,
+        protected primeNGConfig: PrimeNGConfig
     ) {
     }
 
