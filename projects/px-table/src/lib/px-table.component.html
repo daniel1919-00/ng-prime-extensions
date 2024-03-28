@@ -63,7 +63,7 @@
                 </td>
             </ng-container>
 
-            <td *ngIf="rowContextMenuItems && (!rowContextMenuToggleBy || rowContextMenuToggleBy === 'button') && (!rowContextMenuIsActiveFn || rowContextMenuIsActiveFn(rowData))">
+            <td *ngIf="rowContextMenuItems && (!rowContextMenuToggleBy || rowContextMenuToggleBy === 'button') && (!rowContextMenuIsActiveFn || rowContextMenuIsActiveFn(rowData))" class="px-table-context-menu-toggle-cell">
                 <span *ngIf="responsiveLayout === 'stack'" class="p-column-title">&nbsp;</span>
                 <span>
                     <p-button [icon]="rowContextMenuToggleIcon" (click)="toggledContextMenu.toggle($event)"></p-button>
