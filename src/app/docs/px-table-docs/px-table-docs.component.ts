@@ -139,7 +139,14 @@ export class PxTableDocsComponent implements OnDestroy {
         }
     ];
 
-    protected contextMenuSelection?: PxTableRow;
+    dynamicContextMenuItems: ((rowData: PxTableRow) => MenuItem[]) = (rowData: PxTableRow) =>
+    {
+        return [
+            {
+                label: 'Dynamic from row: ' + rowData['column1']
+            }
+        ];
+    };
 
     tableServerSideDataSrc = (requestInfo: PxTableDataRequestInfo) => {
         return this.http.post<PxTableDataResponse>('https://localhost/table', {
@@ -174,6 +181,7 @@ export class PxTableDocsComponent implements OnDestroy {
                 rowContextMenuItems: ['1'],
                 rowContextMenuIsVisibleFn: ['all'],
                 rowContextMenuToggleBy: [0],
+                dynamicContextMenuItems: ['0']
             })
         });
 

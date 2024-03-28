@@ -1,4 +1,4 @@
-<p-contextMenu #contextMenuRef [model]="rowContextMenuItems" appendTo="body"></p-contextMenu>
+<p-contextMenu #contextMenuRef [model]="rowContextMenuItems" appendTo="body" (onShow)="onContextMenuShown()"></p-contextMenu>
 <p-table
     [styleClass]="styleClass"
     [columns]="columns"
@@ -28,7 +28,6 @@
     [filters]="filters"
     [globalFilterFields]="globalFilterFields"
     [contextMenu]="contextMenuRef"
-    [contextMenuSelection]="contextMenuSelection"
     (contextMenuSelectionChange)="onContextMenuSelectionChange($event)"
     (onLazyLoad)="onLazyLoad($event)"
     [selection]="selection"
@@ -65,7 +64,7 @@
 
             <td *ngIf="rowContextMenuItems && (!rowContextMenuToggleBy || rowContextMenuToggleBy === 'button') && (!rowContextMenuIsActiveFn || rowContextMenuIsActiveFn(rowData))">
                 <p-button [icon]="rowContextMenuToggleIcon" (click)="toggledContextMenu.toggle($event)"></p-button>
-                <p-menu #toggledContextMenu [model]="rowContextMenuItems" [popup]="true" appendTo="body" (onShow)="contextMenuSelectionChange.emit(rowData)"></p-menu>
+                <p-menu #toggledContextMenu [model]="rowContextMenuItems" [popup]="true" appendTo="body" (onShow)="onContextMenuSelectionChange(rowData, false); onContextMenuShown()"></p-menu>
             </td>
         </tr>
     </ng-template>

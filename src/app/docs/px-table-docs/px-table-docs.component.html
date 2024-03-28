@@ -31,6 +31,14 @@
                     </p-floatLabel>
 
                     <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuItems]"
+                                    [options]="[{value: '1', desc: 'Enabled'}, {value: '0', desc: 'Disabled'}]"
+                                    optionLabel="desc" optionValue="value"
+                                    formControlName="dynamicContextMenuItems"></p-dropdown>
+                        <label for="[dynamicContextMenuItems]">[dynamicContextMenuItems]</label>
+                    </p-floatLabel>
+
+                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
                         <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuToggleBy]"
                                     [options]="[{value: 'rightClick', desc: 'Right-click only'}, {value: 'button', desc: 'Button toggle only'}, {value: 0, desc: 'Unrestricted'}]"
                                     optionLabel="desc" optionValue="value"
@@ -55,6 +63,7 @@
                 [rowsPerPage]="5"
                 [dataSource]="form.get(['config', 'dataSource'])?.value === 'static' ? tableStaticDataSrc : (form.get(['config', 'dataSource'])?.value === 'server' ? tableServerSideDataSrc : [])"
                 [rowContextMenuItems]="this.form.get(['config', 'rowContextMenuItems'])?.value === '1' ? contextualMenuItems : undefined"
+                [dynamicContextMenuItems]="this.form.get(['config', 'dynamicContextMenuItems'])?.value === '1' ? dynamicContextMenuItems : undefined"
                 [rowContextMenuIsActiveFn]="rowContextMenuIsVisibleFn"
                 [rowContextMenuToggleBy]="!this.form.get(['config', 'rowContextMenuToggleBy'])?.value ? undefined : this.form.get(['config', 'rowContextMenuToggleBy'])?.value"
             ></px-table>

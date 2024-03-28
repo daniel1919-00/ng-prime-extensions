@@ -168,9 +168,15 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
      */
     @Input() tableStyleClass?: string;
     /**
-     * An array of menu items. This enables the context menu and context menu toggle button (added automatically on a separate column at the end of the table).
+     * An array of menu items.
+     * This enables the context menu and context menu toggle button (added automatically on a separate column at the end of the table).
      */
     @Input() rowContextMenuItems?: MenuItem[];
+    /**
+     * A function that takes the row of the active context menu and returns the array of items.
+     * If set then the [rowContextMenuItems] input is ignored.
+     */
+    @Input() dynamicContextMenuItems?: (rowData: PxTableRow) => MenuItem[];
     /**
      * Name of the icon to be passed along to the p-button toggle.
      */
@@ -213,6 +219,10 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
         if(this.pxFilters) {
             this.filters = {};
             delete this.globalFilterFields;
+        }
+
+        if(this.dynamicContextMenuItems) {
+            this.rowContextMenuItems = [];
         }
 
         this.prepareDisplayedColumns();
@@ -335,13 +345,26 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
         }
     }
 
-    protected onContextMenuSelectionChange($event: any) {
-        const contextMenuPanels = this.toggledContextMenus.toArray()
-        for(let i = contextMenuPanels.length; i--;) {
-            const contextMenuPanel = contextMenuPanels[i];
-            contextMenuPanel.hide();
+    protected onContextMenuSelectionChange(rowData: PxTableRow, closeOpenMenus = true) {
+        this.contextMenuSelection = rowData;
+
+        if(closeOpenMenus) {
+            const contextMenuPanels = this.toggledContextMenus.toArray()
+            const contextMenuPanelsLen = contextMenuPanels.length;
+            for(let i = contextMenuPanelsLen; i < contextMenuPanelsLen; ++i) {
+                contextMenuPanels[i].hide();
+            }
         }
-        this.contextMenuSelectionChange.emit($event);
+
+        this.contextMenuSelectionChange.emit(rowData);
+    }
+
+    protected onContextMenuShown() {
+        if(!(this.dynamicContextMenuItems && this.contextMenuSelection)) {
+            return;
+        }
+
+        this.rowContextMenuItems = this.dynamicContextMenuItems(this.contextMenuSelection);
     }
 
     protected createRenderComponentInjector(column: PxTableColumnDefinition, columnData: any, row: PxTableRow) {
