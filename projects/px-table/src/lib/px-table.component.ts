@@ -352,7 +352,7 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
         if(closeOpenMenus) {
             const contextMenuPanels = this.toggledContextMenus.toArray()
             const contextMenuPanelsLen = contextMenuPanels.length;
-            for(let i = contextMenuPanelsLen; i < contextMenuPanelsLen; ++i) {
+            for(let i = 0; i < contextMenuPanelsLen; ++i) {
                 contextMenuPanels[i].hide();
             }
         }
