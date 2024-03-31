@@ -8,8 +8,8 @@ import {Router} from "@angular/router";
     providedIn: 'root'
 })
 export class AppService implements OnDestroy {
-    private theme: string = 'blue';
-    private darkModeActive = false;
+    private theme!: string;
+    private darkModeActive!: boolean;
     public isViewportMobileSize: BehaviorSubject<boolean>;
 
     private serviceDestroyed$ = new Subject<void>();
@@ -19,11 +19,21 @@ export class AppService implements OnDestroy {
         private hljsLoader: HighlightLoader,
         private router: Router
     ) {
+        const savedAppearance = localStorage.getItem('__savedAppearance');
+        if(savedAppearance) {
+            this.setAppearance(JSON.parse(savedAppearance));
+        } else {
+            // Default appearance
+            this.setAppearance({
+                darkModeState: false,
+                theme: 'blue'
+            });
+        }
 
         this.isViewportMobileSize = new BehaviorSubject<boolean>(this.getIsViewportMobileSize());
 
         fromEvent(window, 'resize').pipe(
-            debounceTime(700),
+            debounceTime(300),
             takeUntil(this.serviceDestroyed$)
         ).subscribe(() => {
             const isMobileSize = this.getIsViewportMobileSize();
@@ -31,10 +41,6 @@ export class AppService implements OnDestroy {
                 this.isViewportMobileSize.next(isMobileSize);
             }
         });
-    }
-
-    setTheme(theme: 'blue') {
-        this.theme = theme;
     }
 
     reloadCurrentRoute() {
@@ -47,9 +53,25 @@ export class AppService implements OnDestroy {
     }
 
     toggleDarkMode() {
-        this.darkModeActive = !this.darkModeActive;
-        this.hljsLoader.setTheme(this.darkModeActive ? 'assets/highlightjs/vs2015.css' : 'assets/highlightjs/xcode.css');
-        this.document.getElementById('dynamicStylesheet')?.setAttribute('href', this.theme + '-' + (this.darkModeActive ? 'dark' : 'light') + '.css');
+        this.setAppearance({darkModeState: !this.darkModeActive});
+    }
+
+    setAppearance(appearance: {darkModeState?: boolean; theme?: string;}) {
+        if(appearance.theme !== undefined) {
+            this.theme = appearance.theme;
+        }
+
+        if(appearance.darkModeState !== undefined) {
+            const darkModeActive = appearance.darkModeState;
+            this.darkModeActive = darkModeActive;
+            this.hljsLoader.setTheme(darkModeActive ? 'assets/highlightjs/vs2015.css' : 'assets/highlightjs/xcode.css');
+            this.document.getElementById('dynamicStylesheet')?.setAttribute('href', this.theme + '-' + (darkModeActive ? 'dark' : 'light') + '.css');
+        }
+
+        localStorage.setItem('__savedAppearance', JSON.stringify({
+            darkModeState: this.darkModeActive,
+            theme: this.theme
+        }));
     }
 
     isDarkModeActive() {

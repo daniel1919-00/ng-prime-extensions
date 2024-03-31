@@ -11,6 +11,15 @@ export const routes: Routes = [
             icon: 'pi-table'
         }
     },
+    {
+        title: 'Uploader',
+        path: 'px-uploader',
+        loadComponent: () => import('./docs/px-uploader-docs/px-uploader-docs.component').then(c => c.PxUploaderDocsComponent),
+        data: {
+            addToSidenav: true,
+            icon: 'pi-upload'
+        }
+    },
 
     {
         title: 'Welcome',

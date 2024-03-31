@@ -1,0 +1,91 @@
+<div
+    [ngClass]="{'px-uploader': true, 'dragover': dragoverEventActive}"
+    (dragleave)="onDragLeave($event)"
+    (dragover)="onDragover($event)"
+    (dragenter)="onDragEnter($event)"
+    (drop)="onFilesDropped($event)"
+>
+    <label *ngIf="label !== ''" class="px-uploader-label">{{ label }}</label>
+    <div class="px-uploader-info">
+        <div style="display: flex; align-items: center; flex-wrap: wrap;">
+            <p-button class="px-uploader-upload-button" [icon]="icons?.uploadButton || 'pi pi-upload'" [label]="primeNGConfig.translation.upload" (onClick)="openFilesInput()"></p-button>
+            <div class="px-uploader-info-primary">
+                <label class="px-uploader-msg">{{ intl[PxUploaderIntl.NO_FILES_MSG] }}</label>
+            </div>
+        </div>
+        <div class="px-uploader-info-secondary">
+            <span *ngIf="allowedExtensions.length" class="px-uploader-info-secondary-msg">
+                {{ intl[PxUploaderIntl.ALLOWED_EXTENSIONS] + ': ' + allowedExtensionsText }}
+            </span>
+            <span>{{ intl[PxUploaderIntl.MAX_FILE_SIZE] + ': ' + (maxFileSize | pxFileSize) }}</span>
+            <span *ngIf="maxImageSizeText" class="px-uploader-info-secondary-msg">{{ intl[PxUploaderIntl.IMAGE_SIZE_CHECK_TEXT] + ': ' + maxImageSizeText }}</span>
+            <span *ngIf="infoMessage" class="px-uploader-info-secondary-info-msg">{{infoMessage}}</span>
+        </div>
+    </div>
+
+    <div class="px-uploader-files">
+        <ng-container
+            *ngFor="let uploadedFile of _value; index as uploadedFileIndex"
+            [ngTemplateOutlet]="file"
+            [ngTemplateOutletContext]="{file: uploadedFile, isQueuedFile: false, fileIndex: uploadedFileIndex}"></ng-container>
+
+        <ng-container
+            *ngFor="let queuedFile of filesQueue; index as queuedFileIndex"
+            [ngTemplateOutlet]="file"
+            [ngTemplateOutletContext]="{file: queuedFile, isQueuedFile: true, fileIndex: queuedFileIndex}"></ng-container>
+    </div>
+</div>
+
+<input
+    #fileInput
+    style="display: none;"
+    type="file"
+    [accept]="allowedExtensions.length ? '.' + allowedExtensions.join(',.') : null"
+    [multiple]="multiple"
+    (change)="onFilesAdded($any($event.target).files)">
+
+<ng-template #file let-file="file" let-isQueued="isQueuedFile" let-fileIndex="fileIndex">
+    <div class="px-uploader-file" [ngClass]="[displayAs, showImagePreview && file.imagePreviewUrl ? 'preview' : '', file.uploadError !== undefined ? 'px-uploader-error' : '']">
+        <p-progressBar
+            *ngIf="file.isUploading || (isQueued && file.uploadError === undefined)"
+            [mode]="file.uploadProgress > 0 ? 'determinate' : 'indeterminate'"
+            [value]="file.uploadProgress || 0"
+            class="px-uploader-file-upload-progress"
+        ></p-progressBar>
+
+        <div class="px-uploader-file-header" [ngClass]="file.uploadError ? 'error' : 'success'">
+            <div class="px-uploader-file-info">
+                <i class="px-uploader-file-status-icon" *ngIf="isQueued" [class]="file.isUploading ? icons?.fileStatusIconUploading || 'pi pi-spin pi-spinner' : (file.uploadError !== undefined ? icons?.fileStatusIconError || 'pi pi-times-circle' : icons?.fileStatusIconQueued || 'pi pi-hourglass')"></i>
+                <div class="px-uploader-file-info flex-column">
+                    <span class="px-uploader-file-info-primary">{{file.name}}</span>
+                    <span class="px-uploader-file-info-secondary">{{(file.size || 0) | pxFileSize}}</span>
+                </div>
+            </div>
+
+            <div class="px-uploader-file-info actions">
+                <div class="px-uploader-file-info">
+                    <span class="px-uploader-file-info-primary">{{file.uploadError}}</span>
+                </div>
+                <p-button
+                    *ngIf="!file.isUploading && (file.uploadError === undefined || file.allowDelete === undefined || file.allowDelete)"
+                    [icon]="icons?.removeFileButton || 'pi pi-trash'"
+                    severity="warning"
+                    (onClick)="isQueued ? removeFileFromQueue(fileIndex) : removeFile(fileIndex)"
+                    [style]="{'pointer-events': 'visible'}"
+                ></p-button>
+
+                <p-button
+                    *ngIf="isQueued && file.uploadError !== undefined && file.canRetryUpload"
+                    [icon]="icons?.retryUploadButton || 'pi pi-refresh'"
+                    (onClick)="retryUpload(fileIndex);"
+                    [style]="{'pointer-events': 'visible'}"
+                ></p-button>
+            </div>
+        </div>
+
+        <img
+            *ngIf="showImagePreview && file.imagePreviewUrl"
+            class="px-uploader-file-preview"
+            [src]="file.imagePreviewUrl" alt="">
+    </div>
+</ng-template>

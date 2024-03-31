@@ -84,5 +84,5 @@ export interface PxTableDataRequestInfo {
     pageIndex: number;
     pageLength: number;
     sortedColumns: PxTableSortedColum[];
-    filters: {[filter: string]: any} | {[p: string]: FilterMetadata | FilterMetadata[] | undefined};
+    filters: { [filter: string]: any } | { [p: string]: FilterMetadata | FilterMetadata[] | undefined };
 }

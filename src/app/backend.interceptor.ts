@@ -1,26 +1,36 @@
-import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from "@angular/common/http";
-import {from, lastValueFrom, Observable} from "rxjs";
+import {
+    HttpEvent,
+    HttpEventType,
+    HttpHandler,
+    HttpInterceptor,
+    HttpProgressEvent,
+    HttpRequest,
+    HttpResponse
+} from "@angular/common/http";
+import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 import {timeoutAsync} from "./shared";
-import {PxTableDataResponse, PxTableSortedColum} from "../../projects/px-table/src/lib/px-table";
+import {PxTableDataResponse, PxTableRow, PxTableSortedColum} from "../../projects/px-table/src/lib/px-table";
+
+const UPLOAD_SPEED_BYTES = 100 * 1024;
 
 @Injectable()
 export class BackendInterceptor implements HttpInterceptor {
+
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        return from(this.handleRequest(req, next));
+        return this.handleRequest(req, next);
     }
 
-    private async handleRequest(req: HttpRequest<any>, next: HttpHandler) {
+    private handleRequest(req: HttpRequest<any>, next: HttpHandler) {
         const requestedEndpoint = req.url.replace('https://localhost/', '').split('/');
         switch (requestedEndpoint[0]) {
-            case 'table':
-                return await this.getTableResponse(req);
-            default:
-                return await lastValueFrom(next.handle(req));
+            case 'table': return this.getTableResponse(req);
+            case 'px-uploader': return this.getUploaderResponse(req);
+            default: return next.handle(req);
         }
     }
 
-    private async getTableResponse(request: HttpRequest<any>) {
+    private getTableResponse(request: HttpRequest<any>) {
         let pageIndex: number, pageLen: number, sortCol: string, sortDir: string;
         const requestBody = request.body;
         pageIndex = requestBody.pageIndex;
@@ -28,7 +38,7 @@ export class BackendInterceptor implements HttpInterceptor {
         const sortedCol: PxTableSortedColum = requestBody.sortedColumns ? requestBody.sortedColumns[0] : {};
         sortCol = sortedCol.columnId;
         sortDir = sortedCol.order ? (sortedCol.order > 0 ? 'asc' : 'desc') : '';
-        const data = [];
+        const data: PxTableRow[] = [];
         const maxResults = 100;
         let startRow = pageIndex * pageLen;
         let endRow = startRow + pageLen;
@@ -67,14 +77,49 @@ export class BackendInterceptor implements HttpInterceptor {
                 return 0;
             });
         }
+        return new Observable<HttpEvent<any>>(observer => {
+            timeoutAsync(2000).then(() => {
+                observer.next(new HttpResponse({
+                    status: 200,
+                    body: {
+                        totalRecords: maxResults,
+                        records: data.slice(startRow, endRow)
+                    } as PxTableDataResponse
+                }));
 
-        await timeoutAsync(2000);
-        return new HttpResponse({
-            status: 200,
-            body: {
-                totalRecords: maxResults,
-                records: data.slice(startRow, endRow)
-            } as PxTableDataResponse
+                observer.complete();
+            });
+        });
+    }
+
+    private getUploaderResponse(req: HttpRequest<any>) {
+        const file = (req.body as FormData).get('file') as File;
+        const totalFileSize = file.size;
+        let uploadedSize = 0;
+        let interval: any = null;
+
+        return new Observable<HttpEvent<any>>(observer => {
+            observer.next({type: HttpEventType.Sent});
+
+            interval = setInterval(() => {
+                uploadedSize += UPLOAD_SPEED_BYTES;
+
+                if (uploadedSize >= totalFileSize) {
+                    clearInterval(interval);
+                    interval = null;
+                    observer.next(new HttpResponse({
+                        status: 201
+                    }));
+                    observer.complete();
+                    return;
+                }
+
+                observer.next({
+                    type: HttpEventType.UploadProgress,
+                    loaded: uploadedSize,
+                    total: totalFileSize
+                } as HttpProgressEvent);
+            }, 1000);
         });
     }
 }

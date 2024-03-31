@@ -1,0 +1,133 @@
+<app-library-documentation header="px-uploader" [hiddenSections]="['docIntl', 'docStyling']">
+    <span docDescription class="primary-color">
+        <a href="https://primeng.org" target="_blank">PrimeNG-based</a> library used to upload files.
+    </span>
+    <div docOverview>
+        <app-code-example [code]="pxUploaderCodeExample">
+            <h2>Configuration</h2>
+            <form [formGroup]="form" class="dm:grid dm:align-items-center">
+                <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                    <p-dropdown [style]="{'width': '100%'}" inputId="[multiple]"
+                                [options]="[{value: '0', desc: 'false'}, {value: '1', desc: 'true'}]"
+                                optionLabel="desc" optionValue="value" formControlName="multiple"></p-dropdown>
+                    <label for="[multiple]">[multiple]</label>
+                </p-floatLabel>
+
+                <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                    <p-dropdown [style]="{'width': '100%'}" inputId="[showImagePreview]"
+                                [options]="[{value: '0', desc: 'false'}, {value: '1', desc: 'true'}]"
+                                optionLabel="desc" optionValue="value" formControlName="showImagePreview"></p-dropdown>
+                    <label for="[showImagePreview]">[showImagePreview]</label>
+                </p-floatLabel>
+
+                <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                    <p-dropdown [style]="{'width': '100%'}" inputId="[displayAs]"
+                                [options]="[{value: 'list', desc: 'list'}, {value: 'grid', desc: 'grid'}]"
+                                optionLabel="desc" optionValue="value" formControlName="displayAs"></p-dropdown>
+                    <label for="[displayAs]">[displayAs]</label>
+                </p-floatLabel>
+            </form>
+
+            <br>
+            <h2>Result</h2>
+            <px-uploader
+                [saveEndpoint]="saveEndpoint"
+                label="My uploader"
+                [multiple]="form.get('multiple')?.value === '1'"
+                [showImagePreview]="form.get('showImagePreview')?.value === '1'"
+                [displayAs]="form.get('displayAs')?.value || 'list'"
+            ></px-uploader>
+        </app-code-example>
+    </div>
+
+    <div docApi>
+        <div class="entry-group">
+            <h2 class="title">Imports</h2>
+            <div class="entry">
+                <pre><code class="dm:quote code">import &#123; PxUploaderComponent &#125; from '&#64;ng-prime-extensions/px-uploader';</code></pre>
+            </div>
+        </div>
+
+        <div class="entry-group">
+            <h2 class="title">Inputs</h2>
+
+            <div class="entry">
+                <h3>saveEndpoint</h3>
+                <p>Endpoint that handles the upload.</p>
+                <pre><code class="dm:quote">export interface PxEndpointConfig &#123;
+    url: string;
+    requestMethod?: string;
+    headers?: HttpHeaders | &#123; [p: string]: string | string[] &#123; | Promise&#60;HttpHeaders | &#123;
+        [p: string]: string | string[]
+    &#125;&#62;;
+&#125;</code></pre>
+            </div>
+
+            <div class="entry">
+                <h3>deleteEndpoint</h3>
+                <p>Endpoint that handles file removal.</p>
+            </div>
+
+            <div class="entry">
+                <h3>label</h3>
+                <p>Uploader label.</p>
+            </div>
+
+            <div class="entry">
+                <h3>multiple</h3>
+                <p>Allow multiple files?</p>
+            </div>
+
+            <div class="entry">
+                <h3>displayAs</h3>
+                <p>Determines how the added files are rendered.</p>
+            </div>
+
+            <div class="entry">
+                <h3>allowedExtensions</h3>
+                <p>A list of allowed file extensions(lowercase), if empty the extension check is skipped.</p>
+                <p>Example: ['txt', 'xlsx', ...]</p>
+            </div>
+
+            <div class="entry">
+                <h3>maxFileSize</h3>
+                <p>Maximum file size in bytes. Default: 5MB.</p>
+            </div>
+
+            <div class="entry">
+                <h3>maxParallelUploads</h3>
+                <p>How many files should we upload in parallel?</p>
+            </div>
+
+            <div class="entry">
+                <h3>showImagePreview</h3>
+                <p>Whether to show a preview when the uploaded file is an image.</p>
+            </div>
+
+            <div class="entry">
+                <h3>maxImageSize</h3>
+                <p>Limits the maximum width and/or height of uploaded images.</p>
+                <p>Multiple sizes can be added in the array, for example you can check if the uploaded image has a width of 100 by passing [maxImageSize]="[&#123;width: 100&#125;]"</p>
+            </div>
+
+            <div class="entry">
+                <h3>icons</h3>
+                <p>Overwrite the default icons used.</p>
+            </div>
+
+            <div class="entry">
+                <h3>infoMessage</h3>
+                <p>Additional message to be displayed to the user.</p>
+            </div>
+        </div>
+
+        <div class="entry-group">
+            <h2 class="title">Outputs</h2>
+
+            <div class="entry">
+                <h3>uploadFinished</h3>
+                <p>Event triggered when all the files in the upload queue are uploaded.</p>
+            </div>
+        </div>
+    </div>
+</app-library-documentation>

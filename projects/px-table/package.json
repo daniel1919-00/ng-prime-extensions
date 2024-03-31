@@ -17,7 +17,8 @@
         "px-table",
         "angular",
         "primeNG",
-        "extensions"
+        "extensions",
+        "ng-prime-extensions"
     ],
     "license": "MIT",
     "bugs": {
