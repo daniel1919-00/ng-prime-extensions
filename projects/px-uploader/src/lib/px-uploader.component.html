@@ -1,11 +1,11 @@
 <div
-    [ngClass]="{'px-uploader': true, 'dragover': dragoverEventActive}"
+    [ngClass]="{'px-uploader': true, 'dragover': dragoverEventActive, 'no-label': label === ''}"
     (dragleave)="onDragLeave($event)"
     (dragover)="onDragover($event)"
     (dragenter)="onDragEnter($event)"
     (drop)="onFilesDropped($event)"
 >
-    <label *ngIf="label !== ''" class="px-uploader-label">{{ label }}</label>
+    <label class="px-uploader-label">{{ label }}</label>
     <div class="px-uploader-info">
         <div style="display: flex; align-items: center; flex-wrap: wrap;">
             <p-button class="px-uploader-upload-button" [icon]="icons?.uploadButton || 'pi pi-upload'" [label]="primeNGConfig.translation.upload" (onClick)="openFilesInput()"></p-button>
