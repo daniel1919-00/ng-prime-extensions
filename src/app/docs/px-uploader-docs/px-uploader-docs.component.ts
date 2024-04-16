@@ -9,6 +9,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {DropdownModule} from "primeng/dropdown";
 import {FloatLabelModule} from "primeng/floatlabel";
 import {Subject, takeUntil} from "rxjs";
+import {InputTextModule} from "primeng/inputtext";
 
 @Component({
   selector: 'app-px-uploader-docs',
@@ -20,7 +21,8 @@ import {Subject, takeUntil} from "rxjs";
         PxUploaderComponent,
         HttpClientModule,
         DropdownModule,
-        FloatLabelModule
+        FloatLabelModule,
+        InputTextModule
     ],
   templateUrl: './px-uploader-docs.component.html',
   styleUrl: './px-uploader-docs.component.scss'
@@ -39,6 +41,7 @@ export class PxUploaderDocsComponent implements OnDestroy {
         fb: UntypedFormBuilder
     ) {
         this.form = fb.group({
+            label: ['My uploader'],
             multiple: ['0'],
             showImagePreview: ['1'],
             displayAs: ['list']

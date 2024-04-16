@@ -15,6 +15,9 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "paths": {
+      "px-color-picker": [
+        "./dist/px-color-picker"
+      ],
       "px-table": [
         "./dist/px-table"
       ],
