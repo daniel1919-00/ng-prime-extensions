@@ -58,6 +58,14 @@ export const pxTableCodeExample: CodeExample = {
                         formControlName="responsiveLayout"></p-dropdown>
             <label for="[responsiveLayout]">[responsiveLayout]</label>
         </p-floatLabel>
+
+        <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+            <p-dropdown [style]="{'width': '100%'}" inputId="[loadingIconTemplateRef]"
+                        [options]="[{value: '1', desc: 'Custom'}, {value: '0', desc: 'Default'}]"
+                        optionLabel="desc" optionValue="value"
+                        formControlName="loadingIconTemplateRef"></p-dropdown>
+            <label for="[loadingIconTemplateRef]">[loadingIconTemplateRef]</label>
+        </p-floatLabel>
     </section>
 </form>
 <br>
@@ -66,6 +74,7 @@ export const pxTableCodeExample: CodeExample = {
     #table
     [columns]="tableColumns"
     [rowsPerPage]="5"
+    [loadingIconTemplateRef]="this.form.get(['config', 'loadingIconTemplateRef'])?.value === '1' ? customLoadingIcon : undefined"
     [responsiveLayout]="form.get(['config', 'responsiveLayout'])?.value || 'scroll'"
     [dataSource]="form.get(['config', 'dataSource'])?.value === 'static' ? tableStaticDataSrc : (form.get(['config', 'dataSource'])?.value === 'server' ? tableServerSideDataSrc : [])"
     [rowContextMenuItems]="this.form.get(['config', 'rowContextMenuItems'])?.value === '1' ? contextualMenuItems : undefined"
@@ -73,6 +82,10 @@ export const pxTableCodeExample: CodeExample = {
     [rowContextMenuIsActiveFn]="rowContextMenuIsVisibleFn"
     [rowContextMenuToggleBy]="!this.form.get(['config', 'rowContextMenuToggleBy'])?.value ? undefined : this.form.get(['config', 'rowContextMenuToggleBy'])?.value"
 ></px-table>
+
+<ng-template #customLoadingIcon>
+    Custom Loading
+</ng-template>
     `,
     ts: `
 import {Component, Inject, OnDestroy, ViewChild} from '@angular/core';
@@ -257,7 +270,8 @@ export class PxTableDocsComponent implements OnDestroy {
                 rowContextMenuIsVisibleFn: ['all'],
                 rowContextMenuToggleBy: [0],
                 dynamicContextMenuItems: ['0'],
-                responsiveLayout: ['scroll']
+                responsiveLayout: ['scroll'],
+                loadingIconTemplateRef: ['0']
             })
         });
 

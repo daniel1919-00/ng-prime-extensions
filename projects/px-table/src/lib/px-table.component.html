@@ -1,5 +1,4 @@
-<p-contextMenu #contextMenuRef [model]="rowContextMenuItems" appendTo="body"
-               (onShow)="onContextMenuShown()"></p-contextMenu>
+<p-contextMenu #contextMenuRef [model]="rowContextMenuItems" appendTo="body" (onShow)="onContextMenuShown()"></p-contextMenu>
 <p-table
     [styleClass]="styleClass"
     [columns]="columns"
@@ -83,6 +82,10 @@
             <td colspan="100" class="px-table-empty-message">{{ primeNGConfig.translation.emptyMessage }}</td>
         </tr>
     </ng-template>
+
+    <ng-template pTemplate="loadingicon">
+        <ng-container [ngTemplateOutlet]="loadingIconTemplateRef || defaultLoadingIconRef"></ng-container>
+    </ng-template>
 </p-table>
 
 <ng-template #cellRenderDefaultTemplate let-column="column" let-rowData="rowData">
@@ -97,4 +100,8 @@
 
 <ng-template #cellRenderPipeTemplate let-column="column" let-rowData="rowData">
     {{ rowData[column.id] | pxTableRenderPipe: column.renderUsing.pipe : column.renderUsing.pipeArguments || [] }}
+</ng-template>
+
+<ng-template #defaultLoadingIconRef>
+    <p-progressSpinner [style]="{'width': '65px'}"></p-progressSpinner>
 </ng-template>

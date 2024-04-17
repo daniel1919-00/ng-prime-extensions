@@ -10,7 +10,7 @@ import {
     OnInit,
     Output,
     QueryList,
-    SimpleChanges,
+    SimpleChanges, TemplateRef,
     ViewChildren
 } from "@angular/core";
 import {TableLazyLoadEvent, TableModule, TableRowSelectEvent, TableRowUnSelectEvent} from "primeng/table";
@@ -32,6 +32,7 @@ import {FilterMetadata, MenuItem, PrimeNGConfig} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {Menu, MenuModule} from "primeng/menu";
 import {ContextMenuModule} from "primeng/contextmenu";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 
 @Component({
     selector: 'px-table',
@@ -47,7 +48,8 @@ import {ContextMenuModule} from "primeng/contextmenu";
         ButtonModule,
         MenuModule,
         ContextMenuModule,
-        NgClass
+        NgClass,
+        ProgressSpinnerModule
     ],
     templateUrl: './px-table.component.html',
     styleUrl: './px-table.component.scss',
@@ -194,6 +196,11 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
      * Limits how the context menu is toggled. By default, the menu is triggered by both a right click action and by the button inside the special "actions" column.
      */
     @Input() rowContextMenuToggleBy?: 'rightClick' | 'button';
+    /**
+     * Custom loading icon template.
+     */
+    @Input() loadingIconTemplateRef?: TemplateRef<any>;
+
     /**
      * Function that determines when the contextual menu is active for a particular row.
      */

@@ -184,7 +184,8 @@ export class PxTableDocsComponent implements OnDestroy {
                 rowContextMenuIsVisibleFn: ['all'],
                 rowContextMenuToggleBy: [0],
                 dynamicContextMenuItems: ['0'],
-                responsiveLayout: ['scroll']
+                responsiveLayout: ['scroll'],
+                loadingIconTemplateRef: ['0']
             })
         });
 
@@ -223,7 +224,8 @@ export class PxTableDocsComponent implements OnDestroy {
 
         [
             'rowContextMenuItems',
-            'rowContextMenuIsVisibleFn'
+            'rowContextMenuIsVisibleFn',
+            'loadingIconTemplateRef'
         ].forEach(formControl => this.form.get(['config', formControl])?.valueChanges
             .pipe(takeUntil(this.componentDestroyed$))
             .subscribe(() => this.table.refresh(false)));
