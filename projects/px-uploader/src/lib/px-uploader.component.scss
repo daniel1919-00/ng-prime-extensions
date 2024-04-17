@@ -107,6 +107,7 @@
                 width: 100%;
                 padding: var(--content-padding);
                 z-index: 2;
+                border-radius: var(--border-radius) var(--border-radius) 0 0;
 
                 .px-uploader-file-info {
                     display: flex;
