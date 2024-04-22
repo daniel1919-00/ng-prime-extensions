@@ -1,7 +1,7 @@
 <div class="code-example-container">
     <div class="header">
         <span class="title">{{ title }}</span>
-        <span>
+        <span *ngIf="code">
             <p-button *ngIf="showSource" styleClass="no-focus-outline" [pTooltip]="getCopyBtnTooltip()"
                       icon="pi pi-copy" size="small" [text]="true" (click)="copyCode()"></p-button>
             <p-button *ngIf="code.html || code.ts || code.styles" styleClass="no-focus-outline"
@@ -16,7 +16,7 @@
     </div>
 </ng-template>
 <ng-template #source>
-    <div class="code-source">
+    <div *ngIf="code" class="code-source">
         <p-tabView (activeIndexChange)="currentOpenTab = $event">
             <p-tabPanel *ngIf="code.html" header="HTML">
                 <pre><code [highlight]="code.html" [languages]="['xml']"></code></pre>

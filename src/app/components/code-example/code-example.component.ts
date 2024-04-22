@@ -21,7 +21,7 @@ import {TabViewModule} from "primeng/tabview";
     styleUrl: './code-example.component.scss'
 })
 export class CodeExampleComponent {
-    @Input({required: true}) code!: CodeExample;
+    @Input() code?: CodeExample;
     @Input() title = 'Basic Example';
     protected showSource = false;
     protected currentOpenTab = CodeTab.HTML
@@ -46,6 +46,10 @@ export class CodeExampleComponent {
     }
 
     async copyCode() {
+        if(!this.code) {
+            return;
+        }
+
         let code = '';
         switch (this.currentOpenTab) {
             case CodeTab.HTML:
