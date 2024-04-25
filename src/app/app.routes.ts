@@ -20,15 +20,15 @@ export const routes: Routes = [
             icon: 'pi-upload'
         }
     },
-    {
-        title: 'Color picker',
-        path: 'px-color-picker',
-        loadComponent: () => import('./docs/px-color-picker-docs/px-color-picker-docs.component').then(c => c.PxColorPickerDocsComponent),
-        data: {
-            addToSidenav: true,
-            icon: 'pi-palette'
-        }
-    },
+    // { Lost interest in this
+    //     title: 'Color picker',
+    //     path: 'px-color-picker',
+    //     loadComponent: () => import('./docs/px-color-picker-docs/px-color-picker-docs.component').then(c => c.PxColorPickerDocsComponent),
+    //     data: {
+    //         addToSidenav: true,
+    //         icon: 'pi-palette'
+    //     }
+    // },
 
     {
         title: 'Welcome',

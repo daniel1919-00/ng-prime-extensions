@@ -37,14 +37,15 @@ export class PxColorPickerDocsComponent implements OnDestroy {
     constructor(fb: UntypedFormBuilder) {
         this.form = fb.group({
             config: fb.group({
-                inline: ['0']
+                inline: ['0'],
+                format: ['hex']
             }),
             result: ['#528bef']
         });
 
         const storedFilters = localStorage.getItem('__px-color-picker-config');
         if(storedFilters) {
-            // this.form.patchValue(JSON.parse(storedFilters));
+            this.form.patchValue(JSON.parse(storedFilters));
         }
 
         this.form.valueChanges

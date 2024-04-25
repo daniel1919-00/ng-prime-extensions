@@ -1,142 +1,145 @@
-import {PxColor, PxColorFormat, PxColorFormatHSL, PxColorFormatRGBA} from "./px-color-picker";
+import {
+    PxCanvasSize,
+    PxColor,
+    PxColorFormat,
+    PxColorFormatHSL,
+    PxColorFormatHSV,
+    PxColorFormatRGBA
+} from "./px-color-picker";
+
+/**
+ *
+ * @param r value in the range [0, 1].
+ * @param g value in the range [0, 1].
+ * @param b value in the range [0, 1].
+ */
+export function calculateHue(r: number, g: number, b: number): number {
+    const v = Math.max(r, g, b);
+    const c = v - Math.min(r, g, b);
+    const h = c && ((v == r) ? (g - b) / c : ((v == g) ? 2 + (b - r) / c : 4 + (r - g) / c));
+
+    return 60 * (h < 0 ? h + 6 : h);
+}
 
 export function convertColor<T = PxColor>(color: PxColor, destFormat: PxColorFormat): T {
     let srcFormat: PxColorFormat;
     if (typeof color === 'string') {
         srcFormat = 'hex';
-    } else if ((color as any)['r'] !== undefined) {
-        srcFormat = 'rgba';
-    } else {
+    } else if ((color as any)['v'] !== undefined) {
+        srcFormat = 'hsv';
+    } else if ((color as any)['l'] !== undefined) {
         srcFormat = 'hsl';
+    } else {
+        srcFormat = 'rgba';
     }
 
     if (srcFormat === destFormat) {
         return color as T;
     }
 
-    let rgba: PxColorFormatRGBA = {r: 0, g: 0, b: 0, a: 1};
+    let baseRGBA: PxColorFormatRGBA = {
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 1
+    };
+
     switch (srcFormat) {
         case 'rgba':
-            rgba = color as PxColorFormatRGBA;
+            baseRGBA = {
+                r: (color as PxColorFormatRGBA).r || 0,
+                g: (color as PxColorFormatRGBA).g || 0,
+                b: (color as PxColorFormatRGBA).b || 0,
+                a: (color as PxColorFormatRGBA).b || 1
+            };
             break;
 
-        case 'hex':
-            const hex = (color as string).replace('#', '');
-            rgba = {
-                r: parseInt(hex.substring(0, 2), 16),
-                g: parseInt(hex.substring(2, 4), 16),
-                b: parseInt(hex.substring(4, 6), 16),
-                a: 1
+        case 'hex': {
+            let hex = (color as string).replace('#', '');
+            if (hex === '') {
+                break;
+            }
+
+            if (hex.length === 3) {
+                hex += hex[2].repeat(3);
+            }
+
+            baseRGBA = {
+                r: parseInt(hex.substring(0, 2), 16) || 0,
+                g: parseInt(hex.substring(2, 4), 16) || 0,
+                b: parseInt(hex.substring(4, 6), 16) || 0,
+                a: parseInt(hex.substring(6, 8), 16) || 1
             };
             break
+        }
 
-        case "hsl":
-            const {h, s, l} = color as PxColorFormatHSL;
-
-            if (s !== 0) {
-                const hueToRgb = (p: number, q: number, t: number) => {
-                    t = (t + 1) % 1;
-                    if (t < 1 / 6) return p + (q - p) * 6 * t;
-                    if (t < 1 / 2) return q;
-                    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-                    return p;
-                };
-
-                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-                const p = 2 * l - q;
-                rgba.r = hueToRgb(p, q, h + 1 / 3);
-                rgba.g = hueToRgb(p, q, h);
-                rgba.b = hueToRgb(p, q, h - 1 / 3);
-            } else {
-                rgba.r = rgba.g = rgba.b = l; // achromatic
-            }
+        case "hsl": {
+            let {h, s, l} = color as PxColorFormatHSL;
+            s /= 100;
+            l /= 100;
+            const a = s * Math.min(l, 1 - l);
+            let extractRgbComponent = (n: number, k = (n + h / 30) % 12) => l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+            baseRGBA = {
+                r: Math.round(extractRgbComponent(0) * 255),
+                g: Math.round(extractRgbComponent(8) * 255),
+                b: Math.round(extractRgbComponent(4) * 255),
+                a: 1
+            };
             break;
+        }
+
+        case 'hsv': {
+            let {h, s, v} = color as PxColorFormatHSV;
+            s /= 100;
+            v /= 100;
+            const extractRgbComponent = (n: number, k = (n + h / 60) % 6) => v - v * s * Math.max(Math.min(k, 4 - k, 1), 0);
+            baseRGBA = {
+                r: Math.round(extractRgbComponent(5) * 255),
+                g: Math.round(extractRgbComponent(3) * 255),
+                b: Math.round(extractRgbComponent(1) * 255),
+                a: 1
+            };
+            console.log(baseRGBA);
+            break;
+        }
     }
 
     switch (destFormat) {
         case 'rgba':
-            return rgba as T;
+            return baseRGBA as T;
+
         case 'hex':
-            return `#${rgba.r.toString(16).padStart(2, '0')}${rgba.g.toString(16).padStart(2, '0')}${rgba.b.toString(16).padStart(2, '0')}` as T;
-        case 'hsl':
-            const r = rgba.r / 255;
-            const g = rgba.g / 255;
-            const b = rgba.b / 255;
+            return `#${baseRGBA.r.toString(16).padStart(2, '0')}${baseRGBA.g.toString(16).padStart(2, '0')}${baseRGBA.b.toString(16).padStart(2, '0')}` as T;
 
-            const max = Math.max(r, g, b);
-            const min = Math.min(r, g, b);
-            let h, s, l;
-            h = s = l = (max + min) / 2;
+        case 'hsl': {
+            // Thanks to https://stackoverflow.com/users/860099/kamil-kie%c5%82czewski for this code :)
+            const r = baseRGBA.r / 255;
+            const g = baseRGBA.g / 255;
+            const b = baseRGBA.b / 255;
+            const l = Math.max(r, g, b);
+            const c = l - Math.min(r, g, b);
+            const f = (1 - Math.abs(l + l - c - 1));
 
-            if (max === min) {
-                h = s = 0;
-            } else {
-                const d = max - min;
-                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                switch (max) {
-                    case r:
-                        h = (g - b) / d + (g < b ? 6 : 0);
-                        break;
-                    case g:
-                        h = (b - r) / d + 2;
-                        break;
-                    case b:
-                        h = (r - g) / d + 4;
-                        break;
-                }
-                h /= 6;
-            }
+            return {
+                h: calculateHue(r, g, b),
+                s: (f ? c / f : 0) * 100,
+                l: ((l + l - c) / 2) * 100
+            } as T;
+        }
 
-            return {h: h * 360, s: s * 100, l: l * 100} as T;
+        case 'hsv': {
+            // Thanks to https://stackoverflow.com/users/860099/kamil-kie%c5%82czewski for this code :)
+            const r = baseRGBA.r / 255;
+            const g = baseRGBA.g / 255;
+            const b = baseRGBA.b / 255;
+            const v = Math.max(r, g, b);
+            const c = v - Math.min(r, g, b);
+
+            return {
+                h: calculateHue(r, g, b),
+                s: (v && c / v) * 100,
+                v: v * 100
+            } as T;
+        }
     }
-}
-
-export function calculateHue(color: PxColorFormatRGBA): number {
-    const { r, g, b } = color;
-
-    // Normalize RGB values to be in the range [0, 1]
-    const normalizedR = r / 255;
-    const normalizedG = g / 255;
-    const normalizedB = b / 255;
-
-    const max = Math.max(normalizedR, normalizedG, normalizedB);
-    const min = Math.min(normalizedR, normalizedG, normalizedB);
-
-    let hue;
-    if (max === min) {
-        hue = 0;
-    } else if (max === normalizedR) {
-        hue = ((normalizedG - normalizedB) / (max - min)) % 6;
-    } else if (max === normalizedG) {
-        hue = (normalizedB - normalizedR) / (max - min) + 2;
-    } else {
-        hue = (normalizedR - normalizedG) / (max - min) + 4;
-    }
-    hue *= 60;
-
-    // Clamp hue [0, 360)
-    return hue < 0 ? hue + 360 : hue;
-}
-
-export function calculateSaturation(color: PxColorFormatRGBA): number {
-    const { r, g, b } = color;
-
-    // Normalize RGB values to be in the range [0, 1]
-    const normalizedR = r / 255;
-    const normalizedG = g / 255;
-    const normalizedB = b / 255;
-
-    // Find maximum and minimum values of RGB
-    const max = Math.max(normalizedR, normalizedG, normalizedB);
-    const min = Math.min(normalizedR, normalizedG, normalizedB);
-
-    // Calculate saturation
-    let saturation;
-    if (max === 0) {
-        saturation = 0;
-    } else {
-        saturation = (max - min) / max;
-    }
-
-    return saturation;
 }

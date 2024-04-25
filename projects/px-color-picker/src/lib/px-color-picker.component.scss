@@ -1,26 +1,44 @@
-.px-flex-column {
-    flex-direction: column;
-}
-
-.px-align-center {
-    align-items: center;
-}
-
-.px-row {
+.px-color-picker-row {
     display: flex;
-    align-items: start;
+    align-items: flex-start;
+    width: min-content;
 
-    .px-col {
-        flex-basis: auto;
+    &.px-color-picker-flex-column {
+        flex-direction: column;
+    }
+
+    &.px-color-picker-align-center {
+        align-items: center;
+    }
+
+    .px-color-picker-col {
+        flex: 1 1 0;
         margin: .4rem;
     }
 }
 
-.px-container {
-    padding: .6rem;
-    background: var(--surface-b);
+.px-color-picker-preview-container {
+    width: 10rem;
+    height: 2rem;
     border: 1px solid var(--surface-border);
     border-radius: var(--border-radius);
+
+    .px-color-picker-color-preview {
+        width: 100%;
+        height: 100%;
+        border-radius: var(--border-radius);
+    }
+}
+
+
+.px-color-picker-container {
+    padding: .6rem;
+
+    &:not(.no-background) {
+        background: var(--surface-b);
+        border: 1px solid var(--surface-border);
+        border-radius: var(--border-radius);
+    }
 
     canvas {
         border: 1px solid var(--surface-border);
@@ -30,21 +48,13 @@
         }
     }
 
-    .checkerboard-background {
-       background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAADFJREFUOE9jZGBgEGHAD97gk2YcNYBhmIQBgWSAP52AwoAQwJvQRg1gACckQoC2gQgAIF8IscwEtKYAAAAASUVORK5CYII=") left center;
-    }
-
-    .px-color-preview-container {
+    .px-color-picker-preview-container {
         width: calc(24px + .3rem);
         height: calc(24px + .3rem);
         margin-left: .5rem;
-        border: 1px solid var(--surface-border);
-        border-radius: var(--border-radius);
+    }
 
-        .px-color-preview {
-            width: 100%;
-            height: 100%;
-            border-radius: var(--border-radius);
-        }
+    .px-color-picker-checkerboard-background {
+       background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAADFJREFUOE9jZGBgEGHAD97gk2YcNYBhmIQBgWSAP52AwoAQwJvQRg1gACckQoC2gQgAIF8IscwEtKYAAAAASUVORK5CYII=") left center;
     }
 }

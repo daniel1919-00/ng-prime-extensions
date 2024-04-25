@@ -7,23 +7,26 @@ import {
     Inject,
     Input,
     NgZone,
+    OnChanges,
     OnDestroy,
     Output,
-    ViewChild
+    QueryList,
+    SimpleChanges,
+    ViewChild,
+    ViewChildren
 } from '@angular/core';
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {ColorPickerModule} from "primeng/colorpicker";
-import {DOCUMENT, NgIf, NgStyle, NgTemplateOutlet} from "@angular/common";
+import {DOCUMENT, NgClass, NgIf, NgStyle, NgSwitch, NgSwitchCase, NgTemplateOutlet} from "@angular/common";
 import {fromEvent, Subject, takeUntil} from "rxjs";
-import {
-    PxCanvasSize,
-    PxColor,
-    PxColorFormat,
-    PxColorFormatHEX,
-    PxColorFormatHSL,
-    PxColorFormatRGBA
-} from "./px-color-picker";
-import {calculateHue, calculateSaturation, convertColor} from "./utilities";
+import {PxCanvasSize, PxColor, PxColorFormat, PxColorFormatRGBA} from "./px-color-picker";
+import {calculateHue, convertColor} from "./utilities";
+import {InputGroupModule} from "primeng/inputgroup";
+import {InputTextModule} from "primeng/inputtext";
+import {ButtonModule} from "primeng/button";
+import {OverlayPanelModule} from "primeng/overlaypanel";
+import {InputNumberModule} from "primeng/inputnumber";
+import {InputGroupAddonModule} from "primeng/inputgroupaddon";
 
 @Component({
     selector: 'px-color-picker',
@@ -33,7 +36,16 @@ import {calculateHue, calculateSaturation, convertColor} from "./utilities";
         FormsModule,
         NgTemplateOutlet,
         NgStyle,
-        NgIf
+        NgIf,
+        NgClass,
+        InputGroupModule,
+        InputTextModule,
+        ButtonModule,
+        OverlayPanelModule,
+        NgSwitch,
+        NgSwitchCase,
+        InputNumberModule,
+        InputGroupAddonModule
     ],
     templateUrl: './px-color-picker.component.html',
     styleUrl: './px-color-picker.component.scss',
@@ -45,7 +57,7 @@ import {calculateHue, calculateSaturation, convertColor} from "./utilities";
         }
     ]
 })
-export class PxColorPickerComponent implements ControlValueAccessor, AfterViewInit, OnDestroy {
+export class PxColorPickerComponent implements ControlValueAccessor, OnChanges, AfterViewInit, OnDestroy {
     @Input() format: PxColorFormat = 'hex';
     @Input() disabled: boolean = false;
     @Input() inline: boolean = false;
@@ -53,6 +65,10 @@ export class PxColorPickerComponent implements ControlValueAccessor, AfterViewIn
      * Disabled when using hex color format
      */
     @Input() disableAlpha: boolean = false;
+    /**
+     * Removes the background & border from the container
+     */
+    @Input() noBackground = false;
     @Input() mainCanvasSize: PxCanvasSize = {
         width: 200,
         height: 180
@@ -65,16 +81,25 @@ export class PxColorPickerComponent implements ControlValueAccessor, AfterViewIn
         width: 160,
         height: 12
     };
+
     @Output() valueChange = new EventEmitter<any>();
 
-    @ViewChild('pxColorPickerCanvas') private pxColorPickerCanvas!: ElementRef;
-    @ViewChild('pxColorPickerHueCanvas') private pxColorPickerHueCanvas!: ElementRef;
-    @ViewChild('pxColorPickerAlphaCanvas') private pxColorPickerAlphaCanvas?: ElementRef;
-    @ViewChild('pxColorPickerColorPreview') private pxColorPickerColorPreview!: ElementRef;
+    @ViewChild('pxColorPickerCanvas') private pxColorPickerCanvas?: ElementRef<HTMLCanvasElement>;
+    @ViewChild('pxColorPickerHueCanvas') private pxColorPickerHueCanvas?: ElementRef<HTMLCanvasElement>;
+    @ViewChild('pxColorPickerAlphaCanvas') private pxColorPickerAlphaCanvas?: ElementRef<HTMLCanvasElement>;
+    @ViewChildren('pxColorPickerColorPreview') pxColorPickerColorPreview?: QueryList<ElementRef<HTMLDivElement>>;
 
-    private mainRenderContext!: CanvasRenderingContext2D;
-    private hueRenderContext!: CanvasRenderingContext2D;
-    private alphaRenderContext?: CanvasRenderingContext2D;
+    protected valueRGBA: PxColorFormatRGBA = {
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 1
+    };
+    protected _value: PxColor | null = null;
+
+    private mainRenderContext?: CanvasRenderingContext2D | null;
+    private hueRenderContext?: CanvasRenderingContext2D | null;
+    private alphaRenderContext?: CanvasRenderingContext2D | null;
     private draggingColorPicker: boolean = false;
     private draggingHueSlider: boolean = false;
     private draggingAlphaSlider: boolean = false;
@@ -82,98 +107,44 @@ export class PxColorPickerComponent implements ControlValueAccessor, AfterViewIn
     private alphaSliderPosition: number = 0;
     private hue: number = 0;
     private alpha: number = 1;
-    private lastColorTargetPos: { x: number; y: number } = {
+    private colorPickerCanvasPos: { x: number; y: number } = {
         x: 0,
         y: 0
     };
-    private onChange = (value: any) => value;
-    private onTouched = () => {
-    };
+    private onChange?: (value: PxColor | null) => void;
+    private onTouched?: () => void;
     private touched = false;
-    private valueRGBA: PxColorFormatRGBA = {
-        r: 0,
-        g: 0,
-        b: 0,
-        a: 1
-    };
-    private _value: PxColorFormatHSL | PxColorFormatRGBA | PxColorFormatHEX | null = null;
-    private incomingAngularFormValue = false;
     private onColorPickedTimeout: any = null;
-    private componentDestroyed: Subject<void> = new Subject();
+    private removeBoundEvents$: Subject<void> = new Subject();
 
     constructor(
-        private changeDetector: ChangeDetectorRef,
+        protected changeDetector: ChangeDetectorRef,
         private ngZone: NgZone,
         @Inject(DOCUMENT) private document: Document
-    ) {}
+    ) {
+    }
 
-    ngAfterViewInit() {
-        this.changeDetector.detach();
-
-        if(this.format === 'hex') {
-            this.disableAlpha = true;
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes['format']) {
+            if (this.format === 'hex') {
+                this.alpha = 1;
+                this.disableAlpha = true;
+            } else {
+                if (!changes['disableAlpha']) {
+                    this.disableAlpha = false;
+                }
+                this.alpha = this.valueRGBA.a;
+            }
         }
 
-        const pxColorPickerCanvasEl = this.pxColorPickerCanvas.nativeElement;
-        this.mainRenderContext = pxColorPickerCanvasEl.getContext('2d', {willReadFrequently: true});
+        if (this.mainRenderContext) {
+            this.changeDetector.detectChanges();
+            this.initColorPicker();
+        }
+    }
 
-        const pxColorPickerHueCanvas = this.pxColorPickerHueCanvas.nativeElement;
-        this.hueRenderContext = pxColorPickerHueCanvas.getContext('2d', {willReadFrequently: true});
-
-        const pxColorPickerAlphaCanvas = this.pxColorPickerAlphaCanvas?.nativeElement;
-        this.alphaRenderContext = pxColorPickerAlphaCanvas?.getContext('2d', {willReadFrequently: true});
-
-        this.drawAll();
-
-        this.ngZone.runOutsideAngular(() => {
-            // This is to fix a weird bug, where leaving tab/window focus would clear the canvas context permanently.
-            fromEvent(window, 'focus').pipe(takeUntil(this.componentDestroyed)).subscribe(() => this.drawAll());
-
-            fromEvent(pxColorPickerCanvasEl, 'mousedown')
-                .pipe(takeUntil(this.componentDestroyed))
-                .subscribe($event => {
-                    if (this.disabled) return;
-                    this.draggingColorPicker = true;
-                    this.pickColor(($event as MouseEvent).offsetX, ($event as MouseEvent).offsetY);
-                });
-
-            fromEvent(pxColorPickerCanvasEl, 'mousemove')
-                .pipe(takeUntil(this.componentDestroyed))
-                .subscribe($event => this.draggingColorPicker && this.pickColor(($event as MouseEvent).offsetX, ($event as MouseEvent).offsetY));
-
-            fromEvent(pxColorPickerHueCanvas, 'mousedown')
-                .pipe(takeUntil(this.componentDestroyed))
-                .subscribe($event => {
-                    if (this.disabled) return;
-                    this.draggingHueSlider = true;
-                    this.updateHueSlider($event as MouseEvent);
-                });
-
-            fromEvent(pxColorPickerHueCanvas, 'mousemove')
-                .pipe(takeUntil(this.componentDestroyed))
-                .subscribe($event => this.draggingHueSlider && this.updateHueSlider($event as MouseEvent));
-
-            if(pxColorPickerAlphaCanvas) {
-                fromEvent(pxColorPickerAlphaCanvas, 'mousedown')
-                    .pipe(takeUntil(this.componentDestroyed))
-                    .subscribe($event => {
-                        if (this.disabled) return;
-                        this.draggingAlphaSlider = true;
-                        this.updateAlphaSlider(($event as MouseEvent).offsetX);
-                    });
-
-                fromEvent(pxColorPickerAlphaCanvas, 'mousemove')
-                    .pipe(takeUntil(this.componentDestroyed))
-                    .subscribe($event => this.draggingAlphaSlider && this.updateAlphaSlider(($event as MouseEvent).offsetX));
-            }
-
-            fromEvent(this.document, 'mouseup').pipe(takeUntil(this.componentDestroyed))
-                .subscribe(() => {
-                    this.draggingHueSlider = false;
-                    this.draggingAlphaSlider = false;
-                    this.draggingColorPicker = false;
-                });
-        });
+    ngAfterViewInit() {
+        this.initColorPicker();
     }
 
     getValueAs<T = any>(format: PxColorFormat): T {
@@ -186,25 +157,23 @@ export class PxColorPickerComponent implements ControlValueAccessor, AfterViewIn
 
     @Input()
     set value(val: PxColor | null) {
+        if (this._value === val) {
+            return;
+        }
+
         this._value = val;
         if (val) {
             const rgbaVal = convertColor<PxColorFormatRGBA>(val, 'rgba');
             this.valueRGBA = rgbaVal;
+            this.alpha = rgbaVal.a;
             this.hueSliderPosition = this.getHueSliderPositionByColor(rgbaVal);
-            this.lastColorTargetPos = {
-                x: (this.hue / 360) * this.mainCanvasSize.width,
-                y: (1 - calculateSaturation(rgbaVal)) * this.mainCanvasSize.height
-            };
+            this.colorPickerCanvasPos.x = 0;
+            this.colorPickerCanvasPos.y = 0;
 
-            if(this.mainRenderContext) {
+            if (this.mainRenderContext) {
                 this.drawHueSlider();
-                this.pickColor(this.lastColorTargetPos.x, this.lastColorTargetPos.y);
+                this.drawColorPicker(true);
             }
-        }
-        if (!this.incomingAngularFormValue) {
-            this.onTouched();
-            this.onChange(val);
-            this.valueChange.next(val);
         }
     }
 
@@ -228,21 +197,89 @@ export class PxColorPickerComponent implements ControlValueAccessor, AfterViewIn
     }
 
     writeValue(val: any): void {
-        this.incomingAngularFormValue = true;
         this.value = val;
-        this.incomingAngularFormValue = false;
     }
 
-    private drawAll() {
+    private initColorPicker() {
+        this.removeBoundEvents$.next();
+
+        const pxColorPickerCanvasEl = this.pxColorPickerCanvas?.nativeElement;
+        this.mainRenderContext = pxColorPickerCanvasEl?.getContext('2d', {willReadFrequently: true});
+
+        const pxColorPickerHueCanvas = this.pxColorPickerHueCanvas?.nativeElement;
+        this.hueRenderContext = pxColorPickerHueCanvas?.getContext('2d', {willReadFrequently: true});
+
+        const pxColorPickerAlphaCanvas = this.pxColorPickerAlphaCanvas?.nativeElement;
+        this.alphaRenderContext = pxColorPickerAlphaCanvas?.getContext('2d', {willReadFrequently: true});
+
+        this.ngZone.runOutsideAngular(() => {
+            // This is to fix a weird bug, where leaving tab/window focus would clear the canvas context permanently.
+            fromEvent(window, 'focus').pipe(takeUntil(this.removeBoundEvents$)).subscribe(() => this.initColorPicker());
+
+            if (pxColorPickerCanvasEl) {
+                fromEvent(pxColorPickerCanvasEl, 'mousedown')
+                    .pipe(takeUntil(this.removeBoundEvents$))
+                    .subscribe($event => {
+                        if (this.disabled) return;
+                        this.draggingColorPicker = true;
+                        const x = ($event as MouseEvent).offsetX;
+                        const y = ($event as MouseEvent).offsetY;
+                        this.colorPickerCanvasPos.x !== x && this.colorPickerCanvasPos.y !== y && this.pickColor(x, y);
+                    });
+
+                fromEvent(pxColorPickerCanvasEl, 'mousemove')
+                    .pipe(takeUntil(this.removeBoundEvents$))
+                    .subscribe($event => this.draggingColorPicker && this.pickColor(($event as MouseEvent).offsetX, ($event as MouseEvent).offsetY));
+
+            }
+
+            if (pxColorPickerHueCanvas) {
+                fromEvent(pxColorPickerHueCanvas, 'mousedown')
+                    .pipe(takeUntil(this.removeBoundEvents$))
+                    .subscribe($event => {
+                        if (this.disabled) return;
+                        this.draggingHueSlider = true;
+                        this.updateHueSlider($event as MouseEvent);
+                    });
+
+                fromEvent(pxColorPickerHueCanvas, 'mousemove')
+                    .pipe(takeUntil(this.removeBoundEvents$))
+                    .subscribe($event => this.draggingHueSlider && this.updateHueSlider($event as MouseEvent));
+            }
+
+            if (pxColorPickerAlphaCanvas) {
+                fromEvent(pxColorPickerAlphaCanvas, 'mousedown')
+                    .pipe(takeUntil(this.removeBoundEvents$))
+                    .subscribe($event => {
+                        if (this.disabled) return;
+                        this.draggingAlphaSlider = true;
+                        this.updateAlphaSlider(($event as MouseEvent).offsetX);
+                    });
+
+                fromEvent(pxColorPickerAlphaCanvas, 'mousemove')
+                    .pipe(takeUntil(this.removeBoundEvents$))
+                    .subscribe($event => this.draggingAlphaSlider && this.updateAlphaSlider(($event as MouseEvent).offsetX));
+            }
+
+            fromEvent(this.document, 'mouseup').pipe(takeUntil(this.removeBoundEvents$))
+                .subscribe(() => {
+                    this.draggingHueSlider = false;
+                    this.draggingAlphaSlider = false;
+                    this.draggingColorPicker = false;
+                });
+        });
+
         this.drawHueSlider();
         this.drawAlphaSlider();
-        this.drawColorPicker();
-        this.drawColorPickerCircle(this.lastColorTargetPos.x, this.lastColorTargetPos.y);
-        const rgba = this.valueRGBA;
-        (this.pxColorPickerColorPreview.nativeElement as HTMLDivElement).style.background = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
+        this.drawColorPicker(this.colorPickerCanvasPos.x === 0 && this.colorPickerCanvasPos.y === 0 && this._value !== null);
+        this.updateColorPreview();
     }
 
-    private drawColorPicker(): void {
+    private drawColorPicker(updateColorPickerPos = false): void {
+        if (!this.mainRenderContext) {
+            return;
+        }
+
         const gradient = this.mainRenderContext.createLinearGradient(0, 0, this.mainCanvasSize.width, this.mainCanvasSize.height);
         gradient.addColorStop(0, 'white');
         gradient.addColorStop(0.5, `hsl(${this.hue}, 100%, 50%)`);
@@ -250,10 +287,43 @@ export class PxColorPickerComponent implements ControlValueAccessor, AfterViewIn
 
         this.mainRenderContext.fillStyle = gradient;
         this.mainRenderContext.fillRect(0, 0, this.mainCanvasSize.width, this.mainCanvasSize.height);
+
+        if(updateColorPickerPos) {
+            setTimeout(() => {
+                if (!this.mainRenderContext) {
+                    return;
+                }
+                const canvasH = this.mainCanvasSize.height;
+                const canvasW = this.mainCanvasSize.width;
+                const data = this.mainRenderContext.getImageData(0, 0, canvasW, canvasH).data;
+
+                const targetRGBA = this.valueRGBA;
+                for(let y = canvasH; y--;) {
+                    for(let x = canvasW; x--;) {
+                        const pixelIndex = (y * canvasW) + x * 4;
+                        const r: number = data[pixelIndex];
+                        const g: number = data[pixelIndex + 1];
+                        const b: number = data[pixelIndex + 2];
+
+                        if(r === targetRGBA.r && g === targetRGBA.g && b === targetRGBA.b) {
+                            this.colorPickerCanvasPos = {x, y};
+                            this.drawColorPickerCircle(this.colorPickerCanvasPos.x, this.colorPickerCanvasPos.y);
+                            return;
+                        }
+                    }
+                }
+            });
+        } else {
+            this.drawColorPickerCircle(this.colorPickerCanvasPos.x, this.colorPickerCanvasPos.y);
+        }
     }
 
     private drawHueSlider(): void {
         const hueRenderContext = this.hueRenderContext;
+        if (!hueRenderContext) {
+            return;
+        }
+
         hueRenderContext.clearRect(0, 0, hueRenderContext.canvas.width, hueRenderContext.canvas.height);
         const gradient = hueRenderContext.createLinearGradient(0, 0, hueRenderContext.canvas.width, 0);
 
@@ -268,8 +338,8 @@ export class PxColorPickerComponent implements ControlValueAccessor, AfterViewIn
         hueRenderContext.fillStyle = gradient;
         hueRenderContext.fillRect(0, 0, hueRenderContext.canvas.width, hueRenderContext.canvas.height);
 
-        if(!this.hueSliderPosition) {
-            this.hueSliderPosition = this._value ? this.getHueSliderPositionByColor(convertColor<PxColorFormatRGBA>(this._value, 'rgba')) : 3;
+        if (!this.hueSliderPosition) {
+            this.hueSliderPosition = this._value ? this.getHueSliderPositionByColor(convertColor<PxColorFormatRGBA>(this._value, 'rgba')) : 0;
         }
 
         this.drawSliderHandle(hueRenderContext, this.hueSliderPosition);
@@ -277,24 +347,21 @@ export class PxColorPickerComponent implements ControlValueAccessor, AfterViewIn
 
     private drawAlphaSlider(): void {
         const alphaRenderContext = this.alphaRenderContext;
-        if(!alphaRenderContext) {
+        if (!alphaRenderContext) {
             return;
         }
 
         alphaRenderContext.clearRect(0, 0, alphaRenderContext.canvas.width, alphaRenderContext.canvas.height);
         const gradient = alphaRenderContext.createLinearGradient(0, 0, alphaRenderContext.canvas.width, 0);
-        gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
-
         const currentColor = this.valueRGBA;
+
+        gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
         gradient.addColorStop(1, `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, 1)`);
 
         alphaRenderContext.fillStyle = gradient;
         alphaRenderContext.fillRect(0, 0, alphaRenderContext.canvas.width, alphaRenderContext.canvas.height);
 
-        if (this.alphaSliderPosition === 0) {
-            this.alphaSliderPosition = this.alpha * alphaRenderContext.canvas.width;
-        }
-
+        this.alphaSliderPosition = this.alpha * alphaRenderContext.canvas.width;
         this.drawSliderHandle(alphaRenderContext, this.alphaSliderPosition);
     }
 
@@ -311,18 +378,18 @@ export class PxColorPickerComponent implements ControlValueAccessor, AfterViewIn
         context.strokeRect(sliderX, sliderY, sliderWidth, sliderHeight);
     }
 
-    private pickColor(x: number, y: number): void {
-        this.lastColorTargetPos = {x, y};
+    private pickColor(x: number, y: number, emitEvent = true): void {
+        if (!this.mainRenderContext) {
+            return;
+        }
+
+        this.colorPickerCanvasPos = {x, y};
         this.mainRenderContext.clearRect(0, 0, this.mainCanvasSize.width, this.mainCanvasSize.height);
         this.drawColorPicker();
 
-        // Render the cursor color "target" circle
-        this.drawColorPickerCircle(x, y);
-
         const imageData = this.mainRenderContext.getImageData(x, y, 1, 1).data;
-        const rgba = {r: imageData[0], g: imageData[1], b: imageData[2], a: this.alpha};
-        this.valueRGBA = rgba;
-        (this.pxColorPickerColorPreview.nativeElement as HTMLDivElement).style.background = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
+        this.valueRGBA = {r: imageData[0], g: imageData[1], b: imageData[2], a: this.alpha};
+        this.updateColorPreview();
 
         this.drawAlphaSlider();
 
@@ -336,16 +403,26 @@ export class PxColorPickerComponent implements ControlValueAccessor, AfterViewIn
 
             const selectedColor = this.getValueAs(this.format);
             this._value = selectedColor;
+            this.changeDetector.markForCheck();
 
             this.ngZone.run(() => {
-                this.onTouched();
-                this.onChange(selectedColor);
-                this.valueChange.next(selectedColor);
+                this.onTouched && this.onTouched();
+                this.onChange && this.onChange(selectedColor);
+                emitEvent && this.valueChange.next(selectedColor);
             });
         }, 200);
     }
 
+    private updateColorPreview() {
+        const rgba = this.valueRGBA;
+        this.pxColorPickerColorPreview?.forEach(div => div.nativeElement.style.background = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`);
+    }
+
     private drawColorPickerCircle(x: number, y: number) {
+        if (!this.mainRenderContext) {
+            return;
+        }
+
         const radius = 5;
         this.mainRenderContext.beginPath();
         this.mainRenderContext.arc(x, y, radius + 1, 0, 2 * Math.PI);
@@ -371,7 +448,7 @@ export class PxColorPickerComponent implements ControlValueAccessor, AfterViewIn
 
         this.drawHueSlider();
 
-        this.pickColor(this.lastColorTargetPos.x, this.lastColorTargetPos.y);
+        this.pickColor(this.colorPickerCanvasPos.x, this.colorPickerCanvasPos.y);
     }
 
     private updateAlphaSlider(x: number): void {
@@ -379,11 +456,11 @@ export class PxColorPickerComponent implements ControlValueAccessor, AfterViewIn
         // Limit the slider within the bounds of the canvas and store the position
         this.alphaSliderPosition = Math.max(0, Math.min(x, canvasWidth));
         this.alpha = this.alphaSliderPosition / canvasWidth;
-        this.pickColor(this.lastColorTargetPos.x, this.lastColorTargetPos.y);
+        this.pickColor(this.colorPickerCanvasPos.x, this.colorPickerCanvasPos.y);
     }
 
     private getHueSliderPositionByColor(color: PxColorFormatRGBA): number {
-        const hue = calculateHue(color);
+        const hue = calculateHue(color.r / 255, color.g / 255, color.b / 255);
         this.hue = hue;
         return (hue / 360) * this.hueSliderCanvasSize.width;
     }
@@ -392,7 +469,8 @@ export class PxColorPickerComponent implements ControlValueAccessor, AfterViewIn
         if (this.onColorPickedTimeout) {
             clearTimeout(this.onColorPickedTimeout);
         }
-        this.componentDestroyed.next();
-        this.componentDestroyed.complete();
+
+        this.removeBoundEvents$.next();
+        this.removeBoundEvents$.complete();
     }
 }
