@@ -22,7 +22,7 @@ import {
     PxTableDataResponse,
     PxTableRenderComponentData,
     PxTableRow,
-    PxTableSortedColum
+    PxTableSortedColumn
 } from "./px-table";
 import {AsyncPipe, NgClass, NgComponentOutlet, NgForOf, NgIf, NgTemplateOutlet} from "@angular/common";
 import {PxTableRenderPipePipe} from "./px-table-render.pipe";
@@ -217,7 +217,7 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
     protected displayedColumns: string[] = [];
     protected records: PxTableRow[] = [];
     protected totalRecords = 0;
-    protected pageIndex: number = 0;
+    protected firstRowIndex: number = 0;
     protected isDataSrcStatic = true;
     protected isLoading = false;
 
@@ -250,7 +250,7 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
     ngOnChanges(changes: SimpleChanges) {
         if (changes['columns'] && !changes['columns'].firstChange) {
             this.prepareDisplayedColumns();
-            this.changeDetector.markForCheck();
+            this.changeDetector.detectChanges();
         }
 
         if (changes['dataSource'] && !changes['dataSource'].firstChange) {
@@ -268,7 +268,7 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         if (resetPage) {
-            this.pageIndex = 0;
+            this.firstRowIndex = 0;
         }
         this.onLazyLoad(this.lastLazyLoadEventData);
     }
@@ -286,7 +286,7 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
 
         column.visible = typeof visible === 'undefined' ? !column.visible : visible;
         this.prepareDisplayedColumns();
-        this.changeDetector.markForCheck();
+        this.changeDetector.detectChanges();
     }
 
     /**
@@ -305,7 +305,7 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         this.prepareDisplayedColumns();
-        this.changeDetector.markForCheck();
+        this.changeDetector.detectChanges();
     }
 
     protected onLazyLoad($event: TableLazyLoadEvent) {
@@ -313,19 +313,17 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
         if (this.isDataSrcStatic) {
             this.records = dataSource as PxTableRow[];
             this.totalRecords = dataSource.length;
-            this.changeDetector.markForCheck();
+            this.changeDetector.detectChanges();
         } else {
+            if(this.lastLazyLoadEventData.first === $event.first) {
+                return;
+            }
+
             this.isLoading = true;
-            this.changeDetector.markForCheck();
+            this.changeDetector.detectChanges();
+            this.lastLazyLoadEventData = $event;
 
-            this.lastLazyLoadEventData = {
-                multiSortMeta: $event.multiSortMeta,
-                sortField: $event.sortField,
-                sortOrder: $event.sortOrder,
-                filters: $event.filters
-            };
-
-            const sortedColumns: PxTableSortedColum[] = [];
+            const sortedColumns: PxTableSortedColumn[] = [];
 
             if (this.sortMode === 'multiple') {
                 const multiSortColumns = $event.multiSortMeta;
@@ -348,15 +346,15 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
 
             this.dataSrcSub?.unsubscribe();
             this.dataSrcSub = (dataSource as Exclude<typeof this.dataSource, PxTableRow[]>)({
-                pageIndex: this.pageIndex,
-                pageLength: this.rowsPerPage,
+                firstRowIndex: $event.first || 0,
+                pageLength: $event.rows || 1,
                 sortedColumns,
                 filters: this.pxFilters ? (this.pxFilters instanceof FormGroup ? this.pxFilters.value || {} : this.filters || {}) : $event.filters
             }).subscribe(response => {
                 this.records = response.records;
                 this.totalRecords = response.totalRecords;
                 this.isLoading = false;
-                this.changeDetector.markForCheck();
+                this.changeDetector.detectChanges();
             });
         }
     }

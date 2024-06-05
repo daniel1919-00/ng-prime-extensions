@@ -10,7 +10,12 @@ import {
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 import {timeoutAsync} from "./shared";
-import {PxTableDataResponse, PxTableRow, PxTableSortedColum} from "../../projects/px-table/src/lib/px-table";
+import {
+    PxTableDataRequestInfo,
+    PxTableDataResponse,
+    PxTableRow,
+    PxTableSortedColumn
+} from "../../projects/px-table/src/lib/px-table";
 
 const UPLOAD_SPEED_BYTES = 100 * 1024;
 
@@ -31,16 +36,15 @@ export class BackendInterceptor implements HttpInterceptor {
     }
 
     private getTableResponse(request: HttpRequest<any>) {
-        let pageIndex: number, pageLen: number, sortCol: string, sortDir: string;
-        const requestBody = request.body;
-        pageIndex = requestBody.pageIndex;
-        pageLen = requestBody.pageLen;
-        const sortedCol: PxTableSortedColum = requestBody.sortedColumns ? requestBody.sortedColumns[0] : {};
+        let pageLen: number, sortCol: string, sortDir: string;
+        const requestBody: PxTableDataRequestInfo = request.body;
+        pageLen = requestBody.pageLength;
+        const sortedCol: PxTableSortedColumn = requestBody.sortedColumns ? requestBody.sortedColumns[0] : {columnId: '', order: 0};
         sortCol = sortedCol.columnId;
         sortDir = sortedCol.order ? (sortedCol.order > 0 ? 'asc' : 'desc') : '';
         const data: PxTableRow[] = [];
         const maxResults = 100;
-        let startRow = pageIndex * pageLen;
+        let startRow = requestBody.firstRowIndex;
         let endRow = startRow + pageLen;
         if (endRow > maxResults) {
             endRow = maxResults;

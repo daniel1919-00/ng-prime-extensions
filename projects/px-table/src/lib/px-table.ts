@@ -70,7 +70,7 @@ export interface PxTableColumnVisibility {
     visible?: boolean;
 }
 
-export interface PxTableSortedColum {
+export interface PxTableSortedColumn {
     columnId: string;
     /**
      * Sort order. 1 - Ascending / -1 - Descending
@@ -81,8 +81,8 @@ export interface PxTableSortedColum {
 export const PX_TABLE_RENDER_COMPONENT_DATA = new InjectionToken<PxTableRenderComponentData>('PX_TABLE_RENDER_COMPONENT_DATA');
 
 export interface PxTableDataRequestInfo {
-    pageIndex: number;
+    firstRowIndex: number;
     pageLength: number;
-    sortedColumns: PxTableSortedColum[];
+    sortedColumns: PxTableSortedColumn[];
     filters: { [filter: string]: any } | { [p: string]: FilterMetadata | FilterMetadata[] | undefined };
 }

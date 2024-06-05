@@ -150,12 +150,7 @@ export class PxTableDocsComponent implements OnDestroy {
     };
 
     tableServerSideDataSrc = (requestInfo: PxTableDataRequestInfo) => {
-        return this.http.post<PxTableDataResponse>('https://localhost/table', {
-            pageIndex: requestInfo.pageIndex,
-            pageLen: requestInfo.pageLength,
-            sortedColumns: requestInfo.sortedColumns,
-            filters: requestInfo.filters
-        });
+        return this.http.post<PxTableDataResponse>('https://localhost/table', requestInfo);
     };
 
     rowContextMenuIsVisibleFn = (row: any) => {
