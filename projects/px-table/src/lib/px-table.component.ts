@@ -315,10 +315,6 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
             this.totalRecords = dataSource.length;
             this.changeDetector.detectChanges();
         } else {
-            if(this.lastLazyLoadEventData.first === $event.first) {
-                return;
-            }
-
             this.isLoading = true;
             this.changeDetector.detectChanges();
             this.lastLazyLoadEventData = $event;
