@@ -86,7 +86,7 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
      * Selected row in single mode or an array of values in multiple mode.
      */
     @Input() selection?: any[];
-    /**
+    /**selectionMode
      * Callback to invoke on selection changed.
      */
     @Output() selectionChange = new EventEmitter();

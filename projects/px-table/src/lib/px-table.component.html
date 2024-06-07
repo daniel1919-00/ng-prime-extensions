@@ -38,6 +38,9 @@
 >
     <ng-template pTemplate="header" let-columns>
         <tr>
+            <th *ngIf="selectionMode" style="width: 4rem">
+                <p-tableHeaderCheckbox *ngIf="selectionMode === 'multiple'" />
+            </th>
             <ng-container *ngFor="let column of columns; trackBy: identifyColumn">
                 <th *ngIf="displayedColumns.includes(column.id)"
                     [pSortableColumn]="column.sortable ? column.id : undefined"
@@ -55,6 +58,11 @@
     <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr [pContextMenuRow]="rowData"
             [pContextMenuRowDisabled]="!rowContextMenuItems || (rowContextMenuToggleBy && rowContextMenuToggleBy !== 'rightClick') || (rowContextMenuIsActiveFn && !rowContextMenuIsActiveFn(rowData))">
+            <td *ngIf="selectionMode">
+                <p-tableCheckbox *ngIf="selectionMode === 'multiple'" [value]="rowData" />
+                <p-tableRadioButton *ngIf="selectionMode === 'single'" [value]="rowData" />
+            </td>
+
             <ng-container *ngFor="let column of columns; trackBy: identifyColumn">
                 <td *ngIf="displayedColumns.includes(column.id)" [ngClass]="column.classes">
                     <span *ngIf="responsiveLayout === 'stack'" class="p-column-title">{{ column.name }}</span>

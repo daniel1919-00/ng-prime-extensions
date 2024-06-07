@@ -10,7 +10,7 @@ import {
     PxTableColumnDefinition, PxTableColumnVisibility, PxTableDataRequestInfo, PxTableDataResponse,
     PxTableRenderComponentData, PxTableRow
 } from "../../../../projects/px-table/src/lib/px-table";
-import {DatePipe, JsonPipe} from "@angular/common";
+import {DatePipe, JsonPipe, NgIf} from "@angular/common";
 import {Subject, takeUntil} from "rxjs";
 import {MultiSelectModule} from "primeng/multiselect";
 import {FloatLabelModule} from "primeng/floatlabel";
@@ -50,7 +50,8 @@ class MyColumnRenderer {
         DropdownModule,
         HttpClientModule,
         TieredMenuModule,
-        JsonPipe
+        JsonPipe,
+        NgIf
     ],
     providers: [
         DatePipe
@@ -140,6 +141,8 @@ export class PxTableDocsComponent implements OnDestroy {
         }
     ];
 
+    protected selectedRows?: any[];
+
     dynamicContextMenuItems: ((rowData: PxTableRow) => MenuItem[]) = (rowData: PxTableRow) =>
     {
         return [
@@ -180,7 +183,8 @@ export class PxTableDocsComponent implements OnDestroy {
                 rowContextMenuToggleBy: [0],
                 dynamicContextMenuItems: ['0'],
                 responsiveLayout: ['scroll'],
-                loadingIconTemplateRef: ['0']
+                loadingIconTemplateRef: ['0'],
+                selectionMode: [0]
             })
         });
 
