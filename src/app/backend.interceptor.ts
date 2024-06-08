@@ -58,9 +58,9 @@ export class BackendInterceptor implements HttpInterceptor {
                 column2: i + 2,
                 column3: date.toUTCString(),
                 column4: i + 4,
+                pxDisableSelection: i % 2 === 0
             });
         }
-
         if (sortCol !== '') {
 
             let sortOrderAHigher = 1;

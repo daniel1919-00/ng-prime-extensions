@@ -78,10 +78,16 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
      * Array of integer values to display inside rows per page dropdown of paginator.
      */
     @Input() rowsPerPageOptions: number[] = [5, 10, 20, 30, 40, 50];
+    @Input() stripedRows: boolean = false;
     /**
      * Specifies the selection mode, valid values are "single" and "multiple".
      */
     @Input() selectionMode?: null | 'single' | 'multiple';
+    @Input() selectAllCheckbox?: boolean = false;
+    /**
+     * When enabled with paginator and checkbox selection mode, the select all checkbox in the header will select all rows on the current page.
+     */
+    @Input() selectionPageOnly?: boolean;
     /**
      * Selected row in single mode or an array of values in multiple mode.
      */
@@ -233,6 +239,10 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     ngOnInit() {
+        if(this.stripedRows) {
+            this.styleClass += ' p-datatable-striped';
+        }
+
         if (this.pxFilters) {
             this.filters = {};
             delete this.globalFilterFields;
@@ -250,6 +260,10 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
     ngOnChanges(changes: SimpleChanges) {
         if (changes['columns'] && !changes['columns'].firstChange) {
             this.prepareDisplayedColumns();
+            this.changeDetector.detectChanges();
+        }
+
+        if(changes['selectAllCheckbox'] && !changes['selectAllCheckbox'].firstChange) {
             this.changeDetector.detectChanges();
         }
 

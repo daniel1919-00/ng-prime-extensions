@@ -184,7 +184,9 @@ export class PxTableDocsComponent implements OnDestroy {
                 dynamicContextMenuItems: ['0'],
                 responsiveLayout: ['scroll'],
                 loadingIconTemplateRef: ['0'],
-                selectionMode: [0]
+                selectionMode: [0],
+                stripedRows: ['0'],
+                selectAllCheckbox: ['0'],
             })
         });
 
@@ -229,12 +231,16 @@ export class PxTableDocsComponent implements OnDestroy {
             .pipe(takeUntil(this.componentDestroyed$))
             .subscribe(() => this.table.refresh(false)));
 
-        this.form.get(['config', 'responsiveLayout'])?.valueChanges
+
+        [
+            'responsiveLayout',
+            'stripedRows'
+        ].forEach(formControl => this.form.get(['config', formControl])?.valueChanges
             .pipe(takeUntil(this.componentDestroyed$))
             .subscribe(() => {
                 this.storeFilters();
                 this.appService.reloadCurrentRoute();
-            })
+            }));
 
         this.form.valueChanges.pipe(takeUntil(this.componentDestroyed$)).subscribe(() => this.storeFilters());
     }

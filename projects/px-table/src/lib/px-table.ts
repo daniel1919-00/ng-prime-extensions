@@ -40,6 +40,11 @@ export interface PxTableColumnDefinition {
 
 export interface PxTableRow {
     [columnId: string]: any;
+
+    /**
+     * Whether this row is selectable
+     */
+    pxDisableSelection?: boolean;
 }
 
 export interface PxTableRenderComponentData {

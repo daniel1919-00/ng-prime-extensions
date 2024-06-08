@@ -25,6 +25,7 @@
     [stateKey]="stateKey"
     [tableStyle]="tableStyle"
     [tableStyleClass]="tableStyleClass"
+    [selectionPageOnly]="selectionPageOnly"
     [filters]="filters"
     [globalFilterFields]="globalFilterFields"
     [contextMenu]="contextMenuRef"
@@ -39,7 +40,7 @@
     <ng-template pTemplate="header" let-columns>
         <tr>
             <th *ngIf="selectionMode" style="width: 4rem">
-                <p-tableHeaderCheckbox *ngIf="selectionMode === 'multiple'" />
+                <p-tableHeaderCheckbox *ngIf="selectAllCheckbox && selectionMode === 'multiple'" />
             </th>
             <ng-container *ngFor="let column of columns; trackBy: identifyColumn">
                 <th *ngIf="displayedColumns.includes(column.id)"
@@ -59,8 +60,8 @@
         <tr [pContextMenuRow]="rowData"
             [pContextMenuRowDisabled]="!rowContextMenuItems || (rowContextMenuToggleBy && rowContextMenuToggleBy !== 'rightClick') || (rowContextMenuIsActiveFn && !rowContextMenuIsActiveFn(rowData))">
             <td *ngIf="selectionMode">
-                <p-tableCheckbox *ngIf="selectionMode === 'multiple'" [value]="rowData" />
-                <p-tableRadioButton *ngIf="selectionMode === 'single'" [value]="rowData" />
+                <p-tableCheckbox *ngIf="selectionMode === 'multiple'" [value]="rowData" [disabled]="rowData.pxDisableSelection" />
+                <p-tableRadioButton *ngIf="selectionMode === 'single'" [value]="rowData" [disabled]="rowData.pxDisableSelection" />
             </td>
 
             <ng-container *ngFor="let column of columns; trackBy: identifyColumn">
