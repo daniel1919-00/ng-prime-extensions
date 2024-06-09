@@ -108,7 +108,7 @@
 </ng-template>
 
 <ng-template #cellRenderPipeTemplate let-column="column" let-rowData="rowData">
-    {{ rowData[column.id] | pxTableRenderPipe: column.renderUsing.pipe : column.renderUsing.pipeArguments || [] }}
+    {{ rowData[column.id] | pxTableRenderPipe: column.renderUsing.pipe : column.renderUsing.arguments || [] }}
 </ng-template>
 
 <ng-template #defaultLoadingIconRef>
