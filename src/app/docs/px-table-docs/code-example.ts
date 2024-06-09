@@ -66,6 +66,30 @@ export const pxTableCodeExample: CodeExample = {
                         formControlName="loadingIconTemplateRef"></p-dropdown>
             <label for="[loadingIconTemplateRef]">[loadingIconTemplateRef]</label>
         </p-floatLabel>
+
+        <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+            <p-dropdown [style]="{'width': '100%'}" inputId="[selectionMode]"
+                        [options]="[{value: 0, desc: 'Disabled'}, {value: 'single', desc: 'Single'}, {value: 'multiple', desc: 'Multiple'}]"
+                        optionLabel="desc" optionValue="value"
+                        formControlName="selectionMode"></p-dropdown>
+            <label for="[selectionMode]">[selectionMode]</label>
+        </p-floatLabel>
+
+        <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+            <p-dropdown [style]="{'width': '100%'}" inputId="[stripedRows]"
+                        [options]="[{value: '1', desc: 'Enabled'}, {value: '0', desc: 'Disabled'}]"
+                        optionLabel="desc" optionValue="value"
+                        formControlName="stripedRows"></p-dropdown>
+            <label for="[stripedRows]">[stripedRows]</label>
+        </p-floatLabel>
+
+        <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+            <p-dropdown [style]="{'width': '100%'}" inputId="[selectAllCheckbox]"
+                        [options]="[{value: '1', desc: 'Enabled'}, {value: '0', desc: 'Disabled'}]"
+                        optionLabel="desc" optionValue="value"
+                        formControlName="selectAllCheckbox"></p-dropdown>
+            <label for="[selectAllCheckbox]">[selectAllCheckbox]</label>
+        </p-floatLabel>
     </section>
 </form>
 <br>
@@ -74,7 +98,11 @@ export const pxTableCodeExample: CodeExample = {
     #table
     [columns]="tableColumns"
     [rowsPerPage]="5"
+    [(selection)]="selectedRows"
+    [selectionMode]="this.form.get(['config', 'selectionMode'])?.value !== 0 ? this.form.get(['config', 'selectionMode'])?.value : undefined"
     [loadingIconTemplateRef]="this.form.get(['config', 'loadingIconTemplateRef'])?.value === '1' ? customLoadingIcon : undefined"
+    [stripedRows]="this.form.get(['config', 'stripedRows'])?.value === '1'"
+    [selectAllCheckbox]="this.form.get(['config', 'selectAllCheckbox'])?.value === '1'"
     [responsiveLayout]="form.get(['config', 'responsiveLayout'])?.value || 'scroll'"
     [dataSource]="form.get(['config', 'dataSource'])?.value === 'static' ? tableStaticDataSrc : (form.get(['config', 'dataSource'])?.value === 'server' ? tableServerSideDataSrc : [])"
     [rowContextMenuItems]="this.form.get(['config', 'rowContextMenuItems'])?.value === '1' ? contextualMenuItems : undefined"
@@ -138,7 +166,8 @@ class MyColumnRenderer {
         DropdownModule,
         HttpClientModule,
         TieredMenuModule,
-        JsonPipe
+        JsonPipe,
+        NgIf
     ],
     providers: [
         DatePipe
@@ -271,7 +300,10 @@ export class PxTableDocsComponent implements OnDestroy {
                 rowContextMenuToggleBy: [0],
                 dynamicContextMenuItems: ['0'],
                 responsiveLayout: ['scroll'],
-                loadingIconTemplateRef: ['0']
+                loadingIconTemplateRef: ['0'],
+                selectionMode: [0],
+                stripedRows: ['0'],
+                selectAllCheckbox: ['0'],
             })
         });
 
@@ -310,17 +342,22 @@ export class PxTableDocsComponent implements OnDestroy {
 
         [
             'rowContextMenuItems',
-            'rowContextMenuIsVisibleFn'
+            'rowContextMenuIsVisibleFn',
+            'loadingIconTemplateRef'
         ].forEach(formControl => this.form.get(['config', formControl])?.valueChanges
             .pipe(takeUntil(this.componentDestroyed$))
             .subscribe(() => this.table.refresh(false)));
 
-        this.form.get(['config', 'responsiveLayout'])?.valueChanges
+
+        [
+            'responsiveLayout',
+            'stripedRows'
+        ].forEach(formControl => this.form.get(['config', formControl])?.valueChanges
             .pipe(takeUntil(this.componentDestroyed$))
             .subscribe(() => {
                 this.storeFilters();
                 this.appService.reloadCurrentRoute();
-            })
+            }));
 
         this.form.valueChanges.pipe(takeUntil(this.componentDestroyed$)).subscribe(() => this.storeFilters());
     }

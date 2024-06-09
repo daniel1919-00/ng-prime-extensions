@@ -80,9 +80,12 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
     @Input() rowsPerPageOptions: number[] = [5, 10, 20, 30, 40, 50];
     @Input() stripedRows: boolean = false;
     /**
-     * Specifies the selection mode, valid values are "single" and "multiple".
+     * Specifies the selection mode, valid values are "single" and "multiple". Passing null/undefined will disable row selection.
      */
     @Input() selectionMode?: null | 'single' | 'multiple';
+    /**
+     * Whether to display the "select all" header checkbox.
+     */
     @Input() selectAllCheckbox?: boolean = false;
     /**
      * When enabled with paginator and checkbox selection mode, the select all checkbox in the header will select all rows on the current page.
@@ -92,10 +95,6 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
      * Selected row in single mode or an array of values in multiple mode.
      */
     @Input() selection?: any[];
-    /**selectionMode
-     * Callback to invoke on selection changed.
-     */
-    @Output() selectionChange = new EventEmitter();
     /**
      * Selected row with a context menu.
      */
@@ -211,6 +210,11 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
      * Function that determines when the contextual menu is active for a particular row.
      */
     @Input() rowContextMenuIsActiveFn?: (row: PxTableRow) => boolean;
+
+    /**
+     * Callback to invoke on selection changed.
+     */
+    @Output() selectionChange = new EventEmitter();
     /**
      * Callback to invoke when a row is selected.
      */
@@ -232,9 +236,9 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
     private dataSrcSub?: Subscription;
 
     constructor(
+        protected primeNGConfig: PrimeNGConfig,
         private injector: Injector,
         private changeDetector: ChangeDetectorRef,
-        protected primeNGConfig: PrimeNGConfig
     ) {
     }
 
