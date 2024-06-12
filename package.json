@@ -9,7 +9,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "deploy-docs": "ng build --base-href /ng-prime-extensions/ && npx angular-cli-ghpages docs --dir=dist/ng-prime-extensions/browser --base-href=https://github.com/daniel1919-00/ng-prime-extensions",
-    "upgradeAngular": "ng cache clean && ng update @angular-eslint/schematics @angular/cdk @angular/cli @angular/core && npm install && npm update --save",
+    "upgradeAngular": "ng cache clean && ng update @angular-eslint/schematics @angular/cli @angular/core && npm install && npm update --save",
     "lint": "ng lint"
   },
   "private": true,
