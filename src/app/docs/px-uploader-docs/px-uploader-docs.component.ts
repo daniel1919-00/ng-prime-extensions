@@ -5,7 +5,6 @@ import {pxUploaderCodeExample} from "./code-example";
 import {FormGroup, ReactiveFormsModule, UntypedFormBuilder} from "@angular/forms";
 import {PxUploaderComponent} from "../../../../projects/px-uploader/src/lib/px-uploader.component";
 import {PxEndpointConfig} from "../../../../projects/px-uploader/src/lib/px-uploader";
-import {HttpClientModule} from "@angular/common/http";
 import {DropdownModule} from "primeng/dropdown";
 import {FloatLabelModule} from "primeng/floatlabel";
 import {Subject, takeUntil} from "rxjs";
@@ -19,7 +18,6 @@ import {InputTextModule} from "primeng/inputtext";
         CodeExampleComponent,
         ReactiveFormsModule,
         PxUploaderComponent,
-        HttpClientModule,
         DropdownModule,
         FloatLabelModule,
         InputTextModule

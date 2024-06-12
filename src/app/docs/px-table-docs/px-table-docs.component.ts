@@ -15,7 +15,7 @@ import {Subject, takeUntil} from "rxjs";
 import {MultiSelectModule} from "primeng/multiselect";
 import {FloatLabelModule} from "primeng/floatlabel";
 import {DropdownModule} from "primeng/dropdown";
-import {HttpClient, HttpClientModule} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {TieredMenuModule} from "primeng/tieredmenu";
 import {MenuItem} from "primeng/api";
 import {AppService} from "../../services/app.service";
@@ -48,7 +48,6 @@ class MyColumnRenderer {
         MultiSelectModule,
         FloatLabelModule,
         DropdownModule,
-        HttpClientModule,
         TieredMenuModule,
         JsonPipe,
         NgIf

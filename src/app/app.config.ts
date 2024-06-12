@@ -4,12 +4,17 @@ import {provideRouter} from '@angular/router';
 import {routes} from './app.routes';
 import {provideAnimations} from "@angular/platform-browser/animations";
 import {HIGHLIGHT_OPTIONS} from "ngx-highlightjs";
-import {HTTP_INTERCEPTORS} from "@angular/common/http";
+import {
+    HTTP_INTERCEPTORS,
+    provideHttpClient,
+    withInterceptorsFromDi
+} from "@angular/common/http";
 import {BackendInterceptor} from "./backend.interceptor";
 
 export const appConfig: ApplicationConfig = {
     providers: [
         provideRouter(routes),
+        provideHttpClient(withInterceptorsFromDi()),
         provideAnimations(),
         {
             provide: HIGHLIGHT_OPTIONS,

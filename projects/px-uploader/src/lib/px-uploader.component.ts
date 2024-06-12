@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import {PX_UPLOADER_INTL, PxEndpointConfig, PxFile, PxImageSize, PxUploaderIcons, PxUploaderIntl} from "./px-uploader";
 import {catchError, of} from "rxjs";
-import {HttpClient, HttpEventType} from "@angular/common/http";
+import { HttpClient, HttpEventType } from "@angular/common/http";
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {PxFileSizePipe} from "./px-uploader-file-size.pipe";
 import {NgClass, NgForOf, NgIf, NgTemplateOutlet} from "@angular/common";
