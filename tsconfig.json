@@ -18,6 +18,9 @@
       "px-color-picker": [
         "./dist/px-color-picker"
       ],
+      "px-searchable-accordion": [
+        "./dist/px-searchable-accordion"
+      ],
       "px-table": [
         "./dist/px-table"
       ],
