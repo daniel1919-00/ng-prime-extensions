@@ -19,15 +19,15 @@
     <div *ngIf="code" class="code-source">
         <p-tabView (activeIndexChange)="currentOpenTab = $event">
             <p-tabPanel *ngIf="code.html" header="HTML">
-                <pre><code [highlight]="code.html" [languages]="['xml']"></code></pre>
+                <pre><code [highlight]="code.html" language="xml"></code></pre>
             </p-tabPanel>
 
             <p-tabPanel *ngIf="code.ts" header="TS">
-                <pre><code [highlight]="code.ts" [languages]="['typescript']"></code></pre>
+                <pre><code [highlight]="code.ts" language="typescript"></code></pre>
             </p-tabPanel>
 
             <p-tabPanel *ngIf="code.styles" header="STYLES">
-                <pre><code [highlight]="code.styles" [languages]="['scss', 'css']"></code></pre>
+                <pre><code [highlightAuto]="code.styles" [languages]="['scss', 'css']"></code></pre>
             </p-tabPanel>
         </p-tabView>
     </div>
