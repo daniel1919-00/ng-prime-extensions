@@ -1,0 +1,85 @@
+<app-library-documentation header="px-table" [hiddenSections]="['docIntl', 'docStyling']">
+    <span docDescription class="primary-color">
+        <a href="https://primeng.org" target="_blank">PrimeNG-based</a> library used to create searchable accordions.
+    </span>
+
+    <div docOverview>
+        <app-code-example [code]="pxSearchableAccordionCodeExample">
+            <h2>Configuration</h2>
+            <form [formGroup]="form">
+                <section formGroupName="config" class="dm:grid dm:align-items-center">
+                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                    </p-floatLabel>
+                </section>
+            </form>
+            <br>
+            <br>
+            <div class="dm:grid dm:align-items-center dm:justify-content-center">
+                <input class="dm:col search-input" pInputText (input)="search$.next(($any($event.target).value || '').trim())" placeholder="Search"/>
+            </div>
+            <br>
+            <h2>Default accordion template</h2>
+               <px-searchable-accordion [entries]="entries" [searchString]="search$">
+
+               </px-searchable-accordion>
+<br><br>
+            <h2>Custom accordion template</h2>
+               <px-searchable-accordion [entries]="entries" [headerTemplate]="customHeaderTemplate" [contentTemplate]="customContentTemplate" [searchString]="search$">
+                   <ng-template #customHeaderTemplate let-entry>
+                        <div class="dm:grid dm:col-12 dm:justify-content-between dm:align-content-center">
+                            <span class="dm:col">
+                                Custom Header for:&nbsp; <span [innerHTML]="entry.header"></span>
+                                &nbsp;
+                                <i class="pi pi-heart"></i>
+                            </span>
+                            <p-badge class="dm:col-fixed" value="1" />
+                        </div>
+                   </ng-template>
+                   <ng-template #customContentTemplate let-entry>
+                       <span [innerHTML]="entry.description"></span>
+                       &nbsp;
+                       <i class="pi pi-heart"></i>
+                   </ng-template>
+               </px-searchable-accordion>
+        </app-code-example>
+    </div>
+
+    <div docApi>
+        <div class="entry-group">
+            <h2 class="title">Imports</h2>
+            <div class="entry">
+                <pre><code class="dm:quote code">import &#123; PxSearchableAccordionComponent &#125; from '&#64;ng-prime-extensions/px-searchable-accordion';</code></pre>
+            </div>
+        </div>
+
+        <div class="entry-group">
+            <h2 class="title">Inputs</h2>
+
+            <div class="entry">
+                <h3>dataSource</h3>
+                <p>The data source from which rows are fetched.</p>
+                <p>Can be a static array of rows or a function that takes in info about the data request (like the current page index, the sorted columns, etc.) and returns an observable which will emit the information required by the table.</p>
+            </div>
+
+        </div>
+
+        <div class="entry-group">
+            <h2 class="title">Outputs</h2>
+            <div class="entry">
+                <h3>onRowSelect</h3>
+                <p>Callback to invoke when a row is selected.</p>
+            </div>
+
+        </div>
+
+        <div class="entry-group">
+            <h2 class="title">Public methods</h2>
+
+            <div class="entry">
+                <h3>refresh</h3>
+                <p>Re-fetch table data.</p>
+            </div>
+
+        </div>
+    </div>
+</app-library-documentation>

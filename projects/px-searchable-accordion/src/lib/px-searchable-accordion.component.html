@@ -1,0 +1,17 @@
+<p-accordion>
+    <p-accordionTab *ngFor="let entry of filteredEntries | async" [selected]="!!entry.expanded">
+        <ng-template pTemplate="header">
+            <ng-container *ngTemplateOutlet="headerTemplate ? headerTemplate : defaultHeader; context: { $implicit: entry }"></ng-container>
+        </ng-template>
+        <ng-template pTemplate="content">
+            <ng-container *ngTemplateOutlet="contentTemplate ? contentTemplate : defaultContent; context: { $implicit: entry }"></ng-container>
+        </ng-template>
+    </p-accordionTab>
+</p-accordion>
+
+<ng-template #defaultHeader let-entry>
+    <span [innerHTML]="entry.header"></span>
+</ng-template>
+<ng-template #defaultContent let-entry>
+    <p [innerHTML]="entry.description"></p>
+</ng-template>
