@@ -5,26 +5,18 @@
 
     <div docOverview>
         <app-code-example [code]="pxSearchableAccordionCodeExample">
-            <h2>Configuration</h2>
-            <form [formGroup]="form">
-                <section formGroupName="config" class="dm:grid dm:align-items-center">
-                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
-                    </p-floatLabel>
-                </section>
-            </form>
-            <br>
-            <br>
             <div class="dm:grid dm:align-items-center dm:justify-content-center">
                 <input class="dm:col search-input" pInputText (input)="search$.next(($any($event.target).value || '').trim())" placeholder="Search"/>
             </div>
             <br>
             <h2>Default accordion template</h2>
+
                <px-searchable-accordion [entries]="entries" [searchString]="search$">
 
                </px-searchable-accordion>
 <br><br>
             <h2>Custom accordion template</h2>
-               <px-searchable-accordion [entries]="entries" [headerTemplate]="customHeaderTemplate" [contentTemplate]="customContentTemplate" [searchString]="search$">
+               <px-searchable-accordion [entries]="entriesWithCustomTemplates" [headerTemplate]="customHeaderTemplate" [contentTemplate]="customContentTemplate" [searchString]="search$">
                    <ng-template #customHeaderTemplate let-entry>
                         <div class="dm:grid dm:col-12 dm:justify-content-between dm:align-content-center">
                             <span class="dm:col">
@@ -36,7 +28,7 @@
                         </div>
                    </ng-template>
                    <ng-template #customContentTemplate let-entry>
-                       <span [innerHTML]="entry.description"></span>
+                       <span [innerHTML]="entry.content"></span>
                        &nbsp;
                        <i class="pi pi-heart"></i>
                    </ng-template>
@@ -56,28 +48,57 @@
             <h2 class="title">Inputs</h2>
 
             <div class="entry">
-                <h3>dataSource</h3>
-                <p>The data source from which rows are fetched.</p>
-                <p>Can be a static array of rows or a function that takes in info about the data request (like the current page index, the sorted columns, etc.) and returns an observable which will emit the information required by the table.</p>
+                <h3>entries</h3>
+                <p>Accordion entries to be rendered.</p>
             </div>
 
-        </div>
-
-        <div class="entry-group">
-            <h2 class="title">Outputs</h2>
             <div class="entry">
-                <h3>onRowSelect</h3>
-                <p>Callback to invoke when a row is selected.</p>
+                <h3>searchString</h3>
+                <p>A search string or an observable that emits the search string.</p>
             </div>
 
+            <div class="entry">
+                <h3>headerTemplate</h3>
+                <p>Template to render the header with.</p>
+            </div>
+
+            <div class="entry">
+                <h3>contentTemplate</h3>
+                <p>Template to render the content with.</p>
+            </div>
+
+            <div class="entry">
+                <h3>noResultsTemplate</h3>
+                <p>Template to render the no results message.</p>
+            </div>
+
+            <div class="entry">
+                <h3>searchDebounceTime</h3>
+                <p>Search delay time in milliseconds.</p>
+            </div>
+
+            <div class="entry">
+                <h3>highlightWords</h3>
+                <p>Weather searched words will be highlighted.</p>
+            </div>
+
+            <div class="entry">
+                <h3>highlightClass</h3>
+                <p>The css class applied to the highlighted words.</p>
+            </div>
+
+            <div class="entry">
+                <h3>allowUrlFragments</h3>
+                <p>If true, url fragments will be generated based on the set entry id.</p>
+            </div>
         </div>
 
         <div class="entry-group">
             <h2 class="title">Public methods</h2>
 
             <div class="entry">
-                <h3>refresh</h3>
-                <p>Re-fetch table data.</p>
+                <h3>search</h3>
+                <p>Searches the available entries for the given search string.</p>
             </div>
 
         </div>

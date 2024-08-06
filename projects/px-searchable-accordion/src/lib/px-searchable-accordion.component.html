@@ -1,5 +1,8 @@
-<p-accordion>
-    <p-accordionTab *ngFor="let entry of filteredEntries | async" [selected]="!!entry.expanded">
+<p-accordion [activeIndex]="activeEntryIndex" (activeIndexChange)="activeIndexChanged($event)">
+    <p *ngIf="!(filteredEntries | async)?.length">
+        <ng-container *ngTemplateOutlet="noResultsTemplate ? noResultsTemplate : defaultNoResultsTemplate"></ng-container>
+    </p>
+    <p-accordionTab *ngFor="let entry of filteredEntries | async" [selected]="!!entry.expanded" [attr.id]="entry.id">
         <ng-template pTemplate="header">
             <ng-container *ngTemplateOutlet="headerTemplate ? headerTemplate : defaultHeader; context: { $implicit: entry }"></ng-container>
         </ng-template>
@@ -13,5 +16,8 @@
     <span [innerHTML]="entry.header"></span>
 </ng-template>
 <ng-template #defaultContent let-entry>
-    <p [innerHTML]="entry.description"></p>
+    <p [innerHTML]="entry.content"></p>
+</ng-template>
+<ng-template #defaultNoResultsTemplate>
+    No entries found
 </ng-template>
