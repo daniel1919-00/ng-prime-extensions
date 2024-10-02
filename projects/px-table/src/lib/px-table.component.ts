@@ -108,6 +108,10 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
      */
     @Input() responsiveLayout: 'stack' | 'scroll' = 'scroll';
     /**
+     * The breakpoint to define the maximum width boundary when using stack responsive layout.
+     */
+    @Input() breakpoint: string = '960px';
+    /**
      * Own implementation of table filters to pass along to the [dataSource].
      * [filters] and [globalFilterFields] inputs will be ignored if this is set.
      */
