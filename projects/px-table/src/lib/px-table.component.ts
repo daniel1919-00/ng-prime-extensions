@@ -357,15 +357,15 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
                 }
             } else {
                 sortedColumns.push({
-                    columnId: $event.sortField as string || '',
-                    order: $event.sortOrder || 0
+                    columnId: $event.sortField as string || this.sortColumnId || '',
+                    order: $event.sortOrder || this.sortDirection
                 });
             }
 
             this.dataSrcSub?.unsubscribe();
             this.dataSrcSub = (dataSource as Exclude<typeof this.dataSource, PxTableRow[]>)({
                 firstRowIndex: $event.first || 0,
-                pageLength: $event.rows || 1,
+                pageLength: $event.rows || this.rowsPerPage,
                 sortedColumns,
                 filters: this.pxFilters ? (this.pxFilters instanceof FormGroup ? this.pxFilters.value || {} : this.filters || {}) : $event.filters
             }).subscribe(response => {
