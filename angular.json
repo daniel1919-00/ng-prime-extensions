@@ -35,17 +35,7 @@
                             "src/assets"
                         ],
                         "styles": [
-                            "src/styles.scss",
-                            {
-                                "bundleName": "blue-light",
-                                "inject": false,
-                                "input": "src/themes/blue-light.scss"
-                            },
-                            {
-                                "bundleName": "blue-dark",
-                                "inject": false,
-                                "input": "src/themes/blue-dark.scss"
-                            }
+                            "src/styles.scss"
                         ],
                         "scripts": []
                     },

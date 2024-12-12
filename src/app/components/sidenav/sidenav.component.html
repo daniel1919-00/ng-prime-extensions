@@ -1,7 +1,11 @@
-<p-sidebar styleClass="_sidebar" [(visible)]="sidenavService.isSidenavVisible" [modal]="isMobileDevice"
-           [showCloseIcon]="isMobileDevice" position="left" [closeOnEscape]="isMobileDevice"
+<p-drawer styleClass="_sidebar" [(visible)]="sidenavService.isSidenavVisible" [modal]="isMobileDevice"
+           [closable]="isMobileDevice" position="left" [closeOnEscape]="isMobileDevice"
            [dismissible]="isMobileDevice">
-    <ng-template pTemplate="content">
-        <app-sidenav-menu-item *ngFor="let menuItem of menuItems" [item]="menuItem"></app-sidenav-menu-item>
+    <ng-template #headless>
+        <div class="dm:grid">
+            <div class="dm:col-12">
+                <app-sidenav-menu-item *ngFor="let menuItem of menuItems" [item]="menuItem"></app-sidenav-menu-item>
+            </div>
+        </div>
     </ng-template>
-</p-sidebar>
+</p-drawer>

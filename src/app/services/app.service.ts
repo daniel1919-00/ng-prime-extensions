@@ -65,7 +65,7 @@ export class AppService implements OnDestroy {
             const darkModeActive = appearance.darkModeState;
             this.darkModeActive = darkModeActive;
             this.hljsLoader.setTheme(darkModeActive ? 'assets/highlightjs/vs2015.css' : 'assets/highlightjs/xcode.css');
-            this.document.getElementById('dynamicStylesheet')?.setAttribute('href', this.theme + '-' + (darkModeActive ? 'dark' : 'light') + '.css');
+            this.document.documentElement.classList.toggle('app-dark-mode', darkModeActive)
         }
 
         localStorage.setItem('__savedAppearance', JSON.stringify({

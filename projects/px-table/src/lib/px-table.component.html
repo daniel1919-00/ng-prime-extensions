@@ -8,6 +8,7 @@
     [rows]="rowsPerPage"
     [rowsPerPageOptions]="rowsPerPageOptions"
     [(first)]="firstRowIndex"
+    [stripedRows]="stripedRows"
     [sortMode]="sortMode"
     [sortField]="sortColumnId"
     [sortOrder]="sortDirection"
@@ -40,50 +41,95 @@
 >
     <ng-template pTemplate="header" let-columns>
         <tr>
-            <th *ngIf="selectionMode" style="width: 4rem">
-                <p-tableHeaderCheckbox *ngIf="selectAllCheckbox && selectionMode === 'multiple'" />
-            </th>
-            <ng-container *ngFor="let column of columns; trackBy: identifyColumn">
-                <th *ngIf="displayedColumns.includes(column.id)"
-                    [pSortableColumn]="column.sortable ? column.id : undefined"
-                    [pSortableColumnDisabled]="!column.sortable"
-                    [ngClass]="column.classes"
-                >
-                    {{ column.name }}
-                    <p-sortIcon *ngIf="column.sortable" [field]="column.id"></p-sortIcon>
+            @if(selectionMode)
+            {
+                <th style="width: 4rem">
+                    @if(selectAllCheckbox && selectionMode === 'multiple')
+                    {
+                        <p-tableHeaderCheckbox />
+                    }
                 </th>
-            </ng-container>
-            <th *ngIf="rowContextMenuItems && (!rowContextMenuToggleBy || rowContextMenuToggleBy === 'button')">&nbsp;
-            </th>
+            }
+
+            @for(column of columns; track column.id)
+            {
+                @if(displayedColumns.includes(column.id))
+                {
+                    <th
+                        [pSortableColumn]="column.sortable ? column.id : undefined"
+                        [pSortableColumnDisabled]="!column.sortable"
+                        [ngClass]="column.classes"
+                    >
+                        {{ column.name }}
+
+                        @if(column.sortable)
+                        {
+                            <p-sortIcon [field]="column.id"></p-sortIcon>
+                        }
+                    </th>
+                }
+            }
+
+            @if(rowContextMenuItems && (!rowContextMenuToggleBy || rowContextMenuToggleBy === 'button'))
+            {
+                <th>
+                    &nbsp;
+                </th>
+            }
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr [pContextMenuRow]="rowData"
             [pContextMenuRowDisabled]="!rowContextMenuItems || (rowContextMenuToggleBy && rowContextMenuToggleBy !== 'rightClick') || (rowContextMenuIsActiveFn && !rowContextMenuIsActiveFn(rowData))">
-            <td *ngIf="selectionMode">
-                <p-tableCheckbox *ngIf="selectionMode === 'multiple'" [value]="rowData" [disabled]="rowData.pxDisableSelection" />
-                <p-tableRadioButton *ngIf="selectionMode === 'single'" [value]="rowData" [disabled]="rowData.pxDisableSelection" />
-            </td>
 
-            <ng-container *ngFor="let column of columns; trackBy: identifyColumn">
-                <td *ngIf="displayedColumns.includes(column.id)" [ngClass]="column.classes">
-                    <span *ngIf="responsiveLayout === 'stack'" class="p-column-title">{{ column.name }}</span>
-                    <ng-container
-                        [ngTemplateOutlet]="!column.renderUsing ? cellRenderDefaultTemplate : (column.renderUsing.component ? cellRenderComponentTemplate : cellRenderPipeTemplate)"
-                        [ngTemplateOutletContext]="{column, rowData}"
-                    ></ng-container>
+            @if(selectionMode)
+            {
+                <td>
+                    @if(selectionMode === 'multiple')
+                    {
+                        <p-tableCheckbox [value]="rowData" [disabled]="rowData.pxDisableSelection" />
+                    }
+
+                    @if(selectionMode === 'single')
+                    {
+                        <p-tableRadioButton [value]="rowData" [disabled]="rowData.pxDisableSelection" />
+                    }
                 </td>
-            </ng-container>
+            }
 
-            <td *ngIf="rowContextMenuItems && (!rowContextMenuToggleBy || rowContextMenuToggleBy === 'button') && (!rowContextMenuIsActiveFn || rowContextMenuIsActiveFn(rowData))"
-                class="px-table-context-menu-toggle-cell">
-                <span *ngIf="responsiveLayout === 'stack'" class="p-column-title">&nbsp;</span>
-                <span>
-                    <p-button [icon]="rowContextMenuToggleIcon" (click)="toggledContextMenu.toggle($event)"></p-button>
-                    <p-menu #toggledContextMenu [model]="rowContextMenuItems" [popup]="true" appendTo="body"
-                            (onShow)="onContextMenuSelectionChange(rowData, false); onContextMenuShown()"></p-menu>
-                </span>
-            </td>
+            @for(column of columns; track column.id)
+            {
+                @if(displayedColumns.includes(column.id))
+                {
+                    <td [ngClass]="column.classes">
+                        @if(responsiveLayout === 'stack')
+                        {
+                            <span class="p-column-title">{{ column.name }}</span>
+                        }
+
+                        <ng-container
+                            [ngTemplateOutlet]="!column.renderUsing ? cellRenderDefaultTemplate : (column.renderUsing.component ? cellRenderComponentTemplate : cellRenderPipeTemplate)"
+                            [ngTemplateOutletContext]="{column, rowData}"
+                        ></ng-container>
+                    </td>
+                }
+            }
+
+            @if(rowContextMenuItems && (!rowContextMenuToggleBy || rowContextMenuToggleBy === 'button') && (!rowContextMenuIsActiveFn || rowContextMenuIsActiveFn(rowData)))
+            {
+                <td class="px-table-context-menu-toggle-cell">
+                    @if(responsiveLayout === 'stack')
+                    {
+                        <span class="p-column-title">&nbsp;</span>
+                    }
+
+                    <span>
+                        <p-button [icon]="rowContextMenuToggleIcon" (click)="toggledContextMenu.toggle($event)"></p-button>
+                        <p-menu #toggledContextMenu [model]="rowContextMenuItems" [popup]="true" appendTo="body"
+                                (onShow)="onContextMenuSelectionChange(rowData, false); onContextMenuShown()"></p-menu>
+                    </span>
+                </td>
+            }
         </tr>
     </ng-template>
 

@@ -8,91 +8,91 @@
             <h2>Configuration</h2>
             <form [formGroup]="form">
                 <section formGroupName="config" class="dm:grid dm:align-items-center">
-                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                    <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
                         <p-multiSelect [style]="{'width': '100%'}" inputId="visible-columns" [options]="tableColumns"
                                        optionLabel="name" optionValue="id"
                                        formControlName="tableColumns"></p-multiSelect>
                         <label for="visible-columns">Visible columns</label>
-                    </p-floatLabel>
+                    </p-floatlabel>
 
-                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
-                        <p-dropdown [style]="{'width': '100%'}" inputId="[dataSource]"
+                    <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-select [style]="{'width': '100%'}" inputId="[dataSource]"
                                     [options]="[{value: 'static', desc: 'Static'}, {value: 'server', desc: 'Server'}, {value: 'empty', desc: 'No data'}]"
-                                    optionLabel="desc" optionValue="value" formControlName="dataSource"></p-dropdown>
+                                    optionLabel="desc" optionValue="value" formControlName="dataSource"></p-select>
                         <label for="[dataSource]">[dataSource]</label>
-                    </p-floatLabel>
+                    </p-floatlabel>
 
-                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
-                        <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuItems]"
+                    <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-select [style]="{'width': '100%'}" inputId="[rowContextMenuItems]"
                                     [options]="[{value: '1', desc: 'Enabled'}, {value: '0', desc: 'Disabled'}]"
                                     optionLabel="desc" optionValue="value"
-                                    formControlName="rowContextMenuItems"></p-dropdown>
+                                    formControlName="rowContextMenuItems"></p-select>
                         <label for="[rowContextMenuItems]">[rowContextMenuItems]</label>
-                    </p-floatLabel>
+                    </p-floatlabel>
 
-                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
-                        <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuItems]"
+                    <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-select [style]="{'width': '100%'}" inputId="[rowContextMenuItems]"
                                     [options]="[{value: '1', desc: 'Enabled'}, {value: '0', desc: 'Disabled'}]"
                                     optionLabel="desc" optionValue="value"
-                                    formControlName="dynamicContextMenuItems"></p-dropdown>
+                                    formControlName="dynamicContextMenuItems"></p-select>
                         <label for="[dynamicContextMenuItems]">[dynamicContextMenuItems]</label>
-                    </p-floatLabel>
+                    </p-floatlabel>
 
-                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
-                        <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuToggleBy]"
+                    <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-select [style]="{'width': '100%'}" inputId="[rowContextMenuToggleBy]"
                                     [options]="[{value: 'rightClick', desc: 'Right-click only'}, {value: 'button', desc: 'Button toggle only'}, {value: 0, desc: 'Unrestricted'}]"
                                     optionLabel="desc" optionValue="value"
-                                    formControlName="rowContextMenuToggleBy"></p-dropdown>
+                                    formControlName="rowContextMenuToggleBy"></p-select>
                         <label for="[rowContextMenuToggleBy]">[rowContextMenuToggleBy]</label>
-                    </p-floatLabel>
+                    </p-floatlabel>
 
-                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
-                        <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuIsVisibleFn]"
+                    <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-select [style]="{'width': '100%'}" inputId="[rowContextMenuIsVisibleFn]"
                                     [options]="[{value: 'all', desc: 'All rows'}, {value: 'even', desc: 'Even rows'}, {value: 'odd', desc: 'Odd rows'}]"
                                     optionLabel="desc" optionValue="value"
-                                    formControlName="rowContextMenuIsVisibleFn"></p-dropdown>
+                                    formControlName="rowContextMenuIsVisibleFn"></p-select>
                         <label for="[rowContextMenuIsVisibleFn]">[rowContextMenuIsVisibleFn]</label>
-                    </p-floatLabel>
+                    </p-floatlabel>
 
-                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
-                        <p-dropdown [style]="{'width': '100%'}" inputId="[rowContextMenuIsVisibleFn]"
+                    <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-select [style]="{'width': '100%'}" inputId="[rowContextMenuIsVisibleFn]"
                                     [options]="[{value: 'scroll', desc: 'Scroll'}, {value: 'stack', desc: 'Stack'}]"
                                     optionLabel="desc" optionValue="value"
-                                    formControlName="responsiveLayout"></p-dropdown>
+                                    formControlName="responsiveLayout"></p-select>
                         <label for="[responsiveLayout]">[responsiveLayout]</label>
-                    </p-floatLabel>
+                    </p-floatlabel>
 
-                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
-                        <p-dropdown [style]="{'width': '100%'}" inputId="[loadingIconTemplateRef]"
+                    <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-select [style]="{'width': '100%'}" inputId="[loadingIconTemplateRef]"
                                     [options]="[{value: '1', desc: 'Custom'}, {value: '0', desc: 'Default'}]"
                                     optionLabel="desc" optionValue="value"
-                                    formControlName="loadingIconTemplateRef"></p-dropdown>
+                                    formControlName="loadingIconTemplateRef"></p-select>
                         <label for="[loadingIconTemplateRef]">[loadingIconTemplateRef]</label>
-                    </p-floatLabel>
+                    </p-floatlabel>
 
-                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
-                        <p-dropdown [style]="{'width': '100%'}" inputId="[selectionMode]"
+                    <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-select [style]="{'width': '100%'}" inputId="[selectionMode]"
                                     [options]="[{value: 0, desc: 'Disabled'}, {value: 'single', desc: 'Single'}, {value: 'multiple', desc: 'Multiple'}]"
                                     optionLabel="desc" optionValue="value"
-                                    formControlName="selectionMode"></p-dropdown>
+                                    formControlName="selectionMode"></p-select>
                         <label for="[selectionMode]">[selectionMode]</label>
-                    </p-floatLabel>
+                    </p-floatlabel>
 
-                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
-                        <p-dropdown [style]="{'width': '100%'}" inputId="[stripedRows]"
+                    <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-select [style]="{'width': '100%'}" inputId="[stripedRows]"
                                     [options]="[{value: '1', desc: 'Enabled'}, {value: '0', desc: 'Disabled'}]"
                                     optionLabel="desc" optionValue="value"
-                                    formControlName="stripedRows"></p-dropdown>
+                                    formControlName="stripedRows"></p-select>
                         <label for="[stripedRows]">[stripedRows]</label>
-                    </p-floatLabel>
+                    </p-floatlabel>
 
-                    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
-                        <p-dropdown [style]="{'width': '100%'}" inputId="[selectAllCheckbox]"
+                    <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                        <p-select [style]="{'width': '100%'}" inputId="[selectAllCheckbox]"
                                     [options]="[{value: '1', desc: 'Enabled'}, {value: '0', desc: 'Disabled'}]"
                                     optionLabel="desc" optionValue="value"
-                                    formControlName="selectAllCheckbox"></p-dropdown>
+                                    formControlName="selectAllCheckbox"></p-select>
                         <label for="[selectAllCheckbox]">[selectAllCheckbox]</label>
-                    </p-floatLabel>
+                    </p-floatlabel>
                 </section>
             </form>
             <br>
@@ -118,9 +118,12 @@
                 Custom Loading
             </ng-template>
 
-            <pre *ngIf="selectedRows">
-                {{selectedRows | json}}
-            </pre>
+            @if(selectedRows)
+            {
+                <pre>
+                    {{selectedRows | json}}
+                </pre>
+            }
         </app-code-example>
     </div>
 

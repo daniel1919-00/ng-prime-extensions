@@ -6,7 +6,6 @@ export interface PxSearchableAccordionEntry
     id?: string;
     header: string;
     content: string;
-    expanded?: boolean;
     /**
      * Optional data that can be used by the developer, usually when dealing with custom header/content templates.
      */

@@ -4,11 +4,11 @@
     flex-direction: column;
     box-sizing: border-box;
     min-height: 50px;
-    border: 1px solid var(--surface-border);
-    border-radius: var(--border-radius);
-    background: var(--surface-card);
+    border: 1px solid var(--p-content-border-color);
+    border-radius: var(--p-border-radius-md);
+    background: var(--p-content-background);
     color: inherit;
-    padding: var(--content-padding);
+    padding: var(--p-card-body-padding);
 
     *, *:before, *:after {
         box-sizing: inherit;
@@ -18,7 +18,7 @@
         color: inherit;
         font-size: 1.3rem;
         font-weight: bold;
-        padding-bottom: calc(var(--content-padding) * .8);
+        padding-bottom: calc(var(--p-card-body-padding) * .8);
     }
 
     &.no-label {
@@ -72,7 +72,7 @@
         overflow-y: auto;
 
         &:not(:empty) {
-            border-top: 1px solid var(--surface-border);
+            border-top: 1px solid var(--p-content-border-color);
         }
 
         .px-uploader-file {
@@ -80,8 +80,8 @@
             align-items: flex-start;
             flex-direction: column;
             position: relative;
-            border: 1px solid var(--surface-border);
-            border-radius: var(--border-radius);
+            border: 1px solid var(--p-content-border-color);
+            border-radius: var(--p-border-radius-md);
 
             &.list {
                 flex-shrink: 0;
@@ -105,9 +105,9 @@
                 justify-content: space-between;
                 flex-wrap: nowrap;
                 width: 100%;
-                padding: var(--content-padding);
+                padding: var(--p-card-body-padding);
                 z-index: 2;
-                border-radius: var(--border-radius) var(--border-radius) 0 0;
+                border-radius: var(--p-border-radius-md) var(--p-border-radius-md) 0 0;
 
                 .px-uploader-file-info {
                     display: flex;
@@ -151,8 +151,8 @@
             &.preview {
                 height: var(--px-uploader-file-preview-height, 18rem);
                 .px-uploader-file-header {
-                    background-color: color-mix(in srgb, var(--primary-color), transparent 40%);
-                    color: var(--primary-color-text);
+                    background-color: color-mix(in srgb, var(--p-primary-color), transparent 40%);
+                    color: var(--p-primary-contrast-color);
 
                     @supports ((-webkit-backdrop-filter: blur(.2em)) or (backdrop-filter: blur(.2em))) {
                         -webkit-backdrop-filter: blur(.18rem);
@@ -187,16 +187,16 @@
     }
 
     &.dragover {
-        border: 1px solid var(--surface-border);
+        border: 1px solid var(--p-content-border-color);
 
         &:before, &:after {
             content: "";
             position: absolute;
             inset: -2px;
-            border: 2px solid var(--primary-color);
+            border: 2px solid var(--p-primary-color);
             transition: all .5s;
             animation: dragoverClip 3s infinite linear;
-            border-radius: var(--border-radius);
+            border-radius: var(--p-border-radius-md);
         }
 
         &:after {
@@ -208,7 +208,7 @@
 
             .px-uploader-info-primary,
             .px-uploader-info-secondary {
-                color: var(--primary-color);
+                color: var(--p-primary-color);
             }
         }
 

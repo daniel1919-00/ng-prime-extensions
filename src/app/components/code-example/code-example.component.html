@@ -1,12 +1,22 @@
 <div class="code-example-container">
     <div class="header">
         <span class="title">{{ title }}</span>
-        <span *ngIf="code">
-            <p-button *ngIf="showSource" styleClass="no-focus-outline" [pTooltip]="getCopyBtnTooltip()"
-                      icon="pi pi-copy" size="small" [text]="true" (click)="copyCode()"></p-button>
-            <p-button *ngIf="code.html || code.ts || code.styles" styleClass="no-focus-outline"
-                      (click)="showSource = !showSource" icon="pi pi-code" size="small" [text]="true"></p-button>
-        </span>
+        @if(code)
+        {
+            <span>
+                @if(showSource)
+                {
+                    <p-button styleClass="no-focus-outline" [pTooltip]="getCopyBtnTooltip()"
+                              icon="pi pi-copy" size="small" [text]="true" (click)="copyCode()"></p-button>
+                }
+
+                @if(code.html || code.ts || code.styles)
+                {
+                    <p-button styleClass="no-focus-outline"
+                              (click)="showSource = !showSource" icon="pi pi-code" size="small" [text]="true"></p-button>
+                }
+            </span>
+        }
     </div>
     <ng-container [ngTemplateOutlet]="showSource ? source : result"></ng-container>
 </div>
@@ -16,19 +26,37 @@
     </div>
 </ng-template>
 <ng-template #source>
-    <div *ngIf="code" class="code-source">
-        <p-tabView (activeIndexChange)="currentOpenTab = $event">
-            <p-tabPanel *ngIf="code.html" header="HTML">
-                <pre><code [highlight]="code.html" language="xml"></code></pre>
-            </p-tabPanel>
+    @if(code)
+    {
+        <div class="code-source">
+            <p-tabs [(value)]="currentOpenTab">
+                <p-tablist>
+                    <p-tab [value]="CodeTab.HTML">HTML</p-tab>
+                    @if(code.ts)
+                    {
+                        <p-tab [value]="CodeTab.TS">TS</p-tab>
+                    }
 
-            <p-tabPanel *ngIf="code.ts" header="TS">
-                <pre><code [highlight]="code.ts" language="typescript"></code></pre>
-            </p-tabPanel>
+                    @if(code.styles)
+                    {
+                        <p-tab [value]="CodeTab.STYLES">STYLES</p-tab>
+                    }
+                </p-tablist>
 
-            <p-tabPanel *ngIf="code.styles" header="STYLES">
-                <pre><code [highlightAuto]="code.styles" [languages]="['scss', 'css']"></code></pre>
-            </p-tabPanel>
-        </p-tabView>
-    </div>
+                <p-tabpanels>
+                    <p-tabpanel [value]="CodeTab.HTML">
+                        <pre><code [highlight]="code.html" language="xml"></code></pre>
+                    </p-tabpanel>
+
+                    <p-tabpanel [value]="CodeTab.TS">
+                        <pre><code [highlight]="code.ts" language="typescript"></code></pre>
+                    </p-tabpanel>
+
+                    <p-tabpanel [value]="CodeTab.STYLES">
+                        <pre><code [highlightAuto]="code.styles" [languages]="['scss', 'css']"></code></pre>
+                    </p-tabpanel>
+                </p-tabpanels>
+            </p-tabs>
+        </div>
+    }
 </ng-template>

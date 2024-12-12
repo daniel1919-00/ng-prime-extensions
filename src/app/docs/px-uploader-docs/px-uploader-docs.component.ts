@@ -5,10 +5,10 @@ import {pxUploaderCodeExample} from "./code-example";
 import {FormGroup, ReactiveFormsModule, UntypedFormBuilder} from "@angular/forms";
 import {PxUploaderComponent} from "../../../../projects/px-uploader/src/lib/px-uploader.component";
 import {PxEndpointConfig} from "../../../../projects/px-uploader/src/lib/px-uploader";
-import {DropdownModule} from "primeng/dropdown";
-import {FloatLabelModule} from "primeng/floatlabel";
+import {FloatLabel} from "primeng/floatlabel";
 import {Subject, takeUntil} from "rxjs";
-import {InputTextModule} from "primeng/inputtext";
+import {InputText} from "primeng/inputtext";
+import {Select} from "primeng/select";
 
 @Component({
   selector: 'app-px-uploader-docs',
@@ -16,11 +16,11 @@ import {InputTextModule} from "primeng/inputtext";
     imports: [
         LibraryDocumentationComponent,
         CodeExampleComponent,
+        FloatLabel,
+        Select,
         ReactiveFormsModule,
         PxUploaderComponent,
-        DropdownModule,
-        FloatLabelModule,
-        InputTextModule
+        InputText
     ],
   templateUrl: './px-uploader-docs.component.html',
   styleUrl: './px-uploader-docs.component.scss'

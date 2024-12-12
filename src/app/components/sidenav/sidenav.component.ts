@@ -1,5 +1,4 @@
 import {Component, OnDestroy} from '@angular/core';
-import {SidebarModule} from "primeng/sidebar";
 import {ButtonModule} from "primeng/button";
 import {RippleModule} from "primeng/ripple";
 import {StyleClassModule} from "primeng/styleclass";
@@ -10,17 +9,18 @@ import {CommonModule} from "@angular/common";
 import {SidenavService} from "../../services/sidenav.service";
 import {AppService} from "../../services/app.service";
 import {Subject} from "rxjs";
+import {Drawer} from "primeng/drawer";
 
 @Component({
     selector: 'app-sidenav',
     standalone: true,
     imports: [
         CommonModule,
-        SidebarModule,
         ButtonModule,
         RippleModule,
         StyleClassModule,
-        SidenavMenuItemComponent
+        SidenavMenuItemComponent,
+        Drawer
     ],
     templateUrl: './sidenav.component.html',
     styleUrl: './sidenav.component.scss'

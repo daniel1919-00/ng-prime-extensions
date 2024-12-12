@@ -17,17 +17,23 @@ import {catchError, of} from "rxjs";
 import { HttpClient, HttpEventType } from "@angular/common/http";
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {PxFileSizePipe} from "./px-uploader-file-size.pipe";
-import {NgClass, NgForOf, NgIf, NgTemplateOutlet} from "@angular/common";
-import {ProgressBarModule} from "primeng/progressbar";
-import {ButtonModule} from "primeng/button";
-import {PrimeNGConfig} from "primeng/api";
+import {NgClass, NgTemplateOutlet} from "@angular/common";
+import {ProgressBar} from "primeng/progressbar";
+import {Button} from "primeng/button";
+import {PrimeNG} from "primeng/config";
 
 @Component({
     selector: 'px-uploader',
     standalone: true,
     templateUrl: './px-uploader.component.html',
     styleUrl: './px-uploader.component.scss',
-    imports: [PxFileSizePipe, NgTemplateOutlet, NgClass, ProgressBarModule, NgIf, NgForOf, ButtonModule],
+    imports: [
+        NgClass,
+        ProgressBar,
+        Button,
+        NgTemplateOutlet,
+        PxFileSizePipe
+    ],
     providers: [
         {
             provide: NG_VALUE_ACCESSOR,
@@ -123,7 +129,7 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
     constructor(
         private readonly http: HttpClient,
         private readonly changeDetector: ChangeDetectorRef,
-        protected primeNGConfig: PrimeNGConfig,
+        protected primeNGConfig: PrimeNG,
         @Optional() @Inject(PX_UPLOADER_INTL) intl?: Record<PxUploaderIntl, string>,
     ) {
         this.intl = Object.assign({

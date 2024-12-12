@@ -1,6 +1,6 @@
 {
   "name": "@ng-prime-extensions/px-searchable-accordion",
-    "version": "17.18.0",
+    "version": "18.0.0",
     "description": "PrimeNG searchable accordion extension",
     "homepage": "https://daniel1919-00.github.io/ng-prime-extensions/px-searchable-accordion",
     "publishConfig": {
@@ -28,7 +28,7 @@
     "peerDependencies": {
         "@angular/common": "^18.1.3",
         "@angular/core": "^18.1.3",
-        "primeng": "^17.18.6"
+        "primeng": "^18.0.0"
     },
     "dependencies": {
         "tslib": "^2.6.3"

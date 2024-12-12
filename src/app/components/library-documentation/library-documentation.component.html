@@ -3,21 +3,42 @@
 </p-card>
 <br>
 <p-card>
-    <p-tabView>
-        <p-tabPanel *ngIf="!hiddenSections.includes('docOverview')" header="Overview">
-            <ng-content select="[docOverview]"></ng-content>
-        </p-tabPanel>
+    <p-tabs value="docOverview">
+        <p-tablist>
+            <p-tab value="docOverview">Overview</p-tab>
 
-        <p-tabPanel *ngIf="!hiddenSections.includes('docApi')" header="Api">
-            <ng-content select="[docApi]"></ng-content>
-        </p-tabPanel>
+            @if(!hiddenSections.includes('docApi'))
+            {
+                <p-tab value="docApi">Api</p-tab>
+            }
 
-        <p-tabPanel *ngIf="!hiddenSections.includes('docIntl')" header="Internationalization">
-            <ng-content select="[docIntl]"></ng-content>
-        </p-tabPanel>
+            @if(!hiddenSections.includes('docIntl'))
+            {
+                <p-tab value="docIntl">Internationalization</p-tab>
+            }
 
-        <p-tabPanel *ngIf="!hiddenSections.includes('docStyling')" header="Styling">
-            <ng-content select="[docStyling]"></ng-content>
-        </p-tabPanel>
-    </p-tabView>
+            @if(!hiddenSections.includes('docStyling'))
+            {
+                <p-tab value="2">Styling</p-tab>
+            }
+        </p-tablist>
+
+        <p-tabpanels>
+            <p-tabpanel value="docOverview">
+                <ng-content select="[docOverview]"></ng-content>
+            </p-tabpanel>
+
+            <p-tabpanel value="docApi">
+                <ng-content select="[docApi]"></ng-content>
+            </p-tabpanel>
+
+            <p-tabpanel value="docIntl">
+                <ng-content select="[docIntl]"></ng-content>
+            </p-tabpanel>
+
+            <p-tabpanel value="docStyling">
+                <ng-content select="[docStyling]"></ng-content>
+            </p-tabpanel>
+        </p-tabpanels>
+    </p-tabs>
 </p-card>

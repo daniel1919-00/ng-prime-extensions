@@ -1,10 +1,10 @@
 .code-example-container {
     margin: 1.4rem 0;
-    border: 1px solid var(--surface-border);
-    border-radius: var(--border-radius);
+    border: 1px solid var(--p-content-border-color);
+    border-radius: var(--p-border-radius-md);
 
     .header {
-        color: var(--primary-color);
+        color: var(--p-primary-color);
         padding: 1rem;
         display: flex;
         align-items: center;

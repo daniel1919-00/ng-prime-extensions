@@ -1,5 +1,4 @@
 import {Component, Inject, OnDestroy, ViewChild} from '@angular/core';
-import {CardModule} from "primeng/card";
 import {PxTableComponent} from "../../../../projects/px-table/src/lib/px-table.component";
 import {LibraryDocumentationComponent} from "../../components/library-documentation/library-documentation.component";
 import {CodeExampleComponent} from "../../components/code-example/code-example.component";
@@ -10,15 +9,14 @@ import {
     PxTableColumnDefinition, PxTableColumnVisibility, PxTableDataRequestInfo, PxTableDataResponse,
     PxTableRenderComponentData, PxTableRow
 } from "../../../../projects/px-table/src/lib/px-table";
-import {DatePipe, JsonPipe, NgIf} from "@angular/common";
+import {DatePipe, JsonPipe} from "@angular/common";
 import {Subject, takeUntil} from "rxjs";
-import {MultiSelectModule} from "primeng/multiselect";
-import {FloatLabelModule} from "primeng/floatlabel";
-import {DropdownModule} from "primeng/dropdown";
+import {MultiSelect} from "primeng/multiselect";
+import {FloatLabel} from "primeng/floatlabel";
 import { HttpClient } from "@angular/common/http";
-import {TieredMenuModule} from "primeng/tieredmenu";
 import {MenuItem} from "primeng/api";
 import {AppService} from "../../services/app.service";
+import {Select} from "primeng/select";
 
 @Component({
     standalone: true,
@@ -40,17 +38,14 @@ class MyColumnRenderer {
     selector: 'app-px-table',
     standalone: true,
     imports: [
-        CardModule,
-        PxTableComponent,
         LibraryDocumentationComponent,
         CodeExampleComponent,
         ReactiveFormsModule,
-        MultiSelectModule,
-        FloatLabelModule,
-        DropdownModule,
-        TieredMenuModule,
-        JsonPipe,
-        NgIf
+        MultiSelect,
+        Select,
+        FloatLabel,
+        PxTableComponent,
+        JsonPipe
     ],
     providers: [
         DatePipe

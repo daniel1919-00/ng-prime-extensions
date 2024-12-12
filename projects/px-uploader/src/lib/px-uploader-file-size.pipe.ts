@@ -1,5 +1,5 @@
 import {inject, Pipe, PipeTransform} from '@angular/core';
-import {PrimeNGConfig} from "primeng/api";
+import {PrimeNG} from "primeng/config";
 
 @Pipe({
     standalone: true,
@@ -8,7 +8,7 @@ import {PrimeNGConfig} from "primeng/api";
 export class PxFileSizePipe implements PipeTransform {
     private readonly units: string[];
     constructor() {
-        this.units = inject(PrimeNGConfig).translation.fileSizeTypes || ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        this.units = inject(PrimeNG).translation.fileSizeTypes || ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     }
 
     /**

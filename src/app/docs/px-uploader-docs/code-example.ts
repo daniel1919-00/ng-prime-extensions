@@ -4,7 +4,6 @@ export const pxUploaderCodeExample: CodeExample = {
     ts: `
 import {Component, OnDestroy} from '@angular/core';
 import {LibraryDocumentationComponent} from "../../components/library-documentation/library-documentation.component";
-import {CodeExampleComponent} from "../../components/code-example/code-example.component";
 import {FormGroup, ReactiveFormsModule, UntypedFormBuilder} from "@angular/forms";
 import {PxUploaderComponent} from "../../../../projects/px-uploader/src/lib/px-uploader.component";
 import {PxEndpointConfig} from "../../../../projects/px-uploader/src/lib/px-uploader";
@@ -67,26 +66,26 @@ export class PxUploaderDocsComponent implements OnDestroy {
     html: `
 <h2>Configuration</h2>
 <form [formGroup]="form" class="dm:grid dm:align-items-center">
-    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
-        <p-dropdown [style]="{'width': '100%'}" inputId="[multiple]"
+    <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+        <p-select [style]="{'width': '100%'}" inputId="[multiple]"
                     [options]="[{value: '0', desc: 'false'}, {value: '1', desc: 'true'}]"
-                    optionLabel="desc" optionValue="value" formControlName="multiple"></p-dropdown>
+                    optionLabel="desc" optionValue="value" formControlName="multiple"></p-select>
         <label for="[multiple]">[multiple]</label>
-    </p-floatLabel>
+    </p-floatlabel>
 
-    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
-        <p-dropdown [style]="{'width': '100%'}" inputId="[showImagePreview]"
+    <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+        <p-select [style]="{'width': '100%'}" inputId="[showImagePreview]"
                     [options]="[{value: '0', desc: 'false'}, {value: '1', desc: 'true'}]"
-                    optionLabel="desc" optionValue="value" formControlName="showImagePreview"></p-dropdown>
+                    optionLabel="desc" optionValue="value" formControlName="showImagePreview"></p-select>
         <label for="[showImagePreview]">[showImagePreview]</label>
-    </p-floatLabel>
+    </p-floatlabel>
 
-    <p-floatLabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
-        <p-dropdown [style]="{'width': '100%'}" inputId="[displayAs]"
+    <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+        <p-select [style]="{'width': '100%'}" inputId="[displayAs]"
                     [options]="[{value: 'list', desc: 'list'}, {value: 'grid', desc: 'grid'}]"
-                    optionLabel="desc" optionValue="value" formControlName="displayAs"></p-dropdown>
+                    optionLabel="desc" optionValue="value" formControlName="displayAs"></p-select>
         <label for="[displayAs]">[displayAs]</label>
-    </p-floatLabel>
+    </p-floatlabel>
 </form>
 
 <br>

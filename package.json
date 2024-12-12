@@ -23,9 +23,10 @@
     "@angular/platform-browser-dynamic": "^18.2.6",
     "@angular/router": "^18.2.6",
     "@ng-dominus/dm-styles": "^1.2.0",
+    "@primeng/themes": "^18.0.0",
     "ngx-highlightjs": "^12.0.0",
     "primeicons": "^7.0.0",
-    "primeng": "^17.18.11",
+    "primeng": "^18.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.7.0",
     "zone.js": "^0.14.10"

@@ -1,15 +1,24 @@
-<p-accordion [activeIndex]="activeEntryIndex" (activeIndexChange)="activeIndexChanged($event)">
-    <p *ngIf="!(filteredEntries | async)?.length">
-        <ng-container *ngTemplateOutlet="noResultsTemplate ? noResultsTemplate : defaultNoResultsTemplate"></ng-container>
-    </p>
-    <p-accordionTab *ngFor="let entry of filteredEntries | async" [selected]="!!entry.expanded" [attr.id]="entry.id">
-        <ng-template pTemplate="header">
-            <ng-container *ngTemplateOutlet="headerTemplate ? headerTemplate : defaultHeader; context: { $implicit: entry }"></ng-container>
-        </ng-template>
-        <ng-template pTemplate="content">
-            <ng-container *ngTemplateOutlet="contentTemplate ? contentTemplate : defaultContent; context: { $implicit: entry }"></ng-container>
-        </ng-template>
-    </p-accordionTab>
+<p-accordion [(value)]="activeEntryIndex" (valueChange)="activeIndexChanged()">
+    @if(!(filteredEntries | async)?.length)
+    {
+        @if(noResultsTemplate)
+        {
+            <ng-container *ngTemplateOutlet="noResultsTemplate ? noResultsTemplate : defaultNoResultsTemplate"></ng-container>
+        }
+    }
+
+    @for(entry of filteredEntries | async; track entry.id || $index)
+    {
+        <p-accordion-panel [value]="$index" [attr.id]="entry.id">
+            <p-accordion-header>
+                <ng-container *ngTemplateOutlet="headerTemplate ? headerTemplate : defaultHeader; context: { $implicit: entry }"></ng-container>
+            </p-accordion-header>
+
+            <p-accordion-content>
+                <ng-container *ngTemplateOutlet="contentTemplate ? contentTemplate : defaultContent; context: { $implicit: entry }"></ng-container>
+            </p-accordion-content>
+        </p-accordion-panel>
+    }
 </p-accordion>
 
 <ng-template #defaultHeader let-entry>
@@ -19,5 +28,5 @@
     <p [innerHTML]="entry.content"></p>
 </ng-template>
 <ng-template #defaultNoResultsTemplate>
-    No entries found
+
 </ng-template>

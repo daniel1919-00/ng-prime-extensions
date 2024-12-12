@@ -24,32 +24,30 @@ import {
     PxTableRow,
     PxTableSortedColumn
 } from "./px-table";
-import {AsyncPipe, NgClass, NgComponentOutlet, NgForOf, NgIf, NgTemplateOutlet} from "@angular/common";
+import {NgClass, NgComponentOutlet, NgTemplateOutlet} from "@angular/common";
 import {PxTableRenderPipePipe} from "./px-table-render.pipe";
 import {Observable, Subscription} from "rxjs";
 import {FormGroup} from "@angular/forms";
-import {FilterMetadata, MenuItem, PrimeNGConfig} from "primeng/api";
-import {ButtonModule} from "primeng/button";
-import {Menu, MenuModule} from "primeng/menu";
-import {ContextMenuModule} from "primeng/contextmenu";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {FilterMetadata, MenuItem} from "primeng/api";
+import {Button} from "primeng/button";
+import {Menu} from "primeng/menu";
+import {ContextMenu} from "primeng/contextmenu";
+import {ProgressSpinner} from "primeng/progressspinner";
+import {PrimeNG} from "primeng/config";
 
 @Component({
     selector: 'px-table',
     standalone: true,
     imports: [
-        TableModule,
-        NgForOf,
-        NgIf,
-        NgComponentOutlet,
-        NgTemplateOutlet,
         PxTableRenderPipePipe,
-        AsyncPipe,
-        ButtonModule,
-        MenuModule,
-        ContextMenuModule,
+        ContextMenu,
+        TableModule,
         NgClass,
-        ProgressSpinnerModule
+        NgTemplateOutlet,
+        Button,
+        Menu,
+        NgComponentOutlet,
+        ProgressSpinner,
     ],
     templateUrl: './px-table.component.html',
     styleUrl: './px-table.component.scss',
@@ -240,17 +238,13 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
     private dataSrcSub?: Subscription;
 
     constructor(
-        protected primeNGConfig: PrimeNGConfig,
+        protected primeNGConfig: PrimeNG,
         private injector: Injector,
         private changeDetector: ChangeDetectorRef,
     ) {
     }
 
     ngOnInit() {
-        if(this.stripedRows) {
-            this.styleClass += ' p-datatable-striped';
-        }
-
         if (this.pxFilters) {
             this.filters = {};
             delete this.globalFilterFields;
@@ -412,10 +406,6 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
             }],
             parent: this.injector
         });
-    }
-
-    protected identifyColumn(index: number, column: PxTableColumnDefinition) {
-        return column.id;
     }
 
     private checkDataSource() {

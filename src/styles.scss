@@ -1,4 +1,3 @@
-@import "primeng/resources/primeng.css";
 @import "@ng-dominus/dm-styles/dm-styles.min.css";
 @import "primeicons/primeicons.css";
 
@@ -15,24 +14,27 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+    font: 500 14px/1.45em "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
 }
 
 :root {
     --app-header-height: 50px;
-    --app-sidenav-menu-width: 250px;
+    --app-sidenav-menu-width: 20rem;
     --app-sidenav-menu-item-padding: 10px;
-    --dm-quote-padding: var(--content-padding);
-    --dm-quote-border-radius: var(--border-radius);
-    --dm-quote-color: var(--primary-color);
-    --dm-quote-border: 1px solid var(--primary-color);
+    --dm-quote-padding: var(--p-card-body-padding);
+    --dm-quote-border-radius: var(--p-border-radius-md);
+    --dm-quote-color: var(--p-primary-color);
+    --dm-quote-border: 1px solid var(--p-primary-color);
 }
 
 .primary-color {
-    color: var(--primary-color);
+    color: var(--p-primary-color);
 }
 
 .primary-color-text {
-    color: var(--primary-color-text);
+    color: var(--p-primary-contrast-color);
 }
 
 .no-focus-outline:focus {

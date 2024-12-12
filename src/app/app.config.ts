@@ -10,6 +10,9 @@ import {
     withInterceptorsFromDi
 } from "@angular/common/http";
 import {BackendInterceptor} from "./backend.interceptor";
+import {provideAnimationsAsync} from "@angular/platform-browser/animations/async";
+import {providePrimeNG} from "primeng/config";
+import {AuraThemeExtended} from "./themes/auraTheme";
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -34,5 +37,14 @@ export const appConfig: ApplicationConfig = {
             useClass: BackendInterceptor,
             multi: true
         },
+        provideAnimationsAsync(),
+        providePrimeNG({
+            theme: {
+                preset: AuraThemeExtended,
+                options:{
+                    darkModeSelector: '.app-dark-mode'
+                }
+            }
+        })
     ]
 };

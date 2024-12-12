@@ -8,9 +8,9 @@ import {
     TemplateRef,
     ViewEncapsulation
 } from '@angular/core';
-import {AccordionModule} from "primeng/accordion";
+import {Accordion, AccordionContent, AccordionHeader, AccordionPanel} from "primeng/accordion";
 import {PxSearchableAccordionEntry} from "./px-searchable-accordion";
-import {AsyncPipe, DOCUMENT, NgForOf, NgIf, NgTemplateOutlet} from "@angular/common";
+import {AsyncPipe, DOCUMENT, NgTemplateOutlet} from "@angular/common";
 import {BehaviorSubject, debounceTime, Observable, Subject, Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 
@@ -18,11 +18,12 @@ import {ActivatedRoute, Router} from "@angular/router";
     selector: 'px-searchable-accordion',
     standalone: true,
     imports: [
-        AccordionModule,
-        NgForOf,
-        NgTemplateOutlet,
+        Accordion,
         AsyncPipe,
-        NgIf
+        NgTemplateOutlet,
+        AccordionPanel,
+        AccordionHeader,
+        AccordionContent
     ],
     templateUrl: './px-searchable-accordion.component.html',
     styleUrl: './px-searchable-accordion.component.scss',
@@ -67,7 +68,7 @@ export class PxSearchableAccordionComponent implements OnChanges, AfterViewInit,
     @Input() allowUrlFragments: boolean = true;
 
     protected filteredEntries = new BehaviorSubject<PxSearchableAccordionEntry[]>([]);
-    protected activeEntryIndex: number | null = null;
+    protected activeEntryIndex: number = 0;
 
     private searchSub?: Subscription;
     private routeFragmentsSub?: Subscription;
@@ -168,7 +169,6 @@ export class PxSearchableAccordionComponent implements OnChanges, AfterViewInit,
             filteredEntries.push(this.highlightWords ? {
                 header: headerIncludesStr ? this.highlightString(entry.header, lowerCaseHeader, searchStr) : entry.header,
                 content: contentIncludesStr ? this.highlightString(entry.content, lowerCaseContent, searchStr) : entry.content,
-                expanded: entry.expanded,
                 data: entry.data,
             } : entry);
         }
@@ -176,14 +176,15 @@ export class PxSearchableAccordionComponent implements OnChanges, AfterViewInit,
         this.filteredEntries.next(filteredEntries);
     }
 
-    protected activeIndexChanged(index: number | number[]) {
-        if(Array.isArray(index)) {
-            index = index[0];
+    protected activeIndexChanged() {
+        let activeIndex: number;
+        if(Array.isArray(this.activeEntryIndex)) {
+            activeIndex = this.activeEntryIndex[0];
+        } else {
+            activeIndex = this.activeEntryIndex;
         }
 
-        this.activeEntryIndex = index;
-
-        if(!(index && this.allowUrlFragments)) {
+        if(!(activeIndex && this.allowUrlFragments)) {
             return;
         }
 
@@ -192,7 +193,7 @@ export class PxSearchableAccordionComponent implements OnChanges, AfterViewInit,
             return;
         }
 
-        const activeEntry = entries[index];
+        const activeEntry = entries[activeIndex];
         if(!activeEntry.id) {
             return;
         }

@@ -1,21 +1,26 @@
 import {Component, Input} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {NgTemplateOutlet} from '@angular/common';
 import {CodeExample, CodeTab} from "./code-example";
-import {HighlightModule} from "ngx-highlightjs";
-import {ButtonModule} from "primeng/button";
-import {TooltipModule} from "primeng/tooltip";
+import {Button} from "primeng/button";
+import {Tooltip} from "primeng/tooltip";
 import {MessageService} from "primeng/api";
-import {TabViewModule} from "primeng/tabview";
+import {Tab, TabList, TabPanel, TabPanels, Tabs} from "primeng/tabs";
+import {Highlight, HighlightAuto} from "ngx-highlightjs";
 
 @Component({
     selector: 'app-code-example',
     standalone: true,
     imports: [
-        CommonModule,
-        HighlightModule,
-        ButtonModule,
-        TooltipModule,
-        TabViewModule,
+        Button,
+        Tooltip,
+        NgTemplateOutlet,
+        Tabs,
+        TabList,
+        Tab,
+        TabPanel,
+        TabPanels,
+        Highlight,
+        HighlightAuto
     ],
     templateUrl: './code-example.component.html',
     styleUrl: './code-example.component.scss'
@@ -24,7 +29,7 @@ export class CodeExampleComponent {
     @Input() code?: CodeExample;
     @Input() title = 'Basic Example';
     protected showSource = false;
-    protected currentOpenTab = CodeTab.HTML
+    protected currentOpenTab = CodeTab.HTML;
 
     private clipboard: Clipboard;
 
@@ -72,4 +77,6 @@ export class CodeExampleComponent {
             summary: 'Source code copied to clipboard.'
         });
     }
+
+    protected readonly CodeTab = CodeTab;
 }

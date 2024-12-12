@@ -1,17 +1,17 @@
 import {Component, Input, ViewEncapsulation} from '@angular/core';
-import {CardModule} from "primeng/card";
-import {PxTableComponent} from "../../../../projects/px-table/src/lib/px-table.component";
-import {TabViewModule} from "primeng/tabview";
-import {NgIf} from "@angular/common";
+import {Card} from "primeng/card";
+import {Tab, TabList, TabPanel, TabPanels, Tabs} from "primeng/tabs";
 
 @Component({
     selector: 'app-library-documentation',
     standalone: true,
     imports: [
-        CardModule,
-        PxTableComponent,
-        TabViewModule,
-        NgIf
+        Card,
+        Tabs,
+        TabList,
+        Tab,
+        TabPanels,
+        TabPanel
     ],
     templateUrl: './library-documentation.component.html',
     styleUrl: './library-documentation.component.scss',
