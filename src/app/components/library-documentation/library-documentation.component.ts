@@ -4,7 +4,6 @@ import {Tab, TabList, TabPanel, TabPanels, Tabs} from "primeng/tabs";
 
 @Component({
     selector: 'app-library-documentation',
-    standalone: true,
     imports: [
         Card,
         Tabs,

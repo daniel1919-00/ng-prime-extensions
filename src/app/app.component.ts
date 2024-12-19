@@ -10,7 +10,6 @@ import {MessageService} from "primeng/api";
 
 @Component({
     selector: 'app-root',
-    standalone: true,
     imports: [RouterOutlet, NgClass, SidenavComponent, ButtonModule, AsyncPipe, ToastModule],
     providers: [MessageService],
     templateUrl: './app.component.html',

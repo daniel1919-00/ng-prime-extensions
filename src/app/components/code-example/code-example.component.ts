@@ -9,7 +9,6 @@ import {Highlight, HighlightAuto} from "ngx-highlightjs";
 
 @Component({
     selector: 'app-code-example',
-    standalone: true,
     imports: [
         Button,
         Tooltip,

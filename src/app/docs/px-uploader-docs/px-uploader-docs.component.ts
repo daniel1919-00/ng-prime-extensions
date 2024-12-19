@@ -11,8 +11,7 @@ import {InputText} from "primeng/inputtext";
 import {Select} from "primeng/select";
 
 @Component({
-  selector: 'app-px-uploader-docs',
-  standalone: true,
+    selector: 'app-px-uploader-docs',
     imports: [
         LibraryDocumentationComponent,
         CodeExampleComponent,
@@ -22,8 +21,8 @@ import {Select} from "primeng/select";
         PxUploaderComponent,
         InputText
     ],
-  templateUrl: './px-uploader-docs.component.html',
-  styleUrl: './px-uploader-docs.component.scss'
+    templateUrl: './px-uploader-docs.component.html',
+    styleUrl: './px-uploader-docs.component.scss'
 })
 export class PxUploaderDocsComponent implements OnDestroy {
 

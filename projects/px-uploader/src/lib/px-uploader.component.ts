@@ -24,7 +24,6 @@ import {PrimeNG} from "primeng/config";
 
 @Component({
     selector: 'px-uploader',
-    standalone: true,
     templateUrl: './px-uploader.component.html',
     styleUrl: './px-uploader.component.scss',
     imports: [

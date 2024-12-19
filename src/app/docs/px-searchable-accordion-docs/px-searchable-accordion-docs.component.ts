@@ -13,8 +13,7 @@ import {Subject} from "rxjs";
 import {InputTextModule} from "primeng/inputtext";
 
 @Component({
-  selector: 'app-px-searchable-accordion-docs',
-  standalone: true,
+    selector: 'app-px-searchable-accordion-docs',
     imports: [
         LibraryDocumentationComponent,
         CodeExampleComponent,
@@ -24,8 +23,8 @@ import {InputTextModule} from "primeng/inputtext";
         BadgeModule,
         InputTextModule,
     ],
-  templateUrl: './px-searchable-accordion-docs.component.html',
-  styleUrl: './px-searchable-accordion-docs.component.scss'
+    templateUrl: './px-searchable-accordion-docs.component.html',
+    styleUrl: './px-searchable-accordion-docs.component.scss'
 })
 export class PxSearchableAccordionDocsComponent {
     protected readonly pxSearchableAccordionCodeExample = pxSearchableAccordionCodeExample;

@@ -37,7 +37,6 @@ import {PrimeNG} from "primeng/config";
 
 @Component({
     selector: 'px-table',
-    standalone: true,
     imports: [
         PxTableRenderPipePipe,
         ContextMenu,

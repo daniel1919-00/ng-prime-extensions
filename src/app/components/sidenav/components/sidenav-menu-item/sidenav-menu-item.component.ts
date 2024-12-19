@@ -5,7 +5,6 @@ import {RouterLink, RouterLinkActive} from "@angular/router";
 
 @Component({
     selector: 'app-sidenav-menu-item',
-    standalone: true,
     imports: [CommonModule, RouterLink, RouterLinkActive],
     templateUrl: './sidenav-menu-item.component.html',
     styleUrls: ['./sidenav-menu-item.component.scss'],

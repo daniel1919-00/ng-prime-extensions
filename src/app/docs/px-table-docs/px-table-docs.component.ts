@@ -36,7 +36,6 @@ class MyColumnRenderer {
 
 @Component({
     selector: 'app-px-table',
-    standalone: true,
     imports: [
         LibraryDocumentationComponent,
         CodeExampleComponent,

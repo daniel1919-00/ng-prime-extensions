@@ -13,7 +13,6 @@ import {Drawer} from "primeng/drawer";
 
 @Component({
     selector: 'app-sidenav',
-    standalone: true,
     imports: [
         CommonModule,
         ButtonModule,

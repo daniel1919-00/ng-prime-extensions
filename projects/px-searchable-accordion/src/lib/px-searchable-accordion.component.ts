@@ -16,7 +16,6 @@ import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
     selector: 'px-searchable-accordion',
-    standalone: true,
     imports: [
         Accordion,
         AsyncPipe,
