@@ -64,6 +64,14 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
      */
     @Input({required: true}) dataSource!: PxTableRow[] | ((requestInfo: PxTableDataRequestInfo) => Observable<PxTableDataResponse>);
     /**
+     * An array of objects to represent dynamic columns that are frozen.
+     */
+    @Input() frozenColumns?: any[];
+    /**
+     * An array of objects to display as frozen.
+     */
+    @Input() frozenValue?: any[];
+    /**
      * Whether pagination is enabled.
      */
     @Input() paginator: boolean = true;
