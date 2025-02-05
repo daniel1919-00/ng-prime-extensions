@@ -9,6 +9,8 @@ import {FloatLabel} from "primeng/floatlabel";
 import {Subject, takeUntil} from "rxjs";
 import {InputText} from "primeng/inputtext";
 import {Select} from "primeng/select";
+import {JsonPipe} from "@angular/common";
+import {Button} from "primeng/button";
 
 @Component({
     selector: 'app-px-uploader-docs',
@@ -19,7 +21,9 @@ import {Select} from "primeng/select";
         Select,
         ReactiveFormsModule,
         PxUploaderComponent,
-        InputText
+        InputText,
+        JsonPipe,
+        Button
     ],
     templateUrl: './px-uploader-docs.component.html',
     styleUrl: './px-uploader-docs.component.scss'
@@ -41,7 +45,8 @@ export class PxUploaderDocsComponent implements OnDestroy {
             label: ['My uploader'],
             multiple: ['0'],
             showImagePreview: ['1'],
-            displayAs: ['list']
+            displayAs: ['list'],
+            buttons: [0]
         });
 
         const storedFilters = localStorage.getItem('__px-uploader-config');

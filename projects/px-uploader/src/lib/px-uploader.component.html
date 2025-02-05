@@ -90,21 +90,35 @@
                 </div>
                 @if(!file.isUploading && (file.uploadError === undefined || file.allowDelete === undefined || file.allowDelete))
                 {
-                    <p-button
-                        [icon]="icons?.removeFileButton || 'pi pi-trash'"
-                        severity="warn"
-                        (onClick)="isQueued ? removeFileFromQueue(fileIndex) : removeFile(fileIndex)"
-                        [style]="{'pointer-events': 'visible'}"
-                    ></p-button>
+                    @if(buttons?.removeFileButton)
+                    {
+                        <ng-container [ngTemplateOutlet]="buttons!.removeFileButton!" [ngTemplateOutletContext]="{icon: icons?.removeFileButton || 'pi pi-trash', onClick: getRemoveFileFn(isQueued, fileIndex, true)}"></ng-container>
+                    }
+                    @else
+                    {
+                        <p-button
+                            [icon]="icons?.removeFileButton || 'pi pi-trash'"
+                            severity="warn"
+                            (onClick)="getRemoveFileFn(isQueued, fileIndex, false)"
+                            [style]="{'pointer-events': 'visible'}"
+                        ></p-button>
+                    }
                 }
 
                 @if(isQueued && file.uploadError !== undefined && file.canRetryUpload)
                 {
-                    <p-button
-                        [icon]="icons?.retryUploadButton || 'pi pi-refresh'"
-                        (onClick)="retryUpload(fileIndex);"
-                        [style]="{'pointer-events': 'visible'}"
-                    ></p-button>
+                    @if(buttons?.retryUploadButton)
+                    {
+                        <ng-container [ngTemplateOutlet]="buttons!.retryUploadButton!" [ngTemplateOutletContext]="{icon: icons?.retryUploadButton || 'pi pi-refresh', onClick: retryUpload(fileIndex, true)}"></ng-container>
+                    }
+                    @else
+                    {
+                        <p-button
+                            [icon]="icons?.retryUploadButton || 'pi pi-refresh'"
+                            (onClick)="retryUpload(fileIndex, false)"
+                            [style]="{'pointer-events': 'visible'}"
+                        ></p-button>
+                    }
                 }
             </div>
         </div>

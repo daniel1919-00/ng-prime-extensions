@@ -31,17 +31,36 @@
                                 optionLabel="desc" optionValue="value" formControlName="displayAs"></p-select>
                     <label for="[displayAs]">[displayAs]</label>
                 </p-floatlabel>
+
+                <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                    <p-select [style]="{'width': '100%'}" inputId="[buttons]"
+                              [options]="[{value: 0, desc: 'Use default buttons'}, {value: 1, desc: 'Use custom remove button template'}]"
+                              optionLabel="desc" optionValue="value" formControlName="buttons"></p-select>
+                    <label for="[buttons]">[buttons]</label>
+                </p-floatlabel>
             </form>
 
             <br>
             <h2>Result</h2>
             <px-uploader
+                #uploader
                 [saveEndpoint]="saveEndpoint"
                 [label]="form.get('label')?.value"
                 [multiple]="form.get('multiple')?.value === '1'"
                 [showImagePreview]="form.get('showImagePreview')?.value === '1'"
                 [displayAs]="form.get('displayAs')?.value || 'list'"
+                [buttons]="form.get('buttons')?.value ? {removeFileButton: customRemoveButtonTemplate} : undefined"
             ></px-uploader>
+
+            <ng-template let-icon="icon" let-onClick="onClick" #customRemoveButtonTemplate>
+                <p-button (onClick)="onClick()">
+                    <i [class]="icon"></i>My custom button
+                </p-button>
+            </ng-template>
+
+            <br>
+            <h2>Uploader value</h2>
+            <pre><code>{{uploader.value | json}}</code></pre>
         </app-code-example>
     </div>
 
@@ -62,9 +81,7 @@
                 <pre><code class="dm:quote">export interface PxEndpointConfig &#123;
     url: string;
     requestMethod?: string;
-    headers?: HttpHeaders | &#123; [p: string]: string | string[] &#123; | Promise&#60;HttpHeaders | &#123;
-        [p: string]: string | string[]
-    &#125;&#62;;
+    headers?: HttpHeaders | &#123; [p: string]: string | string&#91;&#93; &#125; | Promise&lt;HttpHeaders | &#123;[p: string]: string | string&#91;&#93;&#125;&gt;;
 &#125;</code></pre>
             </div>
 
@@ -118,6 +135,25 @@
             <div class="entry">
                 <h3>icons</h3>
                 <p>Overwrite the default icons used.</p>
+            </div>
+
+            <div class="entry">
+                <h3>buttons</h3>
+                <p>Overwrite the default buttons used using a template ref.</p>
+                <span>
+                    The following context is passed to your template:<br>
+                    <ul>
+                        <li>icon - The icon class. This is either the default icon or a custom icon passed to the icons attribute (icons.removeFileButton or icons.retryUploadButton).</li>
+                        <li>onClick - Button action function reference</li>
+                    </ul>
+                </span>
+                <p>Example template:</p>
+                <pre><code class="dm:quote">&lt;ng-template let-icon=&quot;icon&quot; let-onClick=&quot;onClick&quot; #customRemoveButtonTemplate&gt;
+    &lt;p-button (onClick)=&quot;onClick()&quot;&gt;
+        &lt;i [class]=&quot;icon&quot;&gt;&lt;/i&gt;My custom button
+    &lt;/p-button&gt;
+&lt;/ng-template&gt;
+</code></pre>
             </div>
 
             <div class="entry">

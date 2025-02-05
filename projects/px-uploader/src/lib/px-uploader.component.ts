@@ -12,7 +12,15 @@ import {
     SimpleChanges,
     ViewChild
 } from '@angular/core';
-import {PX_UPLOADER_INTL, PxEndpointConfig, PxFile, PxImageSize, PxUploaderIcons, PxUploaderIntl} from "./px-uploader";
+import {
+    PX_UPLOADER_INTL,
+    PxEndpointConfig,
+    PxFile,
+    PxImageSize,
+    PxUploaderButtons,
+    PxUploaderIcons,
+    PxUploaderIntl
+} from "./px-uploader";
 import {catchError, of} from "rxjs";
 import { HttpClient, HttpEventType } from "@angular/common/http";
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
@@ -96,7 +104,11 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
     /**
      * Overwrite the default icons used.
      */
-    @Input() icons?:PxUploaderIcons;
+    @Input() icons?: PxUploaderIcons;
+    /**
+     * Overwrite the default buttons used.
+     */
+    @Input() buttons?: PxUploaderButtons;
     /**
      * Additional message to be displayed to the user.
      */
@@ -105,7 +117,7 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
     /**
      * Event triggered when all the files in the upload queue are uploaded.
      */
-    @Output() uploadFinished = new EventEmitter<PxFile[]>();
+    @Output() uploadFinished = new EventEmitter<null|PxFile|PxFile[]>();
 
     protected _value: PxFile[] = [];
     protected filesQueue: PxFile[] = [];
@@ -115,6 +127,7 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
     protected dragoverEventActive = false;
     protected readonly intl: Record<PxUploaderIntl, string>;
     protected readonly PxUploaderIntl = PxUploaderIntl;
+    protected _disabled: boolean = false;
 
     @ViewChild('fileInput')
     private readonly fileInput!: ElementRef;
@@ -157,6 +170,10 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
         if(changes['multiple'] && !changes['multiple'].firstChange) {
             this.changeDetector.markForCheck();
         }
+
+        if(changes['buttons'] && !changes['buttons'].firstChange) {
+            this.changeDetector.markForCheck();
+        }
     }
 
     /**
@@ -166,23 +183,51 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
         this.fileInput.nativeElement.click()
     }
 
-    get value(): PxFile[] {
-        return this._value;
+    /**
+     * Will always be null if there are no files (regardless of multiple attribute)
+     */
+    get value(): null|PxFile|PxFile[] {
+        if(this.multiple) {
+            return this._value.length ? this._value : null;
+        }
+
+        return this._value[0] || null;
     }
 
     @Input()
-    set value(value: PxFile[] | PxFile) {
-        if (!Array.isArray(value)) {
-            value = [value];
+    set value(value: PxFile[] | PxFile | null) {
+        if(value === null) {
+            this._value = [];
+            value = [];
+        } else {
+            if (!Array.isArray(value)) {
+                value = [value];
+            } else if(!this.multiple && value.length) {
+                value = [value[0]];
+            }
+
+            this._value = value;
         }
 
-        this._value = value;
         this.hasFiles = value.length > 0;
         if(!this.isAngularFormValue) {
             this.onChange(value);
             this.onTouched();
         }
         this.changeDetector.markForCheck();
+    }
+
+    get disabled(): boolean {
+        return this._disabled;
+    }
+
+    @Input()
+    set disabled(state: boolean) {
+        this._disabled = state;
+    }
+
+    setDisabledState(isDisabled: boolean) {
+        this.disabled = isDisabled;
     }
 
     writeValue(value: any) {
@@ -340,12 +385,20 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
         });
     }
 
-    protected retryUpload(queuedFileIndex: number) {
-        const queuedFile = this.filesQueue[queuedFileIndex];
-        if (queuedFile) {
-            delete queuedFile.uploadError;
-            this.processUploadQueue().then();
+    protected retryUpload(queuedFileIndex: number, getFnRef: boolean) {
+        const fn = () => {
+            const queuedFile = this.filesQueue[queuedFileIndex];
+            if (queuedFile) {
+                delete queuedFile.uploadError;
+                this.processUploadQueue().then();
+            }
+        };
+
+        if(getFnRef) {
+            return fn;
         }
+
+        return fn();
     }
 
     protected removeFileFromQueue(fileIndex: number) {
@@ -400,6 +453,18 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
         }
 
         this.dragoverEventActive = false;
+    }
+
+    protected getRemoveFileFn(isQueued: boolean, fileIndex: number, getRef: boolean) {
+        const fn = () => {
+            isQueued ? this.removeFileFromQueue(fileIndex) : this.removeFile(fileIndex);
+        }
+
+        if(getRef) {
+           return fn
+        }
+
+        return fn();
     }
 
     private async checkFile(file: File): Promise<string> {

@@ -1,13 +1,11 @@
 import { HttpHeaders } from "@angular/common/http";
-import {InjectionToken} from "@angular/core";
+import {InjectionToken, TemplateRef} from "@angular/core";
 import {Subscription} from "rxjs";
 
 export interface PxEndpointConfig {
     url: string;
     requestMethod?: string;
-    headers?: HttpHeaders | { [p: string]: string | string[] } | Promise<HttpHeaders | {
-        [p: string]: string | string[]
-    }>;
+    headers?: HttpHeaders | { [p: string]: string | string[] } | Promise<HttpHeaders | {[p: string]: string | string[]}>;
 }
 
 export interface PxFile {
@@ -74,4 +72,9 @@ export interface PxUploaderIcons {
     fileStatusIconUploading?: string;
     fileStatusIconError?: string;
     fileStatusIconQueued?: string;
+}
+
+export interface PxUploaderButtons {
+    removeFileButton?: TemplateRef<any>,
+    retryUploadButton?: TemplateRef<any>
 }
