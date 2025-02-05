@@ -255,7 +255,7 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
         if(!this.multiple) {
             this.filesQueue[0]?.httpSubscription?.unsubscribe();
             this.filesQueue = [];
-            this.value = null;
+            this._value = [];
             this.changeDetector.markForCheck();
         }
 
@@ -411,6 +411,7 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
      */
     protected async removeFile(fileIndex: number) {
         const file = this._value.splice(fileIndex, 1)[0];
+        this.value = this._value;
 
         if (this.deleteEndpoint) {
             const deleteEndpoint = this.deleteEndpoint;
@@ -423,8 +424,6 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
                     headers: requestHeaders
                 }).subscribe();
         }
-
-        this.value = this._value;
     }
 
     protected onDragEnter(evt: DragEvent) {
