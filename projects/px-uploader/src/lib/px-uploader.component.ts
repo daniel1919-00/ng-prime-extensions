@@ -255,7 +255,7 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
         if(!this.multiple) {
             this.filesQueue[0]?.httpSubscription?.unsubscribe();
             this.filesQueue = [];
-            this.value = [];
+            this.value = null;
             this.changeDetector.markForCheck();
         }
 
@@ -424,7 +424,7 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
                 }).subscribe();
         }
 
-        this.hasFiles = this._value.length > 0;
+        this.value = this._value;
     }
 
     protected onDragEnter(evt: DragEvent) {
