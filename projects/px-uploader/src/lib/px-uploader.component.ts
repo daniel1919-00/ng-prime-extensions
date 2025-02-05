@@ -211,7 +211,7 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
 
         this.hasFiles = value.length > 0;
         if(!this.isAngularFormValue) {
-            this.onChange(value);
+            this.onChange(this.value);
             this.onTouched();
         }
         this.changeDetector.markForCheck();
