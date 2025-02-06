@@ -6,14 +6,18 @@ import {pxTableCodeExample} from "./code-example";
 import {ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup} from "@angular/forms";
 import {
     PX_TABLE_RENDER_COMPONENT_DATA,
-    PxTableColumnDefinition, PxTableColumnVisibility, PxTableDataRequestInfo, PxTableDataResponse,
-    PxTableRenderComponentData, PxTableRow
+    PxTableColumnDefinition,
+    PxTableColumnVisibility,
+    PxTableDataRequestInfo,
+    PxTableDataResponse,
+    PxTableRenderComponentData,
+    PxTableRow
 } from "../../../../projects/px-table/src/lib/px-table";
 import {DatePipe, JsonPipe} from "@angular/common";
 import {Subject, takeUntil} from "rxjs";
 import {MultiSelect} from "primeng/multiselect";
 import {FloatLabel} from "primeng/floatlabel";
-import { HttpClient } from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {MenuItem} from "primeng/api";
 import {AppService} from "../../services/app.service";
 import {Select} from "primeng/select";
@@ -27,10 +31,12 @@ import {Select} from "primeng/select";
         <img [src]="'https://picsum.photos/id/'+columnData.columnData+'/100'" style="max-width: 100px" alt="Pic">
     `
 })
-class MyColumnRenderer {
+class MyColumnRenderer
+{
     constructor(
         @Inject(PX_TABLE_RENDER_COMPONENT_DATA) protected columnData: PxTableRenderComponentData
-    ) {
+    )
+    {
     }
 }
 
@@ -52,7 +58,8 @@ class MyColumnRenderer {
     templateUrl: './px-table-docs.component.html',
     styleUrl: './px-table-docs.component.scss'
 })
-export class PxTableDocsComponent implements OnDestroy {
+export class PxTableDocsComponent implements OnDestroy
+{
     @ViewChild('table') private table!: PxTableComponent;
     form: UntypedFormGroup;
     tableColumns: PxTableColumnDefinition[] = [
@@ -145,13 +152,16 @@ export class PxTableDocsComponent implements OnDestroy {
         ];
     };
 
-    tableServerSideDataSrc = (requestInfo: PxTableDataRequestInfo) => {
+    tableServerSideDataSrc = (requestInfo: PxTableDataRequestInfo) =>
+    {
         return this.http.post<PxTableDataResponse>('https://localhost/table', requestInfo);
     };
 
-    rowContextMenuIsVisibleFn = (row: any) => {
+    rowContextMenuIsVisibleFn = (row: any) =>
+    {
         const displayCond = this.form.get(['config', 'rowContextMenuIsVisibleFn'])?.value;
-        if (displayCond === 'all') {
+        if (displayCond === 'all')
+        {
             return true;
         }
 
@@ -166,7 +176,8 @@ export class PxTableDocsComponent implements OnDestroy {
         fb: UntypedFormBuilder,
         public http: HttpClient,
         private appService: AppService
-    ) {
+    )
+    {
         this.form = fb.group({
             config: fb.group({
                 tableColumns: [this.tableColumns.map(c => c.id)],
@@ -184,12 +195,14 @@ export class PxTableDocsComponent implements OnDestroy {
         });
 
         const storedFilters = localStorage.getItem('__table-config');
-        if(storedFilters) {
+        if (storedFilters)
+        {
             this.form.patchValue(JSON.parse(storedFilters));
         }
 
         const date = new Date();
-        for (let i = 0; i < 100; ++i) {
+        for (let i = 0; i < 100; ++i)
+        {
             date.setDate(date.getDate() + 1);
             this.tableStaticDataSrc.push({
                 column1: i + 1,
@@ -201,11 +214,13 @@ export class PxTableDocsComponent implements OnDestroy {
 
         this.form.get(['config', 'tableColumns'])?.valueChanges
             .pipe(takeUntil(this.componentDestroyed$))
-            .subscribe((visibleTableColumns: string[]) => {
+            .subscribe((visibleTableColumns: string[]) =>
+            {
                 const tableColumns = this.tableColumns;
                 const visibilityConfig: PxTableColumnVisibility[] = [];
 
-                for (let i = tableColumns.length; i--;) {
+                for (let i = tableColumns.length; i--;)
+                {
                     const tableColumn = tableColumns[i];
                     visibilityConfig.push({
                         columnId: tableColumn.id,
@@ -230,7 +245,8 @@ export class PxTableDocsComponent implements OnDestroy {
             'stripedRows'
         ].forEach(formControl => this.form.get(['config', formControl])?.valueChanges
             .pipe(takeUntil(this.componentDestroyed$))
-            .subscribe(() => {
+            .subscribe(() =>
+            {
                 this.storeFilters();
                 this.appService.reloadCurrentRoute();
             }));
@@ -238,11 +254,13 @@ export class PxTableDocsComponent implements OnDestroy {
         this.form.valueChanges.pipe(takeUntil(this.componentDestroyed$)).subscribe(() => this.storeFilters());
     }
 
-    private storeFilters() {
+    private storeFilters()
+    {
         localStorage.setItem('__table-config', JSON.stringify(this.form.value));
     }
 
-    ngOnDestroy() {
+    ngOnDestroy()
+    {
         this.componentDestroyed$.next();
         this.componentDestroyed$.complete();
     }

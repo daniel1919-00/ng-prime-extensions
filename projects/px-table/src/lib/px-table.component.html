@@ -77,7 +77,7 @@
             }
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
         <tr [pContextMenuRow]="rowData"
             [pContextMenuRowDisabled]="!rowContextMenuItems || (rowContextMenuToggleBy && rowContextMenuToggleBy !== 'rightClick') || (rowContextMenuIsActiveFn && !rowContextMenuIsActiveFn(rowData))">
 
@@ -110,7 +110,7 @@
                         {
                             <ng-container
                                 [ngComponentOutlet]="column.renderUsing.component"
-                                [ngComponentOutletInjector]="createRenderComponentInjector(column, rowData[column.id], rowData)"></ng-container>
+                                [ngComponentOutletInjector]="createRenderComponentInjector(column, rowData, rowIndex)"></ng-container>
                         }
                         @else
                         {

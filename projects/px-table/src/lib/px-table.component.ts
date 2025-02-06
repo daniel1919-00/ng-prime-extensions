@@ -439,18 +439,19 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy
         this.rowContextMenuItems = this.dynamicContextMenuItems(this.contextMenuSelection);
     }
 
-    protected createRenderComponentInjector(column: PxTableColumnDefinition, columnData: any, row: PxTableRow)
+    protected createRenderComponentInjector(column: PxTableColumnDefinition, row: PxTableRow, rowIndex: number)
     {
+        const injectorCacheKey = column.id + '' + rowIndex;
         const columnInjectorCache = this.columnInjectorCache;
 
-        if(!columnInjectorCache[column.id])
+        if(!columnInjectorCache[injectorCacheKey])
         {
-            columnInjectorCache[column.id] = Injector.create({
+            columnInjectorCache[injectorCacheKey] = Injector.create({
                 providers: [{
                     provide: PX_TABLE_RENDER_COMPONENT_DATA,
                     useValue: {
                         columnId: column.id,
-                        columnData,
+                        columnData: row[column.id],
                         row,
                         arguments: column.renderUsing?.arguments
                     } as PxTableRenderComponentData
@@ -459,7 +460,7 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy
             });
         }
 
-        return columnInjectorCache[column.id];
+        return columnInjectorCache[injectorCacheKey];
     }
 
     private checkDataSource()
