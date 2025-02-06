@@ -10,8 +10,9 @@ import {
     OnInit,
     Output,
     QueryList,
-    SimpleChanges, TemplateRef,
-    ViewChildren
+    SimpleChanges,
+    TemplateRef,
+    ViewChildren, ViewEncapsulation
 } from "@angular/core";
 import {TableLazyLoadEvent, TableModule, TableRowSelectEvent, TableRowUnSelectEvent} from "primeng/table";
 import {
@@ -50,9 +51,14 @@ import {PrimeNG} from "primeng/config";
     ],
     templateUrl: './px-table.component.html',
     styleUrl: './px-table.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
+    host: {
+        class: 'px-table',
+    }
 })
-export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
+export class PxTableComponent implements OnInit, OnChanges, OnDestroy
+{
     @ViewChildren('toggledContextMenu') toggledContextMenus!: QueryList<Menu>;
     /**
      * Table column definitions.
@@ -233,7 +239,7 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
      */
     @Output() onRowUnselect = new EventEmitter<TableRowUnSelectEvent>();
 
-    protected displayedColumns: string[] = [];
+    protected displayedColumns: PxTableColumnDefinition[] = [];
     protected records: PxTableRow[] = [];
     protected totalRecords = 0;
     protected firstRowIndex: number = 0;
@@ -242,22 +248,27 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
 
     private lastLazyLoadEventData: TableLazyLoadEvent = {};
     private tableInitialized = false;
+    private columnInjectorCache: {[columnId: string]: Injector} = {};
     private dataSrcSub?: Subscription;
 
     constructor(
         protected primeNGConfig: PrimeNG,
         private injector: Injector,
         private changeDetector: ChangeDetectorRef,
-    ) {
+    )
+    {
     }
 
-    ngOnInit() {
-        if (this.pxFilters) {
+    ngOnInit()
+    {
+        if (this.pxFilters)
+        {
             this.filters = {};
             delete this.globalFilterFields;
         }
 
-        if (this.dynamicContextMenuItems) {
+        if (this.dynamicContextMenuItems)
+        {
             this.rowContextMenuItems = [];
         }
 
@@ -266,17 +277,21 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
         this.tableInitialized = true;
     }
 
-    ngOnChanges(changes: SimpleChanges) {
-        if (changes['columns'] && !changes['columns'].firstChange) {
+    ngOnChanges(changes: SimpleChanges)
+    {
+        if (changes['columns'] && !changes['columns'].firstChange)
+        {
             this.prepareDisplayedColumns();
             this.changeDetector.detectChanges();
         }
 
-        if(changes['selectAllCheckbox'] && !changes['selectAllCheckbox'].firstChange) {
+        if (changes['selectAllCheckbox'] && !changes['selectAllCheckbox'].firstChange)
+        {
             this.changeDetector.detectChanges();
         }
 
-        if (changes['dataSource'] && !changes['dataSource'].firstChange) {
+        if (changes['dataSource'] && !changes['dataSource'].firstChange)
+        {
             this.checkDataSource();
         }
     }
@@ -285,12 +300,15 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
      * Re-fetch table data.
      * @param resetPage
      */
-    refresh(resetPage = true) {
-        if (this.isLoading) {
+    refresh(resetPage = true)
+    {
+        if (this.isLoading)
+        {
             return;
         }
 
-        if (resetPage) {
+        if (resetPage)
+        {
             this.firstRowIndex = 0;
         }
         this.onLazyLoad(this.lastLazyLoadEventData);
@@ -301,9 +319,11 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
      * @param columnId
      * @param visible If not specified, the visibility will be toggled
      */
-    changeColumnVisibility(columnId: string, visible?: boolean) {
+    changeColumnVisibility(columnId: string, visible?: boolean)
+    {
         const column = this.getColumn(columnId);
-        if (!column) {
+        if (!column)
+        {
             return;
         }
 
@@ -316,11 +336,14 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
      * Changes the visibility of multiple columns at once.
      * @param columns The columns and their visibility. Example: [{columnId: 'myColumn1', visible: true}, {columnId: 'myOtherColumn', visible: false}] -- sets myColumn1 to visible and hides myOtherColumn
      */
-    changeColumnsVisibility(columns: PxTableColumnVisibility[]) {
-        for (let i = columns.length; i--;) {
+    changeColumnsVisibility(columns: PxTableColumnVisibility[])
+    {
+        for (let i = columns.length; i--;)
+        {
             const colVisibilityConfig = columns[i];
             const column = this.getColumn(colVisibilityConfig.columnId);
-            if (!column) {
+            if (!column)
+            {
                 continue;
             }
 
@@ -331,24 +354,31 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
         this.changeDetector.detectChanges();
     }
 
-    protected onLazyLoad($event: TableLazyLoadEvent) {
+    protected onLazyLoad($event: TableLazyLoadEvent)
+    {
         const dataSource = this.dataSource;
-        if (this.isDataSrcStatic) {
+        if (this.isDataSrcStatic)
+        {
+            this.columnInjectorCache = {};
             this.records = dataSource as PxTableRow[];
             this.totalRecords = dataSource.length;
             this.changeDetector.detectChanges();
-        } else {
+        }
+        else
+        {
             this.isLoading = true;
-            this.changeDetector.detectChanges();
             this.lastLazyLoadEventData = $event;
 
             const sortedColumns: PxTableSortedColumn[] = [];
 
-            if (this.sortMode === 'multiple') {
+            if (this.sortMode === 'multiple')
+            {
                 const multiSortColumns = $event.multiSortMeta;
-                if (multiSortColumns) {
+                if (multiSortColumns)
+                {
                     const multiSortColumnsLen = multiSortColumns.length;
-                    for (let i = 0; i < multiSortColumnsLen; ++i) {
+                    for (let i = 0; i < multiSortColumnsLen; ++i)
+                    {
                         const sortedCol = multiSortColumns[i];
                         sortedColumns.push({
                             columnId: sortedCol.field,
@@ -356,7 +386,9 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
                         });
                     }
                 }
-            } else {
+            }
+            else
+            {
                 sortedColumns.push({
                     columnId: $event.sortField as string || this.sortColumnId || '',
                     order: $event.sortOrder || this.sortDirection
@@ -369,7 +401,9 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
                 pageLength: $event.rows || this.rowsPerPage,
                 sortedColumns,
                 filters: this.pxFilters ? (this.pxFilters instanceof FormGroup ? this.pxFilters.value || {} : this.filters || {}) : $event.filters
-            }).subscribe(response => {
+            }).subscribe(response =>
+            {
+                this.columnInjectorCache = {};
                 this.records = response.records;
                 this.totalRecords = response.totalRecords;
                 this.isLoading = false;
@@ -378,13 +412,16 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
         }
     }
 
-    protected onContextMenuSelectionChange(rowData: PxTableRow, closeOpenMenus = true) {
+    protected onContextMenuSelectionChange(rowData: PxTableRow, closeOpenMenus = true)
+    {
         this.contextMenuSelection = rowData;
 
-        if (closeOpenMenus) {
+        if (closeOpenMenus)
+        {
             const contextMenuPanels = this.toggledContextMenus.toArray()
             const contextMenuPanelsLen = contextMenuPanels.length;
-            for (let i = 0; i < contextMenuPanelsLen; ++i) {
+            for (let i = 0; i < contextMenuPanelsLen; ++i)
+            {
                 contextMenuPanels[i].hide();
             }
         }
@@ -392,61 +429,81 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
         this.contextMenuSelectionChange.emit(rowData);
     }
 
-    protected onContextMenuShown() {
-        if (!(this.dynamicContextMenuItems && this.contextMenuSelection)) {
+    protected onContextMenuShown()
+    {
+        if (!(this.dynamicContextMenuItems && this.contextMenuSelection))
+        {
             return;
         }
 
         this.rowContextMenuItems = this.dynamicContextMenuItems(this.contextMenuSelection);
     }
 
-    protected createRenderComponentInjector(column: PxTableColumnDefinition, columnData: any, row: PxTableRow) {
-        return Injector.create({
-            providers: [{
-                provide: PX_TABLE_RENDER_COMPONENT_DATA,
-                useValue: {
-                    columnId: column.id,
-                    columnData,
-                    row,
-                    arguments: column.renderUsing?.arguments
-                } as PxTableRenderComponentData
-            }],
-            parent: this.injector
-        });
+    protected createRenderComponentInjector(column: PxTableColumnDefinition, columnData: any, row: PxTableRow)
+    {
+        const columnInjectorCache = this.columnInjectorCache;
+
+        if(!columnInjectorCache[column.id])
+        {
+            columnInjectorCache[column.id] = Injector.create({
+                providers: [{
+                    provide: PX_TABLE_RENDER_COMPONENT_DATA,
+                    useValue: {
+                        columnId: column.id,
+                        columnData,
+                        row,
+                        arguments: column.renderUsing?.arguments
+                    } as PxTableRenderComponentData
+                }],
+                parent: this.injector
+            });
+        }
+
+        return columnInjectorCache[column.id];
     }
 
-    private checkDataSource() {
-        if (Array.isArray(this.dataSource)) {
+    private checkDataSource()
+    {
+        if (Array.isArray(this.dataSource))
+        {
             this.isDataSrcStatic = true;
             this.refresh(this.tableInitialized);
-        } else {
+        }
+        else
+        {
             this.isDataSrcStatic = false;
             this.tableInitialized && this.refresh();
         }
     }
 
-    private prepareDisplayedColumns() {
+    private prepareDisplayedColumns()
+    {
         const columns = this.columns;
         const colLen = columns.length;
         const displayedColumns = [];
 
-        for (let colIndex = 0; colIndex < colLen; ++colIndex) {
+        for (let colIndex = 0; colIndex < colLen; ++colIndex)
+        {
             const column = columns[colIndex];
-            if (column.visible === undefined || column.visible) {
-                displayedColumns.push(column.id);
+            if (column.visible === undefined || column.visible)
+            {
+                displayedColumns.push(column);
             }
         }
 
         this.displayedColumns = displayedColumns;
     }
 
-    private getColumn(columnId: string) {
+    private getColumn(columnId: string)
+    {
         const columns = this.columns;
         let foundColumn: undefined | PxTableColumnDefinition;
 
-        for (let i = columns.length; i--;) {
+        for (let i = columns.length; i--;)
+        {
             const col = columns[i];
-            if (col.id === columnId) {
+            if (col.id === columnId)
+            {
                 foundColumn = col;
                 break;
             }
@@ -455,7 +512,8 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy {
         return foundColumn;
     }
 
-    ngOnDestroy() {
+    ngOnDestroy()
+    {
         this.dataSrcSub?.unsubscribe();
     }
 }

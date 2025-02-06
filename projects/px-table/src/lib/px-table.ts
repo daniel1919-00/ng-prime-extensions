@@ -1,7 +1,10 @@
 import {InjectionToken, ProviderToken, Type} from "@angular/core";
 import {FilterMetadata} from "primeng/api";
 
-export interface PxTableColumnDefinition {
+export type ComponentPipeArguments = any[] | { [key: string]: any };
+
+export interface PxTableColumnDefinition
+{
     /**
      * This will be matched against the data source when providing value for this column.
      * For example the column id 'my_column' should be found in the data source, like so: [{'my_column': 'column_value'}, ...].
@@ -34,11 +37,12 @@ export interface PxTableColumnDefinition {
         /**
          * arguments to be passed to either the pipe or the component
          */
-        arguments?: any[] | { [key: string]: any }
+        arguments?: ComponentPipeArguments;
     };
 }
 
-export interface PxTableRow {
+export interface PxTableRow
+{
     [columnId: string]: any;
 
     /**
@@ -47,19 +51,22 @@ export interface PxTableRow {
     pxDisableSelection?: boolean;
 }
 
-export interface PxTableRenderComponentData {
+export interface PxTableRenderComponentData
+{
     columnId: string;
     columnData: string;
     row: PxTableRow;
-    arguments: any[] | { [key: string]: any };
+    arguments?: ComponentPipeArguments;
 }
 
-export interface PxTableDataResponse {
+export interface PxTableDataResponse
+{
     totalRecords: number;
     records: PxTableRow[];
 }
 
-export interface PxTableColumnVisibility {
+export interface PxTableColumnVisibility
+{
     columnId: string;
     /**
      * If not specified, the visibility will be toggled
@@ -67,7 +74,8 @@ export interface PxTableColumnVisibility {
     visible?: boolean;
 }
 
-export interface PxTableColumnVisibility {
+export interface PxTableColumnVisibility
+{
     columnId: string;
     /**
      * If not specified, the visibility will be toggled
@@ -75,7 +83,8 @@ export interface PxTableColumnVisibility {
     visible?: boolean;
 }
 
-export interface PxTableSortedColumn {
+export interface PxTableSortedColumn
+{
     columnId: string;
     /**
      * Sort order. 1 - Ascending / -1 - Descending
@@ -85,7 +94,8 @@ export interface PxTableSortedColumn {
 
 export const PX_TABLE_RENDER_COMPONENT_DATA = new InjectionToken<PxTableRenderComponentData>('PX_TABLE_RENDER_COMPONENT_DATA');
 
-export interface PxTableDataRequestInfo {
+export interface PxTableDataRequestInfo
+{
     firstRowIndex: number;
     pageLength: number;
     sortedColumns: PxTableSortedColumn[];

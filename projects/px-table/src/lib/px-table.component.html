@@ -45,7 +45,7 @@
         <tr>
             @if(selectionMode)
             {
-                <th style="width: 4rem">
+                <th>
                     @if(selectAllCheckbox && selectionMode === 'multiple')
                     {
                         <p-tableHeaderCheckbox />
@@ -53,23 +53,20 @@
                 </th>
             }
 
-            @for(column of columns; track column.id)
+            @for(column of displayedColumns; track column.id)
             {
-                @if(displayedColumns.includes(column.id))
-                {
-                    <th
-                        [pSortableColumn]="column.sortable ? column.id : undefined"
-                        [pSortableColumnDisabled]="!column.sortable"
-                        [ngClass]="column.classes"
-                    >
-                        {{ column.name }}
+                <th
+                    [pSortableColumn]="column.sortable ? column.id : undefined"
+                    [pSortableColumnDisabled]="!column.sortable"
+                    [ngClass]="column.classes"
+                >
+                    {{ column.name }}
 
-                        @if(column.sortable)
-                        {
-                            <p-sortIcon [field]="column.id"></p-sortIcon>
-                        }
-                    </th>
-                }
+                    @if(column.sortable)
+                    {
+                        <p-sortIcon [field]="column.id"></p-sortIcon>
+                    }
+                </th>
             }
 
             @if(rowContextMenuItems && (!rowContextMenuToggleBy || rowContextMenuToggleBy === 'button'))
@@ -99,22 +96,32 @@
                 </td>
             }
 
-            @for(column of columns; track column.id)
+            @for(column of displayedColumns; track column.id)
             {
-                @if(displayedColumns.includes(column.id))
-                {
-                    <td [ngClass]="column.classes">
-                        @if(responsiveLayout === 'stack')
-                        {
-                            <div class="p-datatable-column-title">{{ column.name }}</div>
-                        }
+                <td [ngClass]="column.classes">
+                    @if(responsiveLayout === 'stack')
+                    {
+                        <div class="p-datatable-column-title">{{ column.name }}</div>
+                    }
 
-                        <ng-container
-                            [ngTemplateOutlet]="!column.renderUsing ? cellRenderDefaultTemplate : (column.renderUsing.component ? cellRenderComponentTemplate : cellRenderPipeTemplate)"
-                            [ngTemplateOutletContext]="{column, rowData}"
-                        ></ng-container>
-                    </td>
-                }
+                    @if(column.renderUsing)
+                    {
+                        @if(column.renderUsing.component)
+                        {
+                            <ng-container
+                                [ngComponentOutlet]="column.renderUsing.component"
+                                [ngComponentOutletInjector]="createRenderComponentInjector(column, rowData[column.id], rowData)"></ng-container>
+                        }
+                        @else
+                        {
+                            {{ rowData[column.id] | pxTableRenderPipe: column.renderUsing.pipe! : column.renderUsing.arguments || [] }}
+                        }
+                    }
+                    @else
+                    {
+                        {{ rowData[column.id] }}
+                    }
+                </td>
             }
 
             @if(rowContextMenuItems && (!rowContextMenuToggleBy || rowContextMenuToggleBy === 'button') && (!rowContextMenuIsActiveFn || rowContextMenuIsActiveFn(rowData)))
@@ -142,24 +149,13 @@
     </ng-template>
 
     <ng-template pTemplate="loadingicon">
-        <ng-container [ngTemplateOutlet]="loadingIconTemplateRef || defaultLoadingIconRef"></ng-container>
+        @if(loadingIconTemplateRef)
+        {
+            <ng-container [ngTemplateOutlet]="loadingIconTemplateRef"></ng-container>
+        }
+        @else
+        {
+            <p-progressSpinner class="px-default-loading-icon" [style]="{'width': '65px'}" strokeWidth="3"></p-progressSpinner>
+        }
     </ng-template>
 </p-table>
-
-<ng-template #cellRenderDefaultTemplate let-column="column" let-rowData="rowData">
-    {{ rowData[column.id] }}
-</ng-template>
-
-<ng-template #cellRenderComponentTemplate let-column="column" let-rowData="rowData">
-    <ng-container
-        [ngComponentOutlet]="column.renderUsing.component"
-        [ngComponentOutletInjector]="createRenderComponentInjector(column, rowData[column.id], rowData)"></ng-container>
-</ng-template>
-
-<ng-template #cellRenderPipeTemplate let-column="column" let-rowData="rowData">
-    {{ rowData[column.id] | pxTableRenderPipe: column.renderUsing.pipe : column.renderUsing.arguments || [] }}
-</ng-template>
-
-<ng-template #defaultLoadingIconRef>
-    <p-progressSpinner [style]="{'width': '65px'}"></p-progressSpinner>
-</ng-template>

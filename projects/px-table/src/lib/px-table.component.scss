@@ -1,12 +1,23 @@
-.px-table-empty-message {
-    text-align: center;
-}
+.px-table {
+    .px-table-empty-message {
+        text-align: center;
+    }
 
-.px-table-context-menu-toggle-cell {
-    text-align: right;
-}
+    .px-table-context-menu-toggle-cell {
+        text-align: right;
+    }
 
-.p-datatable-column-title {
-    display: none;
-    font-weight: bold;
+    .p-datatable-column-title {
+        display: none;
+        font-weight: bold;
+    }
+
+    .p-datatable-loading-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: unset;
+        width: unset;
+        font-size: unset;
+    }
 }
