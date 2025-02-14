@@ -43,7 +43,7 @@
             <br>
             <h2>Result</h2>
             <px-uploader
-                #uploader
+                [formControl]="uploaderFormControl"
                 [saveEndpoint]="saveEndpoint"
                 [label]="form.get('label')?.value"
                 [multiple]="form.get('multiple')?.value === '1'"
@@ -60,7 +60,7 @@
 
             <br>
             <h2>Uploader value</h2>
-            <pre><code>{{uploader.value | json}}</code></pre>
+            <pre><code>{{uploaderFormControl.value | json}}</code></pre>
         </app-code-example>
     </div>
 

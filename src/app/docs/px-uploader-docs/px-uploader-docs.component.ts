@@ -2,7 +2,7 @@ import {Component, OnDestroy} from '@angular/core';
 import {LibraryDocumentationComponent} from "../../components/library-documentation/library-documentation.component";
 import {CodeExampleComponent} from "../../components/code-example/code-example.component";
 import {pxUploaderCodeExample} from "./code-example";
-import {FormGroup, ReactiveFormsModule, UntypedFormBuilder} from "@angular/forms";
+import {FormControl, FormGroup, ReactiveFormsModule, UntypedFormBuilder} from "@angular/forms";
 import {PxUploaderComponent} from "../../../../projects/px-uploader/src/lib/px-uploader.component";
 import {PxEndpointConfig} from "../../../../projects/px-uploader/src/lib/px-uploader";
 import {FloatLabel} from "primeng/floatlabel";
@@ -32,6 +32,7 @@ export class PxUploaderDocsComponent implements OnDestroy {
 
     protected readonly pxUploaderCodeExample = pxUploaderCodeExample;
     protected form: FormGroup;
+    protected uploaderFormControl = new FormControl(null);
     saveEndpoint: PxEndpointConfig = {
         url: 'https://localhost/px-uploader'
     };
@@ -48,6 +49,7 @@ export class PxUploaderDocsComponent implements OnDestroy {
             displayAs: ['list'],
             buttons: [0]
         });
+
 
         const storedFilters = localStorage.getItem('__px-uploader-config');
         if(storedFilters) {
