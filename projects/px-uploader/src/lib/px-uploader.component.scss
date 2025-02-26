@@ -121,6 +121,7 @@
 
                     .px-uploader-file-status-icon {
                         font-size: var(--px-uploader-file-info-status-icon-font-size, 2rem);
+                        margin-right: .4rem;
                     }
 
                     .px-uploader-file-info-primary {
@@ -141,7 +142,7 @@
                         flex-direction: row;
                         align-items: center;
 
-                        > button {
+                        .px-uploader-file-info-action-button {
                             margin-left: .4rem;
                         }
                     }
@@ -163,8 +164,8 @@
 
             &.px-uploader-error.preview {
                 .px-uploader-file-header {
-                    background-color: color-mix(in srgb, var(--red-500), transparent 40%);
-                    color: var(--px-uploader-file-preview-header-background-color-error, white);
+                    background-color: color-mix(in srgb, var(--p-red-500), transparent 40%);
+                    color: var(--px-uploader-file-preview-header-color-error, white);
                 }
             }
 

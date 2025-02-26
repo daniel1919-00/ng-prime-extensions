@@ -88,23 +88,6 @@
                 <div class="px-uploader-file-info">
                     <span class="px-uploader-file-info-primary">{{file.uploadError}}</span>
                 </div>
-                @if(!file.isUploading && file.uploadError === undefined && (file.allowDelete === undefined || file.allowDelete))
-                {
-                    @if(buttons?.removeFileButton)
-                    {
-                        <ng-container [ngTemplateOutlet]="buttons!.removeFileButton!" [ngTemplateOutletContext]="{icon: icons?.removeFileButton || 'pi pi-trash', onClick: getRemoveFileFn(isQueued, fileIndex, true)}"></ng-container>
-                    }
-                    @else
-                    {
-                        <p-button
-                            [icon]="icons?.removeFileButton || 'pi pi-trash'"
-                            severity="warn"
-                            (onClick)="getRemoveFileFn(isQueued, fileIndex, false)"
-                            [style]="{'pointer-events': 'visible'}"
-                        ></p-button>
-                    }
-                }
-
                 @if(isQueued && file.uploadError !== undefined && file.canRetryUpload)
                 {
                     @if(buttons?.retryUploadButton)
@@ -114,8 +97,27 @@
                     @else
                     {
                         <p-button
+                            class="px-uploader-file-info-action-button"
                             [icon]="icons?.retryUploadButton || 'pi pi-refresh'"
                             (onClick)="retryUpload(fileIndex, false)"
+                            [style]="{'pointer-events': 'visible'}"
+                        ></p-button>
+                    }
+                }
+
+                @if(!file.isUploading && (file.allowDelete === undefined || file.allowDelete))
+                {
+                    @if(buttons?.removeFileButton)
+                    {
+                        <ng-container [ngTemplateOutlet]="buttons!.removeFileButton!" [ngTemplateOutletContext]="{icon: icons?.removeFileButton || 'pi pi-trash', onClick: getRemoveFileFn(isQueued, fileIndex, true)}"></ng-container>
+                    }
+                    @else
+                    {
+                        <p-button
+                            class="px-uploader-file-info-action-button"
+                            [icon]="icons?.removeFileButton || 'pi pi-trash'"
+                            severity="warn"
+                            (onClick)="getRemoveFileFn(isQueued, fileIndex, false)"
                             [style]="{'pointer-events': 'visible'}"
                         ></p-button>
                     }
