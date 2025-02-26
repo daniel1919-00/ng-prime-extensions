@@ -152,8 +152,8 @@
             &.preview {
                 height: var(--px-uploader-file-preview-height, 18rem);
                 .px-uploader-file-header {
-                    background-color: color-mix(in srgb, var(--p-primary-color), transparent 40%);
-                    color: var(--p-primary-contrast-color);
+                    background-color: color-mix(in srgb, var(--px-uploader-file-preview-header-backgorund-color, var(--p-primary-color)), transparent 40%);
+                    color: var(--px-uploader-file-preview-header-color, --p-primary-contrast-color);
 
                     @supports ((-webkit-backdrop-filter: blur(.2em)) or (backdrop-filter: blur(.2em))) {
                         -webkit-backdrop-filter: blur(.18rem);
@@ -164,7 +164,7 @@
 
             &.px-uploader-error.preview {
                 .px-uploader-file-header {
-                    background-color: color-mix(in srgb, var(--p-red-500), transparent 40%);
+                    background-color: color-mix(in srgb, var(--px-uploader-file-preview-header-background-color-error, var(--p-red-500)), transparent 40%);
                     color: var(--px-uploader-file-preview-header-color-error, white);
                 }
             }
