@@ -103,9 +103,9 @@
             .px-uploader-file-header {
                 display: flex;
                 justify-content: space-between;
-                flex-wrap: nowrap;
+                flex-wrap: wrap;
                 width: 100%;
-                padding: var(--px-uploader-body-padding, 1.25rem);
+                padding: var(--px-uploader-body-padding, 1rem);
                 z-index: 2;
                 border-radius: var(--p-border-radius-md) var(--p-border-radius-md) 0 0;
 
