@@ -129,12 +129,7 @@
             <div class="entry">
                 <h3>maxImageSize</h3>
                 <p>Limits the maximum width and/or height of uploaded images.</p>
-                <p>Multiple sizes can be added in the array, for example you can check if the uploaded image has a width of 100 by passing [maxImageSize]="[&#123;width: 100&#125;]"</p>
-            </div>
-
-            <div class="entry">
-                <h3>icons</h3>
-                <p>Overwrite the default icons used.</p>
+                <p>Check if the uploaded image has a width of exactly 100 by passing [maxImageSize]="[&#123;width: 100, strict: true&#123;]" or just limit the maximum by removing the 'strict' property.</p>
             </div>
 
             <div class="entry">
@@ -157,8 +152,28 @@
             </div>
 
             <div class="entry">
+                <h3>icons</h3>
+                <p>Overwrite the default icons used.</p>
+            </div>
+
+            <div class="entry">
                 <h3>infoMessage</h3>
                 <p>Additional message to be displayed to the user.</p>
+            </div>
+
+            <div class="entry">
+                <h3>showFileName</h3>
+                <p>Displays the file name.</p>
+            </div>
+
+            <div class="entry">
+                <h3>showFileSize</h3>
+                <p>Displays the file size in human-readable form.</p>
+            </div>
+
+            <div class="entry">
+                <h3>showImageSize</h3>
+                <p>If the file is an image, displays the image height and width.</p>
             </div>
         </div>
 

@@ -61,70 +61,80 @@
     (change)="onFilesAdded($any($event.target).files)">
 
 <ng-template #file let-file="file" let-isQueued="isQueuedFile" let-fileIndex="fileIndex">
-    <div class="px-uploader-file" [ngClass]="[displayAs, showImagePreview && file.imagePreviewUrl ? 'preview' : '', file.uploadError !== undefined ? 'px-uploader-error' : '']">
-        @if(file.isUploading || (isQueued && file.uploadError === undefined))
-        {
-            <p-progressBar
-                [mode]="file.uploadProgress > 0 ? 'determinate' : 'indeterminate'"
-                [value]="file.uploadProgress || 0"
-                [style]="{ height: '1rem' }"
-                class="px-uploader-file-upload-progress"
-            ></p-progressBar>
-        }
+    <div class="px-uploader-file" [ngClass]="[displayAs, showImagePreview && file.imagePreviewUrl ? 'preview' : '', file._internal?.uploadError ? 'px-uploader-error' : '']">
+        <div class="px-uploader-file-header-container" [class]="file._internal?.uploadError ? 'error' : 'success'">
+            @if(isQueued && !file._internal?.uploadError)
+            {
+                <p-progressBar
+                    [mode]="file._internal.uploadProgress > 0 ? 'determinate' : 'indeterminate'"
+                    [value]="file._internal.uploadProgress || 0"
+                    [style]="{ height: '1rem', 'border-bottom-right-radius': 0, 'border-bottom-left-radius': 0 }"
+                ></p-progressBar>
+            }
 
-        <div class="px-uploader-file-header" [ngClass]="file.uploadError ? 'error' : 'success'">
-            <div class="px-uploader-file-info">
-                @if(isQueued)
-                {
-                    <i class="px-uploader-file-status-icon" [class]="file.isUploading ? icons?.fileStatusIconUploading || 'pi pi-spin pi-spinner' : (file.uploadError !== undefined ? icons?.fileStatusIconError || 'pi pi-times-circle' : icons?.fileStatusIconQueued || 'pi pi-hourglass')"></i>
-                }
-                <div class="px-uploader-file-info flex-column">
-                    <span class="px-uploader-file-info-primary">{{file.name}}</span>
-                    <span class="px-uploader-file-info-secondary">{{(file.size || 0) | pxFileSize}}</span>
-                </div>
-            </div>
-
-            <div class="px-uploader-file-info actions">
+            <div class="px-uploader-file-header">
                 <div class="px-uploader-file-info">
-                    <span class="px-uploader-file-info-primary">{{file.uploadError}}</span>
-                </div>
-                @if(isQueued && file.uploadError !== undefined && file.canRetryUpload)
-                {
-                    @if(buttons?.retryUploadButton)
+                    @if(isQueued)
                     {
-                        <ng-container [ngTemplateOutlet]="buttons!.retryUploadButton!" [ngTemplateOutletContext]="{icon: icons?.retryUploadButton || 'pi pi-refresh', onClick: retryUpload(fileIndex, true)}"></ng-container>
+                        <i class="px-uploader-file-status-icon" [class]="file._internal.isUploading ? icons?.fileStatusIconUploading || 'pi pi-spin pi-spinner' : (file._internal.uploadError !== undefined ? icons?.fileStatusIconError || 'pi pi-times-circle' : icons?.fileStatusIconQueued || 'pi pi-hourglass')"></i>
                     }
-                    @else
-                    {
-                        <p-button
-                            class="px-uploader-file-info-action-button"
-                            [icon]="icons?.retryUploadButton || 'pi pi-refresh'"
-                            (onClick)="retryUpload(fileIndex, false)"
-                            [style]="{'pointer-events': 'visible'}"
-                        ></p-button>
-                    }
-                }
 
-                @if(!file.isUploading && (file.allowDelete === undefined || file.allowDelete))
-                {
-                    @if(buttons?.removeFileButton)
+                    <div class="px-uploader-file-info flex-column">
+                        @if(showFileName) {
+                            <span class="px-uploader-file-info-primary">{{file.name}}</span>
+                        }
+
+                        @if(showImageSize && file.imageSize) {
+                            <span class="px-uploader-file-info-secondary">{{file.imageSize.width}}x{{file.imageSize.height}}</span>
+                        }
+
+                        @if(showFileSize) {
+                            <span class="px-uploader-file-info-secondary">{{(file.size || 0) | pxFileSize}}</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="px-uploader-file-info actions">
+                    <div class="px-uploader-file-info">
+                        <span class="px-uploader-file-info-primary">{{file._internal?.uploadError}}</span>
+                    </div>
+                    @if(isQueued && file._internal.uploadError && file._internal.canRetryUpload)
                     {
-                        <ng-container [ngTemplateOutlet]="buttons!.removeFileButton!" [ngTemplateOutletContext]="{icon: icons?.removeFileButton || 'pi pi-trash', onClick: getRemoveFileFn(isQueued, fileIndex, true)}"></ng-container>
+                        @if(buttons?.retryUploadButton)
+                        {
+                            <ng-container [ngTemplateOutlet]="buttons!.retryUploadButton!" [ngTemplateOutletContext]="{icon: icons?.retryUploadButton || 'pi pi-refresh', onClick: retryUpload(fileIndex, true)}"></ng-container>
+                        }
+                        @else
+                        {
+                            <p-button
+                                class="px-uploader-file-info-action-button"
+                                [icon]="icons?.retryUploadButton || 'pi pi-refresh'"
+                                (onClick)="retryUpload(fileIndex, false)"
+                                [style]="{'pointer-events': 'visible'}"
+                            ></p-button>
+                        }
                     }
-                    @else
+
+                    @if(!file._internal?.isUploading && (file.allowDelete === undefined || file.allowDelete))
                     {
-                        <p-button
-                            class="px-uploader-file-info-action-button"
-                            [icon]="icons?.removeFileButton || 'pi pi-trash'"
-                            severity="warn"
-                            (onClick)="getRemoveFileFn(isQueued, fileIndex, false)"
-                            [style]="{'pointer-events': 'visible'}"
-                        ></p-button>
+                        @if(buttons?.removeFileButton)
+                        {
+                            <ng-container [ngTemplateOutlet]="buttons!.removeFileButton!" [ngTemplateOutletContext]="{icon: icons?.removeFileButton || 'pi pi-trash', onClick: getRemoveFileFn(isQueued, fileIndex, true)}"></ng-container>
+                        }
+                        @else
+                        {
+                            <p-button
+                                class="px-uploader-file-info-action-button"
+                                [icon]="icons?.removeFileButton || 'pi pi-trash'"
+                                severity="warn"
+                                (onClick)="getRemoveFileFn(isQueued, fileIndex, false)"
+                                [style]="{'pointer-events': 'visible'}"
+                            ></p-button>
+                        }
                     }
-                }
+                </div>
             </div>
         </div>
-
         @if(showImagePreview && file.imagePreviewUrl)
         {
             <img

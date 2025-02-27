@@ -20,6 +20,10 @@ export interface PxFile {
     type?: string;
     imagePreviewUrl?: string;
     /**
+     * Always set if the uploaded file is an image
+     */
+    imageSize?: {height: number; width: number};
+    /**
      * Custom data attached to this file(by default the response body from the save endpoint).
      */
     metaData?: { [key: string]: any };
@@ -28,28 +32,31 @@ export interface PxFile {
      */
     allowDelete?: boolean;
     /**
-     * Used internally to store the upload progress percentage
+     * Used internally
      */
-    uploadProgress?: number;
-    /**
-     * Used internally to store any errors that occurred during the upload
-     */
-    uploadError?: string;
-    /**
-     * File to be uploaded
-     */
-    uploadedFile?: File;
-    /**
-     * Determines if this file has a recoverable error (temporary loss of connection, server down temporarily, etc.)
-     */
-    canRetryUpload?: boolean;
-    isUploading?: boolean;
-    httpSubscription?: Subscription;
+    _internal?: {
+        /**
+         * Determines if this file has a recoverable error (temporary loss of connection, server down temporarily, etc.)
+         */
+        canRetryUpload?: boolean;
+        isUploading?: boolean;
+        /**
+         * File to be uploaded
+         */
+        uploadedFile?: File;
+        uploadError?: string;
+        httpSubscription?: Subscription;
+        uploadProgress?: number;
+    }
 }
 
 export interface PxImageSize {
     width?: number;
     height?: number;
+    /**
+     * Whether the image should have these exact sizes
+     */
+    strict?: boolean;
 }
 
 export enum PxUploaderIntl {
