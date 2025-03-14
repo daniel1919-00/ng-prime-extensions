@@ -49,7 +49,8 @@ export class PxUploaderDocsComponent implements OnDestroy {
             showImagePreview: ['1'],
             displayAs: ['list'],
             buttons: [0],
-            allowedExtensions: ['.png, .jpg, .pdf']
+            allowedExtensions: ['.png, .jpg, .pdf'],
+            infoMessage: [null]
         });
 
 

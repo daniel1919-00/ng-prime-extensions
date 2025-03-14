@@ -392,7 +392,12 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
             switch (event.type)
             {
                 case HttpEventType.UploadProgress:
-                    queuedPxFile._internal!.uploadProgress = Math.floor(event.loaded / (event.total || 1) * 100);
+                    let progress = Math.floor(event.loaded / (event.total || 1) * 100);
+                    if(progress > 100)
+                    {
+                        progress = 100;
+                    }
+                    queuedPxFile._internal!.uploadProgress = progress;
                     this.changeDetector.detectChanges();
                     break;
 

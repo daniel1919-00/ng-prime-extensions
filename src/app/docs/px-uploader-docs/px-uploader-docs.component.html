@@ -43,6 +43,11 @@
                     <input type="text" id="[allowedExtensions]" pInputText formControlName="allowedExtensions">
                     <label for="[allowedExtensions]">[allowedExtensions]</label>
                 </p-floatlabel>
+
+                <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                    <input type="text" id="[infoMessage]" pInputText formControlName="infoMessage">
+                    <label for="[infoMessage]">[infoMessage]</label>
+                </p-floatlabel>
             </form>
 
             <br>
@@ -55,6 +60,7 @@
                 [showImagePreview]="form.get('showImagePreview')?.value === '1'"
                 [displayAs]="form.get('displayAs')?.value || 'list'"
                 [allowedExtensions]="(form.get('allowedExtensions')?.value || '').replaceAll(' ', '').replaceAll('.', '').split(',')"
+                [infoMessage]="form.get('infoMessage')?.value"
                 [buttons]="form.get('buttons')?.value ? {removeFileButton: customRemoveButtonTemplate} : undefined"
             ></px-uploader>
 
