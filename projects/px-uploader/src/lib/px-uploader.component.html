@@ -61,14 +61,14 @@
     (change)="onFilesAdded($any($event.target).files)">
 
 <ng-template #file let-file="file" let-isQueued="isQueuedFile" let-fileIndex="fileIndex">
-    <div class="px-uploader-file" [ngClass]="[displayAs, showImagePreview && file.imagePreviewUrl ? 'preview' : '', file._internal?.uploadError ? 'px-uploader-error' : '']">
+    <div class="px-uploader-file" [ngClass]="[displayAs, showImagePreview && file.imagePreviewUrl ? 'preview' : '', file._internal?.uploadError ? 'px-uploader-error' : '', isQueued ? 'queued' : '']">
         @if(showImagePreview && file.imagePreviewUrl)
         {
             <img
                 class="px-uploader-file-preview"
                 [src]="file.imagePreviewUrl" alt="">
         }
-        <div class="px-uploader-file-header-container" [class]="file._internal?.uploadError ? 'error' : 'success'">
+        <div class="px-uploader-file-header-container">
             @if(isQueued && !file._internal?.uploadError)
             {
                 <p-progressBar

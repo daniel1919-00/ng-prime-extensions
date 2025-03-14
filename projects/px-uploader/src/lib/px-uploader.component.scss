@@ -178,7 +178,7 @@
                     }
                 }
 
-                &:hover {
+                &:hover, &.queued, &.px-uploader-error {
                     .px-uploader-file-header-container {
                         opacity: 1;
                     }
