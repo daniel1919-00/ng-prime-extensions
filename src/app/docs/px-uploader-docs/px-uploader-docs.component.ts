@@ -1,4 +1,4 @@
-import {Component, OnDestroy} from '@angular/core';
+import {Component, OnDestroy, ViewEncapsulation} from '@angular/core';
 import {LibraryDocumentationComponent} from "../../components/library-documentation/library-documentation.component";
 import {CodeExampleComponent} from "../../components/code-example/code-example.component";
 import {pxUploaderCodeExample} from "./code-example";
@@ -26,7 +26,8 @@ import {Button} from "primeng/button";
         Button
     ],
     templateUrl: './px-uploader-docs.component.html',
-    styleUrl: './px-uploader-docs.component.scss'
+    styleUrl: './px-uploader-docs.component.scss',
+    encapsulation: ViewEncapsulation.None
 })
 export class PxUploaderDocsComponent implements OnDestroy {
 
@@ -47,7 +48,8 @@ export class PxUploaderDocsComponent implements OnDestroy {
             multiple: ['0'],
             showImagePreview: ['1'],
             displayAs: ['list'],
-            buttons: [0]
+            buttons: [0],
+            allowedExtensions: ['.png, .jpg, .pdf']
         });
 
 

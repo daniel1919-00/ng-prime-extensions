@@ -16,8 +16,8 @@
 
     .px-uploader-label {
         color: inherit;
-        font-size: 1.3rem;
-        font-weight: bold;
+        font-size: var(--px-uploader-label-font-size, 1.2rem);
+        font-weight: var(--px-uploader-label-font-weight, 700);
         padding-bottom: calc(var(--px-uploader-body-padding, 1.25rem) * .8);
     }
 
@@ -97,10 +97,6 @@
                 margin: .4em;
             }
 
-            &.preview {
-                height: var(--px-uploader-file-preview-height, 14rem);
-            }
-
             .px-uploader-file-header-container {
                 display: flex;
                 flex-direction: column;
@@ -155,25 +151,40 @@
             }
 
 
+            &.px-uploader-error {
+                border-color: var(--px-uploader-file-error-border-color, var(--p-red-500));
+                color: var(--px-uploader-file-error-color, var(--p-red-500));
+
+                &.preview {
+                    .px-uploader-file-header-container {
+                        color: var(--px-uploader-file-error-color, #333333);
+                    }
+                }
+            }
+
             &.preview {
                 height: var(--px-uploader-file-preview-height, 18rem);
+
                 .px-uploader-file-header-container {
-                    background-color: color-mix(in srgb, var(--px-uploader-file-preview-header-backgorund-color, var(--p-primary-color)), transparent 40%);
-                    color: var(--px-uploader-file-preview-header-color, --p-primary-contrast-color);
+                    opacity: 0;
+                    transition: opacity 300ms ease;
+
+                    background-color: color-mix(in srgb, var(--px-uploader-file-preview-header-background-color, #d0d0d0), transparent 40%);
+                    color: var(--px-uploader-file-preview-header-color, #333333);
 
                     @supports ((-webkit-backdrop-filter: blur(.2em)) or (backdrop-filter: blur(.2em))) {
                         -webkit-backdrop-filter: blur(.18rem);
                         backdrop-filter: blur(.18rem);
                     }
                 }
-            }
 
-            &.px-uploader-error.preview {
-                .px-uploader-file-header-container {
-                    background-color: color-mix(in srgb, var(--px-uploader-file-preview-header-background-color-error, var(--p-red-500)), transparent 40%);
-                    color: var(--px-uploader-file-preview-header-color-error, white);
+                &:hover {
+                    .px-uploader-file-header-container {
+                        opacity: 1;
+                    }
                 }
             }
+
 
             .px-uploader-file-preview {
                 position: absolute;
