@@ -8,7 +8,7 @@ export interface PxEndpointConfig {
     headers?: HttpHeaders | { [p: string]: string | string[] } | Promise<HttpHeaders | {[p: string]: string | string[]}>;
 }
 
-export interface PxFile {
+export interface PxFile<T = { [key: string]: any }> {
     name: string;
     /**
      * bytes
@@ -26,7 +26,7 @@ export interface PxFile {
     /**
      * Custom data attached to this file(by default the response body from the save endpoint).
      */
-    metaData?: { [key: string]: any };
+    metaData?: T;
     /**
      * Allow/Disallow the deletion of this file after upload
      */
