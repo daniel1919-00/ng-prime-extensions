@@ -8,7 +8,7 @@ export interface PxEndpointConfig {
     headers?: HttpHeaders | { [p: string]: string | string[] } | Promise<HttpHeaders | {[p: string]: string | string[]}>;
 }
 
-export interface PxFile<T = { [key: string]: any }> {
+export interface PxFile<T = any> {
     name: string;
     /**
      * bytes
