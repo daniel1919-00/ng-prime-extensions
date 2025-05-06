@@ -41,7 +41,7 @@
     (onRowSelect)="onRowSelect.emit($event)"
     (onRowUnselect)="onRowUnselect.emit($event)"
 >
-    <ng-template pTemplate="header" let-columns>
+    <ng-template pTemplate="header">
         <tr>
             @if(selectionMode)
             {
@@ -124,7 +124,7 @@
                 </td>
             }
 
-            @if(rowContextMenuItems && (!rowContextMenuToggleBy || rowContextMenuToggleBy === 'button') && (!rowContextMenuIsActiveFn || rowContextMenuIsActiveFn(rowData)))
+            @if(rowContextMenuItems && (!rowContextMenuToggleBy || rowContextMenuToggleBy === 'button'))
             {
                 <td class="px-table-context-menu-toggle-cell">
                     @if(responsiveLayout === 'stack')
@@ -132,11 +132,14 @@
                         <div class="p-datatable-column-title">&nbsp;</div>
                     }
 
-                    <span>
-                        <p-button [icon]="rowContextMenuToggleIcon" (click)="toggledContextMenu.toggle($event)"></p-button>
-                        <p-menu #toggledContextMenu [model]="rowContextMenuItems" [popup]="true" appendTo="body"
-                                (onShow)="onContextMenuSelectionChange(rowData, false); onContextMenuShown()"></p-menu>
-                    </span>
+                    @if(!rowContextMenuIsActiveFn || rowContextMenuIsActiveFn(rowData))
+                    {
+                        <span>
+                            <p-button [icon]="rowContextMenuToggleIcon" (click)="toggledContextMenu.toggle($event)"></p-button>
+                            <p-menu #toggledContextMenu [model]="rowContextMenuItems" [popup]="true" appendTo="body"
+                                    (onShow)="onContextMenuSelectionChange(rowData, false); onContextMenuShown()"></p-menu>
+                        </span>
+                    }
                 </td>
             }
         </tr>
