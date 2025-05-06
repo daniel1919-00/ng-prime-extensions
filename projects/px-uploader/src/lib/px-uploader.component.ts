@@ -1,4 +1,5 @@
 import {
+    AfterViewInit,
     ChangeDetectorRef,
     Component,
     ElementRef,
@@ -49,7 +50,7 @@ import {PrimeNG} from "primeng/config";
         }
     ]
 })
-export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnDestroy
+export class PxUploaderComponent implements ControlValueAccessor, OnChanges, AfterViewInit, OnDestroy
 {
     /**
      * Endpoint that handles the upload.
@@ -141,6 +142,7 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
     private isAngularFormValue = false;
     private uploadingFilesCount = 0;
     private processingUploadQueue = false;
+    private viewInit = false;
 
     constructor(
         private readonly http: HttpClient,
@@ -176,15 +178,18 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
             !changes['maxImageSize'].firstChange && this.changeDetector.detectChanges();
         }
 
-        if (changes['multiple'] && !changes['multiple'].firstChange)
+        if (
+            (changes['multiple'] && !changes['multiple'].firstChange)
+            || (changes['buttons'] && !changes['buttons'].firstChange)
+        )
         {
             this.changeDetector.detectChanges();
         }
+    }
 
-        if (changes['buttons'] && !changes['buttons'].firstChange)
-        {
-            this.changeDetector.detectChanges();
-        }
+    ngAfterViewInit()
+    {
+        this.viewInit = true;
     }
 
     /**
@@ -192,7 +197,7 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
      */
     openFilesInput()
     {
-        this.fileInput.nativeElement.click()
+        this.getOpenFilesInputFn()();
     }
 
     /**
@@ -248,6 +253,10 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
     set disabled(state: boolean)
     {
         this._disabled = state;
+        if(this.viewInit)
+        {
+            this.changeDetector.detectChanges();
+        }
     }
 
     setDisabledState(isDisabled: boolean)
@@ -429,21 +438,6 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
         });
     }
 
-    protected retryUpload(queuedFileIndex: number, getFnRef: boolean)
-    {
-        const fn = () =>
-        {
-            const queuedFile = this.filesQueue[queuedFileIndex];
-            if (queuedFile)
-            {
-                delete queuedFile._internal!.uploadError;
-                this.processUploadQueue().then();
-            }
-        };
-
-        return getFnRef ? fn : fn();
-    }
-
     protected removeFileFromQueue(fileIndex: number)
     {
         this.filesQueue.splice(fileIndex, 1);
@@ -506,14 +500,30 @@ export class PxUploaderComponent implements ControlValueAccessor, OnChanges, OnD
         this.dragoverEventActive = false;
     }
 
-    protected getRemoveFileFn(isQueued: boolean, fileIndex: number, getRef: boolean)
+    protected getRetryUploadFn(queuedFileIndex: number)
     {
-        const fn = () =>
+        return () =>
+        {
+            const queuedFile = this.filesQueue[queuedFileIndex];
+            if (queuedFile)
+            {
+                delete queuedFile._internal!.uploadError;
+                this.processUploadQueue().then();
+            }
+        };
+    }
+
+    protected getRemoveFileFn(isQueued: boolean, fileIndex: number)
+    {
+        return () =>
         {
             isQueued ? this.removeFileFromQueue(fileIndex) : this.removeFile(fileIndex);
         }
+    }
 
-        return getRef ? fn : fn();
+    protected getOpenFilesInputFn()
+    {
+        return () => this.fileInput.nativeElement.click();
     }
 
     private async checkFile(file: File): Promise<PxFile>

@@ -29,20 +29,21 @@ import {Button} from "primeng/button";
     styleUrl: './px-uploader-docs.component.scss',
     encapsulation: ViewEncapsulation.None
 })
-export class PxUploaderDocsComponent implements OnDestroy {
+export class PxUploaderDocsComponent implements OnDestroy
+{
 
-    protected readonly pxUploaderCodeExample = pxUploaderCodeExample;
-    protected form: FormGroup;
-    protected uploaderFormControl = new FormControl(null);
     saveEndpoint: PxEndpointConfig = {
         url: 'https://localhost/px-uploader'
     };
-
+    protected readonly pxUploaderCodeExample = pxUploaderCodeExample;
+    protected form: FormGroup;
+    protected uploaderFormControl = new FormControl(null);
     private componentDestroyed$ = new Subject<void>();
 
     constructor(
         fb: UntypedFormBuilder
-    ) {
+    )
+    {
         this.form = fb.group({
             label: ['My uploader'],
             multiple: ['0'],
@@ -50,24 +51,39 @@ export class PxUploaderDocsComponent implements OnDestroy {
             displayAs: ['list'],
             buttons: [0],
             allowedExtensions: ['.png, .jpg, .pdf'],
-            infoMessage: [null]
+            infoMessage: [null],
+            disabled: [false]
         });
 
+        this.form.get('disabled')?.valueChanges.pipe(takeUntil(this.componentDestroyed$)).subscribe(disabled =>
+        {
+            if(disabled)
+            {
+                this.uploaderFormControl.disable();
+            }
+            else
+            {
+                this.uploaderFormControl.enable();
+            }
+        });
 
         const storedFilters = localStorage.getItem('__px-uploader-config');
-        if(storedFilters) {
+        if(storedFilters)
+        {
             this.form.patchValue(JSON.parse(storedFilters));
         }
 
         this.form.valueChanges.pipe(takeUntil(this.componentDestroyed$)).subscribe(() => this.storeFilters());
     }
 
-    private storeFilters() {
-        localStorage.setItem('__px-uploader-config', JSON.stringify(this.form.value));
-    }
-
-    ngOnDestroy() {
+    ngOnDestroy()
+    {
         this.componentDestroyed$.next();
         this.componentDestroyed$.complete();
+    }
+
+    private storeFilters()
+    {
+        localStorage.setItem('__px-uploader-config', JSON.stringify(this.form.value));
     }
 }

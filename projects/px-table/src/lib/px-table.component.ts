@@ -237,7 +237,7 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy
     /**
      * Callback to invoke when a row is unselected.
      */
-    @Output() onRowUnselect = new EventEmitter<TableRowUnSelectEvent>();
+    @Output() onRowUnselect = new EventEmitter<TableRowUnSelectEvent<any>>();
 
     protected displayedColumns: PxTableColumnDefinition[] = [];
     protected records: PxTableRow[] = [];

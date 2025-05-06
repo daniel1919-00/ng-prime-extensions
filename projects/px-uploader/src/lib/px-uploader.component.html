@@ -1,5 +1,5 @@
 <div
-    [ngClass]="{'px-uploader': true, 'dragover': dragoverEventActive, 'no-label': label === ''}"
+    [ngClass]="{'px-uploader': true, 'dragover': dragoverEventActive, 'no-label': label === '', 'px-uploader-disabled': disabled}"
     (dragleave)="onDragLeave($event)"
     (dragover)="onDragover($event)"
     (dragenter)="onDragEnter($event)"
@@ -8,7 +8,14 @@
     <label class="px-uploader-label">{{ label }}</label>
     <div class="px-uploader-info">
         <div style="display: flex; align-items: center; flex-wrap: wrap;">
-            <p-button class="px-uploader-upload-button" [icon]="icons?.uploadButton || 'pi pi-upload'" [label]="primeNGConfig.translation.upload" (onClick)="openFilesInput()"></p-button>
+            @if(buttons?.uploadButton)
+            {
+                <ng-container [ngTemplateOutlet]="buttons!.uploadButton!" [ngTemplateOutletContext]="{icon: icons?.uploadButton || 'pi pi-upload', onClick: getOpenFilesInputFn(), disabled: disabled}"></ng-container>
+            }
+            @else
+            {
+                <p-button class="px-uploader-upload-button" [icon]="icons?.uploadButton || 'pi pi-upload'" [label]="primeNGConfig.translation.upload" [disabled]="disabled" (onClick)="openFilesInput()"></p-button>
+            }
             <div class="px-uploader-info-primary">
                 <label class="px-uploader-msg">{{ intl[PxUploaderIntl.NO_FILES_MSG] }}</label>
             </div>
@@ -86,15 +93,18 @@
                     }
 
                     <div class="px-uploader-file-info flex-column">
-                        @if(showFileName) {
+                        @if(showFileName)
+                        {
                             <span class="px-uploader-file-info-primary">{{file.name}}</span>
                         }
 
-                        @if(showImageSize && file.imageSize) {
+                        @if(showImageSize && file.imageSize)
+                        {
                             <span class="px-uploader-file-info-secondary">{{file.imageSize.width}}x{{file.imageSize.height}}</span>
                         }
 
-                        @if(showFileSize) {
+                        @if(showFileSize)
+                        {
                             <span class="px-uploader-file-info-secondary">{{(file.size || 0) | pxFileSize}}</span>
                         }
                     </div>
@@ -108,15 +118,16 @@
                     {
                         @if(buttons?.retryUploadButton)
                         {
-                            <ng-container [ngTemplateOutlet]="buttons!.retryUploadButton!" [ngTemplateOutletContext]="{icon: icons?.retryUploadButton || 'pi pi-refresh', onClick: retryUpload(fileIndex, true)}"></ng-container>
+                            <ng-container [ngTemplateOutlet]="buttons!.retryUploadButton!" [ngTemplateOutletContext]="{icon: icons?.retryUploadButton || 'pi pi-refresh', onClick: getRetryUploadFn(fileIndex), disabled: disabled}"></ng-container>
                         }
                         @else
                         {
                             <p-button
                                 class="px-uploader-file-info-action-button"
                                 [icon]="icons?.retryUploadButton || 'pi pi-refresh'"
-                                (onClick)="retryUpload(fileIndex, false)"
+                                [disabled]="disabled"
                                 [style]="{'pointer-events': 'visible'}"
+                                (onClick)="getRetryUploadFn(fileIndex)()"
                             ></p-button>
                         }
                     }
@@ -125,7 +136,7 @@
                     {
                         @if(buttons?.removeFileButton)
                         {
-                            <ng-container [ngTemplateOutlet]="buttons!.removeFileButton!" [ngTemplateOutletContext]="{icon: icons?.removeFileButton || 'pi pi-trash', onClick: getRemoveFileFn(isQueued, fileIndex, true)}"></ng-container>
+                            <ng-container [ngTemplateOutlet]="buttons!.removeFileButton!" [ngTemplateOutletContext]="{icon: icons?.removeFileButton || 'pi pi-trash', onClick: getRemoveFileFn(isQueued, fileIndex), disabled: disabled}"></ng-container>
                         }
                         @else
                         {
@@ -133,8 +144,9 @@
                                 class="px-uploader-file-info-action-button"
                                 [icon]="icons?.removeFileButton || 'pi pi-trash'"
                                 severity="warn"
-                                (onClick)="getRemoveFileFn(isQueued, fileIndex, false)"
                                 [style]="{'pointer-events': 'visible'}"
+                                [disabled]="disabled"
+                                (onClick)="getRemoveFileFn(isQueued, fileIndex)()"
                             ></p-button>
                         }
                     }

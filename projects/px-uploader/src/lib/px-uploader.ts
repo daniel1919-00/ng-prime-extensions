@@ -82,6 +82,7 @@ export interface PxUploaderIcons {
 }
 
 export interface PxUploaderButtons {
+    uploadButton?: TemplateRef<any>,
     removeFileButton?: TemplateRef<any>,
     retryUploadButton?: TemplateRef<any>
 }

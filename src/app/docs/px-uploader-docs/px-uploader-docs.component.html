@@ -34,7 +34,7 @@
 
                 <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
                     <p-select [style]="{'width': '100%'}" inputId="[buttons]"
-                              [options]="[{value: 0, desc: 'Use default buttons'}, {value: 1, desc: 'Use custom remove button template'}]"
+                              [options]="[{value: 0, desc: 'Use default upload button'}, {value: 1, desc: 'Use custom upload button template'}]"
                               optionLabel="desc" optionValue="value" formControlName="buttons"></p-select>
                     <label for="[buttons]">[buttons]</label>
                 </p-floatlabel>
@@ -47,6 +47,13 @@
                 <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
                     <input type="text" id="[infoMessage]" pInputText formControlName="infoMessage">
                     <label for="[infoMessage]">[infoMessage]</label>
+                </p-floatlabel>
+
+                <p-floatlabel class="dm:col-12 dm:md:col-6 dm:lg:col-4 dm:xl:col-3">
+                    <p-select [style]="{'width': '100%'}" inputId="[disabled]"
+                              [options]="[{value: true, desc: 'true'}, {value: false, desc: false}]"
+                              optionLabel="desc" optionValue="value" formControlName="disabled"></p-select>
+                    <label for="[disabled]">[disabled]</label>
                 </p-floatlabel>
             </form>
 
@@ -61,11 +68,11 @@
                 [displayAs]="form.get('displayAs')?.value || 'list'"
                 [allowedExtensions]="(form.get('allowedExtensions')?.value || '').replaceAll(' ', '').replaceAll('.', '').split(',')"
                 [infoMessage]="form.get('infoMessage')?.value"
-                [buttons]="form.get('buttons')?.value ? {removeFileButton: customRemoveButtonTemplate} : undefined"
+                [buttons]="form.get('buttons')?.value ? {uploadButton: customRemoveButtonTemplate} : undefined"
             ></px-uploader>
 
-            <ng-template let-icon="icon" let-onClick="onClick" #customRemoveButtonTemplate>
-                <p-button (onClick)="onClick()">
+            <ng-template let-icon="icon" let-onClick="onClick" let-disabled="disabled" #customRemoveButtonTemplate>
+                <p-button [disabled]="disabled" (onClick)="onClick()">
                     <i [class]="icon"></i>My custom button
                 </p-button>
             </ng-template>
