@@ -186,6 +186,29 @@
             </div>
 
             <div class="entry">
+                <h3>frozenColumns</h3>
+                <p>An array of objects to represent dynamic columns that are frozen.</p>
+            </div>
+
+            <div class="entry">
+                <h3>frozenValue</h3>
+                <p>An array of objects to display as frozen.</p>
+            </div>
+
+            <div class="entry">
+                <h3>dynamicContextMenuItems</h3>
+                <p>
+                    A function that takes the row of the active context menu and returns the array of items.
+                    If set, the <code>rowContextMenuItems</code> input is ignored.
+                </p>
+            </div>
+
+            <div class="entry">
+                <h3>dynamicContextMenuNoItemsMessage</h3>
+                <p>Message shown when <code>dynamicContextMenuItems</code> returns an empty array.</p>
+            </div>
+
+            <div class="entry">
                 <h3>paginator</h3>
                 <p>Whether pagination is enabled.</p>
             </div>
@@ -379,7 +402,7 @@
 
             <div class="entry">
                 <h3>contextMenuSelectionChange</h3>
-                <p>Selected row with a context menu.</p>
+                <p>Callback to invoke on context menu selection change.</p>
             </div>
 
             <div class="entry">

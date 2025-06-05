@@ -209,6 +209,10 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy
      */
     @Input() dynamicContextMenuItems?: (rowData: PxTableRow) => MenuItem[];
     /**
+     * Message shown when dynamicContextMenuItems returns an array
+     */
+    @Input() dynamicContextMenuNoItemsMessage = 'No actions available';
+    /**
      * Name of the icon to be passed along to the p-button toggle.
      */
     @Input() rowContextMenuToggleIcon: string = 'pi pi-bars';
@@ -437,6 +441,13 @@ export class PxTableComponent implements OnInit, OnChanges, OnDestroy
         }
 
         this.rowContextMenuItems = this.dynamicContextMenuItems(this.contextMenuSelection);
+        if(!this.rowContextMenuItems.length)
+        {
+            this.rowContextMenuItems.push({
+                label: this.dynamicContextMenuNoItemsMessage,
+                disabled: true
+            });
+        }
     }
 
     protected createRenderComponentInjector(column: PxTableColumnDefinition, row: PxTableRow, rowIndex: number)

@@ -74,7 +74,7 @@ export class PxTableDocsComponent implements OnDestroy
         {
             label: 'File',
             icon: 'pi pi-file',
-            visible: false,
+            visible: true,
             items: [
                 {
                     label: 'New',
@@ -119,10 +119,6 @@ export class PxTableDocsComponent implements OnDestroy
             ]
         },
         {
-            label: 'Search',
-            icon: 'pi pi-search'
-        },
-        {
             separator: true
         },
         {
@@ -147,7 +143,7 @@ export class PxTableDocsComponent implements OnDestroy
     {
         return [
             {
-                label: 'Dynamic from row: ' + rowData['column1']
+                label: 'Dynamic context menu for row: ' + rowData['column1']
             }
         ];
     };
