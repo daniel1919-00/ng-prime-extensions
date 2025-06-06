@@ -79,7 +79,7 @@
             @if(isQueued && !file._internal?.uploadError)
             {
                 <p-progressBar
-                    [mode]="file._internal.uploadProgress > 0 || file._internal.uploadProgress === 100 ? 'determinate' : 'indeterminate'"
+                    [mode]="file._internal.uploadProgress > 0 && file._internal.uploadProgress !== 100 ? 'determinate' : 'indeterminate'"
                     [value]="file._internal.uploadProgress || 0"
                     [style]="{ height: '1rem', 'border-bottom-right-radius': 0, 'border-bottom-left-radius': 0 }"
                 ></p-progressBar>
