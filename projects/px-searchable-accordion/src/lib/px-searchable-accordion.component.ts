@@ -1,16 +1,17 @@
 import {
-    AfterViewInit, ChangeDetectorRef,
-    Component, Inject,
-    Input,
-    OnChanges,
-    OnDestroy,
-    SimpleChanges,
-    TemplateRef,
-    ViewEncapsulation
+  AfterViewInit, ChangeDetectorRef,
+  Component, Inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+  TemplateRef,
+  ViewEncapsulation,
+  DOCUMENT
 } from '@angular/core';
 import {Accordion, AccordionContent, AccordionHeader, AccordionPanel} from "primeng/accordion";
 import {PxSearchableAccordionEntry} from "./px-searchable-accordion";
-import {AsyncPipe, DOCUMENT, NgTemplateOutlet} from "@angular/common";
+import {AsyncPipe, NgTemplateOutlet} from "@angular/common";
 import {BehaviorSubject, debounceTime, Observable, Subject, Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 

@@ -24,9 +24,9 @@
         "url": "https://github.com/daniel1919-00/ng-prime-extensions/issues"
     },
     "peerDependencies": {
-        "@angular/common": "^19.2.9",
-        "@angular/core": "^19.2.9",
-        "primeng": "^19.1.2"
+        "@angular/common": "^20.1.4",
+        "@angular/core": "^20.1.4",
+        "primeng": "^20.0.1"
     },
     "dependencies": {
         "tslib": "^2.8.1"

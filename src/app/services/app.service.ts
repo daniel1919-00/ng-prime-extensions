@@ -1,5 +1,5 @@
-import {Inject, Injectable, OnDestroy} from '@angular/core';
-import {DOCUMENT} from "@angular/common";
+import {Inject, Injectable, OnDestroy, DOCUMENT} from '@angular/core';
+
 import {BehaviorSubject, debounceTime, fromEvent, Subject, takeUntil} from "rxjs";
 import {HighlightLoader} from "ngx-highlightjs";
 import {Router} from "@angular/router";
