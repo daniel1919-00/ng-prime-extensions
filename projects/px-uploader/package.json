@@ -1,6 +1,6 @@
 {
     "name": "@ng-prime-extensions/px-uploader",
-    "version": "19.1.0",
+    "version": "20.0.0",
     "description": "PrimeNG uploader extension",
     "homepage": "https://daniel1919-00.github.io/ng-prime-extensions/px-uploader",
     "publishConfig": {
